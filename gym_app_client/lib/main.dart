@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gym_app_client/pages/signin_page.dart';
 import 'package:gym_app_client/pages/signup_page.dart';
 
 void main() {
@@ -13,7 +14,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: const SignUpPage(),
+      home: const SignInPage(),
     );
   }
 }

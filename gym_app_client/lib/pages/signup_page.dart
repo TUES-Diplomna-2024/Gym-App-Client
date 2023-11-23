@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/utils/constants/signup_constants.dart';
+import 'package:gym_app_client/utils/constants/app_regexes.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -37,6 +38,7 @@ class _SignUpPageState extends State<SignUpPage> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          // Title
           const Padding(
             padding: EdgeInsets.all(30.0),
             child: Text(
@@ -44,6 +46,7 @@ class _SignUpPageState extends State<SignUpPage> {
               style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
             ),
           ),
+          // Username
           Padding(
             padding: const EdgeInsets.only(left: 30, right: 30, bottom: 15),
             child: TextFormField(
@@ -70,6 +73,7 @@ class _SignUpPageState extends State<SignUpPage> {
               },
             ),
           ),
+          // Email
           Padding(
             padding: const EdgeInsets.only(left: 30, right: 30, bottom: 15),
             child: TextFormField(
@@ -86,7 +90,7 @@ class _SignUpPageState extends State<SignUpPage> {
               validator: (String? value) {
                 if (value == null || value.isEmpty) {
                   return "Email cannot be empty";
-                } else if (!_isValidEmail(value)) {
+                } else if (!AppRegexes.isValidEmail(value)) {
                   return "Invalid email format";
                 }
 
@@ -95,6 +99,7 @@ class _SignUpPageState extends State<SignUpPage> {
               },
             ),
           ),
+          // Birth Date
           Padding(
             padding: const EdgeInsets.only(left: 30, right: 30, bottom: 15),
             child: TextFormField(
@@ -118,6 +123,7 @@ class _SignUpPageState extends State<SignUpPage> {
               onTap: () => _selectDate(),
             ),
           ),
+          // Password
           Padding(
             padding: const EdgeInsets.only(left: 30, right: 30, bottom: 15),
             child: TextFormField(
@@ -147,7 +153,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 } else if (value.length < SignUpConstants.minPasswordLength ||
                     value.length > SignUpConstants.maxPasswordLength) {
                   return "Password must be between ${SignUpConstants.minPasswordLength} and ${SignUpConstants.maxPasswordLength} characters";
-                } else if (!_isValidPassword(value)) {
+                } else if (!AppRegexes.isValidPassword(value)) {
                   return "Password must include at least one lowercase letter, \none uppercase letter, one digit, and one special character.";
                 }
 
@@ -156,6 +162,7 @@ class _SignUpPageState extends State<SignUpPage> {
               },
             ),
           ),
+          // Confirm Password
           Padding(
             padding: const EdgeInsets.only(left: 30, right: 30, bottom: 30),
             child: TextFormField(
@@ -189,6 +196,7 @@ class _SignUpPageState extends State<SignUpPage> {
               },
             ),
           ),
+          // Create account button
           Padding(
             padding: const EdgeInsets.only(left: 30, right: 30, bottom: 15),
             child: ElevatedButton(
@@ -208,9 +216,10 @@ class _SignUpPageState extends State<SignUpPage> {
                   debugPrint("Failed submittion!");
                 }
               },
-              child: const Text('Sign Up'),
+              child: const Text('Create account'),
             ),
           ),
+          // Sign in page reference
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -220,11 +229,11 @@ class _SignUpPageState extends State<SignUpPage> {
               ),
               TextButton(
                 onPressed: () {
-                  // Navigator.pop(context);
-                  debugPrint("Login page");
+                  Navigator.pop(context);
+                  debugPrint("-> Sign in page");
                 },
                 child: const Text(
-                  'Login',
+                  "Sign in",
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
                 ),
               ),
@@ -260,10 +269,4 @@ class _SignUpPageState extends State<SignUpPage> {
       );
     }
   }
-
-  bool _isValidEmail(String email) =>
-      RegExp(SignUpConstants.emailRegEx).hasMatch(email);
-
-  bool _isValidPassword(String password) =>
-      RegExp(SignUpConstants.passwordRegEx).hasMatch(password);
 }
