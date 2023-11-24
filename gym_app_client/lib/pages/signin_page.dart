@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:gym_app_client/components/padded_elevated_button.dart';
+import 'package:gym_app_client/components/padded_text_form_field.dart';
 import 'package:gym_app_client/pages/signup_page.dart';
 import 'package:gym_app_client/utils/constants/app_regexes.dart';
 import 'package:gym_app_client/utils/constants/signup_constants.dart';
@@ -43,90 +45,81 @@ class _SignInPageState extends State<SignInPage> {
             ),
           ),
           // Email
-          Padding(
-            padding: const EdgeInsets.only(left: 30, right: 30, bottom: 15),
-            child: TextFormField(
-              controller: _emailController,
-              decoration: const InputDecoration(
-                label: Text("Email"),
-                filled: true,
-                prefixIcon: Icon(Icons.mail_outline),
-                hintText: "Enter your email",
-                enabledBorder: OutlineInputBorder(borderSide: BorderSide.none),
-                focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.blue)),
-              ),
-              validator: (String? value) {
-                if (value == null || value.isEmpty) {
-                  return "Email cannot be empty";
-                } else if (!AppRegexes.isValidEmail(value)) {
-                  return "Invalid email format";
-                }
-
-                setState(() => _emailController.text = value);
-                return null;
-              },
+          PaddedTextFormField(
+            controller: _emailController,
+            decoration: const InputDecoration(
+              label: Text("Email"),
+              filled: true,
+              prefixIcon: Icon(Icons.mail_outline),
+              hintText: "Enter your email",
+              enabledBorder: OutlineInputBorder(borderSide: BorderSide.none),
+              focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.blue)),
             ),
+            validator: (String? value) {
+              if (value == null || value.isEmpty) {
+                return "Email cannot be empty";
+              } else if (!AppRegexes.isValidEmail(value)) {
+                return "Invalid email format";
+              }
+
+              setState(() => _emailController.text = value);
+              return null;
+            },
           ),
           // Password
-          Padding(
-            padding: const EdgeInsets.only(left: 30, right: 30, bottom: 15),
-            child: TextFormField(
-              controller: _passwordController,
-              decoration: InputDecoration(
-                label: const Text("Password"),
-                filled: true,
-                prefixIcon: const Icon(Icons.lock_outline),
-                hintText: "Enter your password",
-                enabledBorder:
-                    const OutlineInputBorder(borderSide: BorderSide.none),
-                focusedBorder: const OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.blue)),
-                suffixIcon: IconButton(
-                  onPressed: () {
-                    setState(() => _passwordVisible = !_passwordVisible);
-                  },
-                  icon: _passwordVisible
-                      ? const Icon(Icons.visibility_outlined)
-                      : const Icon(Icons.visibility_off_outlined),
-                ),
+          PaddedTextFormField(
+            controller: _passwordController,
+            decoration: InputDecoration(
+              label: const Text("Password"),
+              filled: true,
+              prefixIcon: const Icon(Icons.lock_outline),
+              hintText: "Enter your password",
+              enabledBorder:
+                  const OutlineInputBorder(borderSide: BorderSide.none),
+              focusedBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.blue)),
+              suffixIcon: IconButton(
+                onPressed: () {
+                  setState(() => _passwordVisible = !_passwordVisible);
+                },
+                icon: _passwordVisible
+                    ? const Icon(Icons.visibility_outlined)
+                    : const Icon(Icons.visibility_off_outlined),
               ),
-              obscureText: !_passwordVisible,
-              validator: (String? value) {
-                if (value == null || value.isEmpty) {
-                  return "Please enter your password";
-                } else if (value.length < SignUpConstants.minPasswordLength ||
-                    value.length > SignUpConstants.maxPasswordLength) {
-                  return "Password must be between ${SignUpConstants.minPasswordLength} and ${SignUpConstants.maxPasswordLength} characters";
-                } else if (!AppRegexes.isValidPassword(value)) {
-                  return "Password must include at least one lowercase letter, \none uppercase letter, one digit, and one special character.";
-                }
-
-                setState(() => _passwordController.text = value);
-                return null;
-              },
             ),
+            obscureText: !_passwordVisible,
+            validator: (String? value) {
+              if (value == null || value.isEmpty) {
+                return "Please enter your password";
+              } else if (value.length < SignUpConstants.minPasswordLength ||
+                  value.length > SignUpConstants.maxPasswordLength) {
+                return "Password must be between ${SignUpConstants.minPasswordLength} and ${SignUpConstants.maxPasswordLength} characters";
+              } else if (!AppRegexes.isValidPassword(value)) {
+                return "Password must include at least one lowercase letter, \none uppercase letter, one digit, and one special character.";
+              }
+
+              setState(() => _passwordController.text = value);
+              return null;
+            },
           ),
           // Login button
-          Padding(
-            padding: const EdgeInsets.only(left: 30, right: 30, bottom: 15),
-            child: ElevatedButton(
-              onPressed: () {
-                if (_formKey.currentState!.validate()) {
-                  debugPrint("Successful submit!");
+          PaddedElevatedButton(
+            onPressed: () {
+              if (_formKey.currentState!.validate()) {
+                debugPrint("Successful submit!");
 
-                  var registerData = {
-                    "email": _emailController.text,
-                    "password": _passwordController.text,
-                  };
+                var registerData = {
+                  "email": _emailController.text,
+                  "password": _passwordController.text,
+                };
 
-                  debugPrint(registerData.toString());
-                } else {
-                  debugPrint("Failed submittion!");
-                }
-              },
-              child: const Text('Login'),
-            ),
+                debugPrint(registerData.toString());
+              } else {
+                debugPrint("Failed submittion!");
+              }
+            },
+            child: const Text('Login'),
           ),
           // Sign up page reference
           Row(
@@ -138,10 +131,13 @@ class _SignInPageState extends State<SignInPage> {
               ),
               TextButton(
                 onPressed: () {
-                  _formKey.currentState?.reset();
+                  _emailController.clear();
+                  _passwordController.clear();
+
                   Navigator.of(context).push(MaterialPageRoute(
                     builder: (BuildContext context) => const SignUpPage(),
                   ));
+
                   debugPrint("-> Sign up page");
                 },
                 child: const Text(
