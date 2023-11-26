@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:gym_app_client/components/padded_elevated_button.dart';
 import 'package:gym_app_client/components/padded_text_form_field.dart';
 import 'package:gym_app_client/utils/constants/signup_constants.dart';
