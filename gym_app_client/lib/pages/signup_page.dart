@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:gym_app_client/db_api/models/user/user_signup_model.dart';
 
+import 'package:gym_app_client/db_api/services/user_service.dart';
 import 'package:gym_app_client/utils/components/padded_elevated_button.dart';
 import 'package:gym_app_client/utils/components/padded_text_form_field.dart';
 import 'package:gym_app_client/utils/constants/signup_constants.dart';
@@ -13,6 +15,8 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
+  final userService = UserService();
+
   final _formKey = GlobalKey<FormState>();
 
   final _usernameController = TextEditingController();
@@ -186,18 +190,21 @@ class _SignUpPageState extends State<SignUpPage> {
           ),
           // Create account button
           PaddedElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               if (_formKey.currentState!.validate()) {
                 debugPrint("Successful submit!");
 
-                var registerData = {
-                  "username": _usernameController.text,
-                  "email": _emailController.text,
-                  "bDate": _bDateController.text,
-                  "password": _passwordController.text,
-                };
+                UserSignUpModel userData = UserSignUpModel(
+                  username: _usernameController.text,
+                  email: _emailController.text,
+                  birthDate: _bDateController.text,
+                  password: _passwordController.text,
+                );
 
-                debugPrint(registerData.toString());
+                String response = await userService.signUpNewUser(userData);
+
+                debugPrint(userData.toJson().toString());
+                debugPrint("Request response: $response");
               } else {
                 debugPrint("Failed submittion!");
               }
