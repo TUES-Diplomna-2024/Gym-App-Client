@@ -15,7 +15,7 @@ class SignUpPage extends StatefulWidget {
 }
 
 class _SignUpPageState extends State<SignUpPage> {
-  final userService = UserService();
+  final _userService = UserService();
 
   final _formKey = GlobalKey<FormState>();
 
@@ -201,7 +201,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   password: _passwordController.text,
                 );
 
-                var result = await userService.signUp(userData);
+                var result = await _userService.signUp(userData);
 
                 if (context.mounted) {
                   _showInformativePopup(context, result.$1, result.$2);

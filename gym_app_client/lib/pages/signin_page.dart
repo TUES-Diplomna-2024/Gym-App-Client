@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:gym_app_client/db_api/models/user/user_signin_model.dart';
+import 'package:gym_app_client/db_api/services/user_service.dart';
 
 import 'package:gym_app_client/utils/components/padded_elevated_button.dart';
 import 'package:gym_app_client/utils/components/padded_text_form_field.dart';
@@ -14,6 +16,8 @@ class SignInPage extends StatefulWidget {
 }
 
 class _SignInPageState extends State<SignInPage> {
+  final _userService = UserService();
+
   final _formKey = GlobalKey<FormState>();
 
   final _emailController = TextEditingController();
@@ -106,16 +110,22 @@ class _SignInPageState extends State<SignInPage> {
           ),
           // Login button
           PaddedElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               if (_formKey.currentState!.validate()) {
                 debugPrint("Successful submit!");
 
-                var registerData = {
-                  "email": _emailController.text,
-                  "password": _passwordController.text,
-                };
+                UserSignInModel userData = UserSignInModel(
+                  email: _emailController.text,
+                  password: _passwordController.text,
+                );
 
-                debugPrint(registerData.toString());
+                var result = await _userService.signIn(userData);
+
+                if (context.mounted) {
+                  _showInformativePopup(context, result.$1, result.$2);
+                }
+
+                debugPrint(userData.toJson().toString());
               } else {
                 debugPrint("Failed submittion!");
               }
@@ -158,5 +168,22 @@ class _SignInPageState extends State<SignInPage> {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  void _showInformativePopup(
+      BuildContext context, String message, Color color) {
+    final popup = SnackBar(
+      content: Center(
+        child: Text(message,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            )),
+      ),
+      backgroundColor: color,
+      duration: const Duration(seconds: 3),
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(popup);
   }
 }

@@ -3,6 +3,7 @@ import 'package:gym_app_client/db_api/models/user/user_signin_model.dart';
 import 'package:gym_app_client/db_api/services/base_service.dart';
 import 'package:http/http.dart';
 import 'package:flutter/material.dart';
+import 'dart:convert';
 
 class UserService extends BaseService {
   UserService()
@@ -38,6 +39,29 @@ class UserService extends BaseService {
   }
 
   Future<(String msg, Color color)> signIn(UserSignInModel user) async {
-    return ("", Colors.cyan);
+    try {
+      final response = await post(
+        urls[1],
+        headers: {"Content-Type": "application/json"},
+        body: user.toJson(),
+      );
+
+      switch (response.statusCode) {
+        case 200:
+          final Map<String, dynamic> user = json.decode(response.body);
+          return ("Hello, ${user["username"]}!", Colors.green.shade300);
+        case 400:
+          return ("Invalid user data!", Colors.red.shade400);
+        case 401:
+          return ("Sign in or password is invalid!", Colors.red.shade400);
+        default:
+          return (
+            "Unexpected status code: ${response.statusCode}",
+            Colors.red.shade400
+          );
+      }
+    } catch (er) {
+      return ("Error: ${er.toString()}", Colors.red.shade400);
+    }
   }
 }
