@@ -22,17 +22,17 @@ class UserService extends BaseService {
             Colors.green.shade300
           );
         case 400:
-          return ("Invalid user data!", Colors.red.shade300);
+          return ("Invalid user data!", Colors.red.shade400);
         case 409:
           return ("This email address is already in use!", Colors.red.shade400);
         default:
           return (
             "Unexpected status code: ${response.statusCode}",
-            Colors.red.shade300
+            Colors.red.shade400
           );
       }
     } catch (er) {
-      return ("Error: ${er.toString()}", Colors.red.shade300);
+      return ("Error: ${er.toString()}", Colors.red.shade400);
     }
   }
 }
