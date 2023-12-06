@@ -4,6 +4,8 @@ import 'package:gym_app_client/db_api/models/user/user_signup_model.dart';
 import 'package:gym_app_client/db_api/services/user_service.dart';
 import 'package:gym_app_client/utils/components/padded_elevated_button.dart';
 import 'package:gym_app_client/utils/components/padded_text_form_field.dart';
+import 'package:gym_app_client/utils/components/informative_popup.dart';
+
 import 'package:gym_app_client/utils/constants/signup_constants.dart';
 import 'package:gym_app_client/utils/constants/app_regexes.dart';
 
@@ -204,7 +206,12 @@ class _SignUpPageState extends State<SignUpPage> {
                 var result = await _userService.signUp(userData);
 
                 if (context.mounted) {
-                  _showInformativePopup(context, result.$1, result.$2);
+                  final InformativePopUp popup = InformativePopUp(
+                    message: result.$1,
+                    color: result.$2,
+                  );
+
+                  ScaffoldMessenger.of(context).showSnackBar(popup);
                 }
 
                 debugPrint(userData.toJson().toString());
@@ -263,22 +270,5 @@ class _SignUpPageState extends State<SignUpPage> {
         () => _bDateController.text = pickedDate.toString().split(" ")[0],
       );
     }
-  }
-
-  void _showInformativePopup(
-      BuildContext context, String message, Color color) {
-    final popup = SnackBar(
-      content: Center(
-        child: Text(message,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            )),
-      ),
-      backgroundColor: color,
-      duration: const Duration(seconds: 3),
-    );
-
-    ScaffoldMessenger.of(context).showSnackBar(popup);
   }
 }
