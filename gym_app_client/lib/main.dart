@@ -1,8 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:global_configuration/global_configuration.dart';
 
 import 'package:gym_app_client/pages/signin_page.dart';
-
-import 'dart:io';
 
 class CustomHttpOverrides extends HttpOverrides {
   @override
@@ -13,8 +14,12 @@ class CustomHttpOverrides extends HttpOverrides {
   }
 }
 
-void main() {
+void main() async {
   HttpOverrides.global = CustomHttpOverrides();
+
+  WidgetsFlutterBinding.ensureInitialized();
+  await GlobalConfiguration().loadFromAsset("app_settings");
+
   runApp(const MyApp());
 }
 
