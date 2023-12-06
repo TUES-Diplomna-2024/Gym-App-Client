@@ -201,10 +201,13 @@ class _SignUpPageState extends State<SignUpPage> {
                   password: _passwordController.text,
                 );
 
-                String response = await userService.signUpNewUser(userData);
+                var result = await userService.signUpNewUser(userData);
+
+                if (context.mounted) {
+                  _showInformativePopup(context, result.$1, result.$2);
+                }
 
                 debugPrint(userData.toJson().toString());
-                debugPrint("Request response: $response");
               } else {
                 debugPrint("Failed submittion!");
               }
@@ -260,5 +263,22 @@ class _SignUpPageState extends State<SignUpPage> {
         () => _bDateController.text = pickedDate.toString().split(" ")[0],
       );
     }
+  }
+
+  void _showInformativePopup(
+      BuildContext context, String message, Color color) {
+    final popup = SnackBar(
+      content: Center(
+        child: Text(message,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            )),
+      ),
+      backgroundColor: color,
+      duration: const Duration(seconds: 3),
+    );
+
+    ScaffoldMessenger.of(context).showSnackBar(popup);
   }
 }

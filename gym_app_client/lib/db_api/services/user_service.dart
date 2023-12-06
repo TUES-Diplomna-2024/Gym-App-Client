@@ -1,12 +1,13 @@
 import 'package:gym_app_client/db_api/models/user/user_signup_model.dart';
 import 'package:gym_app_client/db_api/services/base_service.dart';
 import 'package:http/http.dart';
+import 'package:flutter/material.dart';
 
 class UserService extends BaseService {
   UserService()
       : super(baseEndpoint: "users", subEndpoints: ["signup", "signin"]);
 
-  Future<String> signUpNewUser(UserSignUpModel user) async {
+  Future<(String msg, Color color)> signUpNewUser(UserSignUpModel user) async {
     try {
       final response = await post(
         urls[0],
@@ -16,16 +17,22 @@ class UserService extends BaseService {
 
       switch (response.statusCode) {
         case 200:
-          return "200 Ok";
+          return (
+            "Your account has been successfully created!",
+            Colors.green.shade300
+          );
         case 400:
-          return "400 Bad Request";
+          return ("Invalid user data!", Colors.red.shade300);
         case 409:
-          return "409 Conflict";
+          return ("This email address is already in use!", Colors.red.shade400);
         default:
-          return "Unhandeled status code: ${response.statusCode}";
+          return (
+            "Unexpected status code: ${response.statusCode}",
+            Colors.red.shade300
+          );
       }
     } catch (er) {
-      return "CATCH EXCEPTION: ${er.toString()}";
+      return ("Error: ${er.toString()}", Colors.red.shade300);
     }
   }
 }
