@@ -1,3 +1,4 @@
+import 'package:gym_app_client/db_api/models/user/user_profile_model.dart';
 import 'package:gym_app_client/db_api/models/user/user_signup_model.dart';
 import 'package:gym_app_client/db_api/models/user/user_signin_model.dart';
 import 'package:gym_app_client/db_api/services/base_service.dart';
@@ -48,8 +49,8 @@ class UserService extends BaseService {
 
       switch (response.statusCode) {
         case 200:
-          final Map<String, dynamic> user = json.decode(response.body);
-          return ("Hello, ${user["username"]}!", Colors.green.shade300);
+          final user = UserProfileModel.loadFromMap(json.decode(response.body));
+          return ("Hello, ${user.username}!", Colors.green.shade300);
         case 400:
           return ("Invalid user data!", Colors.red.shade400);
         case 401:
