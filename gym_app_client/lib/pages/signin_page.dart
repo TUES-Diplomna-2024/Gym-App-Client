@@ -128,6 +128,7 @@ class _SignInPageState extends State<SignInPage> {
                     color: result.$2,
                   );
 
+                  ScaffoldMessenger.of(context).removeCurrentSnackBar();
                   ScaffoldMessenger.of(context).showSnackBar(popup);
                 }
 
@@ -150,6 +151,8 @@ class _SignInPageState extends State<SignInPage> {
                 onPressed: () {
                   _emailController.clear();
                   _passwordController.clear();
+
+                  ScaffoldMessenger.of(context).clearSnackBars();
 
                   Navigator.of(context).push(MaterialPageRoute(
                     builder: (BuildContext context) => const SignUpPage(),

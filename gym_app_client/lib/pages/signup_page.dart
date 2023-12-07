@@ -211,6 +211,7 @@ class _SignUpPageState extends State<SignUpPage> {
                     color: result.$2,
                   );
 
+                  ScaffoldMessenger.of(context).removeCurrentSnackBar();
                   ScaffoldMessenger.of(context).showSnackBar(popup);
                 }
 
@@ -231,6 +232,8 @@ class _SignUpPageState extends State<SignUpPage> {
               ),
               TextButton(
                 onPressed: () {
+                  ScaffoldMessenger.of(context).clearSnackBars();
+
                   Navigator.pop(context);
                   debugPrint("-> Sign in page");
                 },
