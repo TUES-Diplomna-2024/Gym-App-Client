@@ -234,7 +234,7 @@ class _SignUpPageState extends State<SignUpPage> {
                 onPressed: () {
                   ScaffoldMessenger.of(context).clearSnackBars();
 
-                  Navigator.pop(context);
+                  Navigator.of(context).pop();
                   debugPrint("-> Sign in page");
                 },
                 child: const Text(

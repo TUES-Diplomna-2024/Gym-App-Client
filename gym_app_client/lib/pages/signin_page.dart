@@ -7,7 +7,6 @@ import 'package:gym_app_client/utils/components/padded_elevated_button.dart';
 import 'package:gym_app_client/utils/components/padded_text_form_field.dart';
 import 'package:gym_app_client/utils/constants/app_regexes.dart';
 import 'package:gym_app_client/utils/constants/signup_constants.dart';
-import 'package:gym_app_client/pages/signup_page.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({super.key});
@@ -30,7 +29,9 @@ class _SignInPageState extends State<SignInPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: _buildSignInForm(),
+        child: SingleChildScrollView(
+          child: _buildSignInForm(),
+        ),
       ),
     );
   }
@@ -154,9 +155,7 @@ class _SignInPageState extends State<SignInPage> {
 
                   ScaffoldMessenger.of(context).clearSnackBars();
 
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (BuildContext context) => const SignUpPage(),
-                  ));
+                  Navigator.of(context).pushNamed("/signup");
 
                   debugPrint("-> Sign up page");
                 },
