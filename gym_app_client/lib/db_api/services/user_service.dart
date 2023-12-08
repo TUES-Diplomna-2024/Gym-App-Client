@@ -7,13 +7,12 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 
 class UserService extends BaseService {
-  UserService()
-      : super(baseEndpoint: "users", subEndpoints: ["signup", "signin"]);
+  UserService() : super(baseEndpoint: "users");
 
   Future<(String msg, Color color)> signUp(UserSignUpModel user) async {
     try {
       final response = await post(
-        urls[0],
+        getUri("signup"),
         headers: {"Content-Type": "application/json"},
         body: user.toJson(),
       );
@@ -42,7 +41,7 @@ class UserService extends BaseService {
   Future<(String msg, Color color)> signIn(UserSignInModel user) async {
     try {
       final response = await post(
-        urls[1],
+        getUri("signin"),
         headers: {"Content-Type": "application/json"},
         body: user.toJson(),
       );
