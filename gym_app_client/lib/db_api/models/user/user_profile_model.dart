@@ -1,4 +1,4 @@
-import 'package:gym_app_client/utils/classes/date_only.dart';
+import 'package:gym_app_client/utils/common/date_only.dart';
 
 class UserProfileModel {
   late final String id;
