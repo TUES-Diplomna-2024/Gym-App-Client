@@ -52,6 +52,40 @@ class _StepperExampleState extends State<StepperExample> {
       ),
       body: Center(
         child: Stepper(
+          controlsBuilder: (BuildContext context, _) {
+            return Column(
+              children: [
+                const SizedBox(height: 20),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: <Widget>[
+                    TextButton(
+                      onPressed: () {
+                        if (_curStep > 0) {
+                          setState(() => _curStep -= 1);
+                        }
+                      },
+                      child: const Text(
+                        "PREV",
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        if (_curStep < steps.length - 1) {
+                          setState(() => _curStep += 1);
+                        }
+                      },
+                      child: const Text(
+                        "NEXT",
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            );
+          },
           physics: const ClampingScrollPhysics(),
           type: StepperType.horizontal,
           currentStep: _curStep,
