@@ -6,4 +6,6 @@ class SignUpConstants {
   static const int maxPasswordLength = 16;
 
   static const int allowableYearsRange = 122;
+
+  static const List<String> genders = ["Male", "Female", "Other"];
 }

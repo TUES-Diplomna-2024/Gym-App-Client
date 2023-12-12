@@ -27,7 +27,7 @@ class _StepperExampleState extends State<StepperExample> {
   final _passwordController = TextEditingController();
 
   final _bDateController = TextEditingController();
-  final _genderController = TextEditingController();
+  String _selectedGender = SignUpConstants.genders[0];
   final _heightController = TextEditingController();
   final _weightController = TextEditingController();
 
@@ -80,7 +80,6 @@ class _StepperExampleState extends State<StepperExample> {
     _passwordController.dispose();
 
     _bDateController.dispose();
-    _genderController.dispose();
     _heightController.dispose();
     _weightController.dispose();
 
@@ -105,10 +104,11 @@ class _StepperExampleState extends State<StepperExample> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const SizedBox(height: 30),
           // Username
           PaddedTextFormField(
             controller: _usernameController,
+            padding:
+                const EdgeInsets.only(top: 35, left: 15, right: 15, bottom: 25),
             decoration: const InputDecoration(
               label: Text("Username"),
               prefixIcon: Icon(Icons.person_outline),
@@ -232,10 +232,11 @@ class _StepperExampleState extends State<StepperExample> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          const SizedBox(height: 30),
           // Birth Date
           PaddedTextFormField(
             controller: _bDateController,
+            padding:
+                const EdgeInsets.only(top: 35, left: 15, right: 15, bottom: 25),
             decoration: const InputDecoration(
               label: Text("Birth Date"),
               filled: true,
@@ -254,6 +255,26 @@ class _StepperExampleState extends State<StepperExample> {
             readOnly: true,
             onTap: () => _selectDate(),
           ),
+          // Gender
+          DropdownButtonFormField(
+            decoration: const InputDecoration(
+              label: Text("Gender"),
+              filled: true,
+              prefixIcon: Icon(Icons.accessibility_new),
+              enabledBorder: OutlineInputBorder(borderSide: BorderSide.none),
+              focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.blue)),
+            ),
+            onChanged: (String? value) {
+              setState(() => _selectedGender = value!);
+            },
+            items: SignUpConstants.genders
+                .map((String gender) => DropdownMenuItem(
+                      value: gender,
+                      child: Text(gender),
+                    ))
+                .toList(),
+          )
         ],
       ),
     );
