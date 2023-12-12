@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/models/user/user_signup_model.dart';
 
 import 'package:gym_app_client/db_api/services/user_service.dart';
+import 'package:gym_app_client/utils/components/padded_dropdown_button_form_field.dart';
 import 'package:gym_app_client/utils/components/padded_elevated_button.dart';
 import 'package:gym_app_client/utils/components/padded_text_form_field.dart';
 import 'package:gym_app_client/utils/components/informative_popup.dart';
@@ -25,11 +26,11 @@ class _StepperExampleState extends State<StepperExample> {
   final _usernameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-
   final _bDateController = TextEditingController();
-  String _selectedGender = SignUpConstants.genders[0];
-  final _heightController = TextEditingController();
-  final _weightController = TextEditingController();
+
+  String _selectedGender = "";
+  double _selectedHeight = SignUpConstants.defaultHeight;
+  double _selectedWeight = SignUpConstants.defaultWeight;
 
   bool _passwordVisible = false;
   bool _cPasswordVisible = false;
@@ -78,10 +79,7 @@ class _StepperExampleState extends State<StepperExample> {
     _usernameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
-
     _bDateController.dispose();
-    _heightController.dispose();
-    _weightController.dispose();
 
     super.dispose();
   }
@@ -89,10 +87,14 @@ class _StepperExampleState extends State<StepperExample> {
   List<Step> _getStepList() => [
         Step(
           title: const Text("Account Info"),
+          state: _curStep == 0 ? StepState.editing : StepState.complete,
+          isActive: _curStep >= 0,
           content: _buildAccountInfoForm(),
         ),
         Step(
           title: const Text("Biometric Info"),
+          state: _curStep == 1 ? StepState.editing : StepState.indexed,
+          isActive: _curStep == 1,
           content: _buildBiometricInfoForm(),
         )
       ];
@@ -256,7 +258,7 @@ class _StepperExampleState extends State<StepperExample> {
             onTap: () => _selectDate(),
           ),
           // Gender
-          DropdownButtonFormField(
+          PaddedDropdownButtonFormField(
             decoration: const InputDecoration(
               label: Text("Gender"),
               filled: true,
@@ -274,7 +276,49 @@ class _StepperExampleState extends State<StepperExample> {
                       child: Text(gender),
                     ))
                 .toList(),
-          )
+            validator: (String? value) {
+              if (value == null || value.isEmpty) {
+                return "Please select your gender";
+              }
+
+              return null;
+            },
+          ),
+          // Height
+          Padding(
+            padding: const EdgeInsets.only(bottom: 25),
+            child: Column(
+              children: [
+                Center(
+                  child: Text("Height: ${_selectedHeight.round()} cm"),
+                ),
+                Slider.adaptive(
+                  value: _selectedHeight,
+                  min: SignUpConstants.minHeight,
+                  max: SignUpConstants.maxHeight,
+                  onChanged: (double value) {
+                    setState(() => _selectedHeight = value);
+                  },
+                ),
+              ],
+            ),
+          ),
+          // Weight
+          Column(
+            children: [
+              Center(
+                child: Text("Weight: ${_selectedWeight.toStringAsFixed(1)} kg"),
+              ),
+              Slider.adaptive(
+                value: _selectedWeight,
+                min: SignUpConstants.minWeight,
+                max: SignUpConstants.maxWeight,
+                onChanged: (double value) {
+                  setState(() => _selectedWeight = value);
+                },
+              ),
+            ],
+          ),
         ],
       ),
     );
