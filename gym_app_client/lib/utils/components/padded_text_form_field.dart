@@ -7,6 +7,7 @@ class PaddedTextFormField extends StatelessWidget {
   final bool obscureText;
   final String? Function(String?)? validator;
   final void Function()? onTap;
+  final EdgeInsetsGeometry padding;
 
   const PaddedTextFormField({
     super.key,
@@ -16,12 +17,13 @@ class PaddedTextFormField extends StatelessWidget {
     this.readOnly = false,
     this.obscureText = false,
     this.onTap,
+    this.padding = const EdgeInsets.only(left: 15, right: 15, bottom: 25),
   });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 30, right: 30, bottom: 15),
+      padding: padding,
       child: TextFormField(
         controller: controller,
         decoration: decoration,
