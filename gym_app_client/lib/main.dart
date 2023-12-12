@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       onGenerateRoute: RouteGenerator.generateRoute,
-      initialRoute: "/signin",
+      initialRoute: "/stepper-example",
     );
   }
 }
