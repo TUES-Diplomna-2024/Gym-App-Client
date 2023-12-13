@@ -35,7 +35,9 @@ class _StepperExampleState extends State<StepperExample> {
   bool _passwordVisible = false;
   bool _cPasswordVisible = false;
 
-  int _curStep = 0;
+  int _currStep = 0;
+  StepState _accountInfoCurrState = StepState.editing;
+  StepState _biometricInfoCurrState = StepState.indexed;
 
   @override
   Widget build(BuildContext context) {
@@ -53,55 +55,76 @@ class _StepperExampleState extends State<StepperExample> {
       body: Center(
         child: Stepper(
           controlsBuilder: (BuildContext context, _) {
+            late List<Widget> rowChildren;
+
+            if (_currStep == 0) {
+              rowChildren = [
+                TextButton(
+                  onPressed: () {
+                    if (_accountInfoFormKey.currentState!.validate() &&
+                        _currStep < steps.length - 1) {
+                      setState(() => _currStep += 1);
+                      setState(
+                          () => _accountInfoCurrState = StepState.complete);
+                    } else {
+                      setState(() => _accountInfoCurrState = StepState.error);
+                    }
+                  },
+                  child: const Text(
+                    "NEXT",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ),
+              ];
+            } else {
+              rowChildren = [
+                TextButton(
+                  onPressed: () {
+                    if (_currStep > 0) {
+                      setState(() => _currStep -= 1);
+                      setState(
+                          () => _biometricInfoCurrState = StepState.editing);
+                    }
+                  },
+                  child: const Text(
+                    "PREV",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    if (_biometricInfoFormKey.currentState!.validate()) {
+                      setState(
+                          () => _biometricInfoCurrState = StepState.complete);
+                    } else {
+                      setState(() => _biometricInfoCurrState = StepState.error);
+                    }
+                  },
+                  child: const Text(
+                    "SUBMIT",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ),
+              ];
+            }
+
             return Column(
               children: [
-                const SizedBox(height: 20),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: <Widget>[
-                    TextButton(
-                      onPressed: () {
-                        if (_curStep > 0) {
-                          setState(() => _curStep -= 1);
-                        }
-                      },
-                      child: const Text(
-                        "PREV",
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        if (_curStep < steps.length - 1) {
-                          setState(() => _curStep += 1);
-                        }
-                      },
-                      child: const Text(
-                        "NEXT",
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ),
-                  ],
+                  mainAxisAlignment: _currStep == 0
+                      ? MainAxisAlignment.end
+                      : MainAxisAlignment.spaceAround,
+                  children: rowChildren,
                 )
               ],
             );
           },
           physics: const ClampingScrollPhysics(),
           type: StepperType.horizontal,
-          currentStep: _curStep,
-          onStepCancel: () {
-            if (_curStep > 0) {
-              setState(() => _curStep -= 1);
-            }
-          },
-          onStepContinue: () {
-            if (_curStep < steps.length - 1) {
-              setState(() => _curStep += 1);
-            }
-          },
-          onStepTapped: (int index) {
-            setState(() => _curStep = index);
-          },
+          currentStep: _currStep,
+          // onStepTapped: (int index) {
+          //   setState(() => _currStep = index);
+          // },
           steps: steps,
         ),
       ),
@@ -121,14 +144,14 @@ class _StepperExampleState extends State<StepperExample> {
   List<Step> _getStepList() => [
         Step(
           title: const Text("Account Info"),
-          state: _curStep == 0 ? StepState.editing : StepState.complete,
-          isActive: _curStep >= 0,
+          state: _accountInfoCurrState,
+          isActive: _currStep >= 0,
           content: _buildAccountInfoForm(),
         ),
         Step(
           title: const Text("Biometric Info"),
-          state: _curStep == 1 ? StepState.editing : StepState.indexed,
-          isActive: _curStep == 1,
+          state: _biometricInfoCurrState,
+          isActive: _currStep == 1,
           content: _buildBiometricInfoForm(),
         )
       ];
@@ -338,20 +361,24 @@ class _StepperExampleState extends State<StepperExample> {
             ),
           ),
           // Weight
-          Column(
-            children: [
-              Center(
-                child: Text("Weight: ${_selectedWeight.toStringAsFixed(1)} kg"),
-              ),
-              Slider.adaptive(
-                value: _selectedWeight,
-                min: SignUpConstants.minWeight,
-                max: SignUpConstants.maxWeight,
-                onChanged: (double value) {
-                  setState(() => _selectedWeight = value);
-                },
-              ),
-            ],
+          Padding(
+            padding: const EdgeInsets.only(bottom: 25),
+            child: Column(
+              children: [
+                Center(
+                  child:
+                      Text("Weight: ${_selectedWeight.toStringAsFixed(1)} kg"),
+                ),
+                Slider.adaptive(
+                  value: _selectedWeight,
+                  min: SignUpConstants.minWeight,
+                  max: SignUpConstants.maxWeight,
+                  onChanged: (double value) {
+                    setState(() => _selectedWeight = value);
+                  },
+                ),
+              ],
+            ),
           ),
         ],
       ),
