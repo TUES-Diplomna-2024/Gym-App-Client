@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/models/user/user_signup_model.dart';
 
 import 'package:gym_app_client/db_api/services/user_service.dart';
-import 'package:gym_app_client/utils/components/padded_elevated_button.dart';
+import 'package:gym_app_client/utils/components/padded_dropdown_button_form_field.dart';
 import 'package:gym_app_client/utils/components/padded_text_form_field.dart';
 import 'package:gym_app_client/utils/components/informative_popup.dart';
 
@@ -19,45 +19,179 @@ class SignUpPage extends StatefulWidget {
 class _SignUpPageState extends State<SignUpPage> {
   final _userService = UserService();
 
-  final _formKey = GlobalKey<FormState>();
+  final _accountInfoFormKey = GlobalKey<FormState>();
+  final _biometricInfoFormKey = GlobalKey<FormState>();
 
   final _usernameController = TextEditingController();
   final _emailController = TextEditingController();
-  final _bDateController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _bDateController = TextEditingController();
+
+  String _selectedGender = "";
+  double _selectedHeight = SignUpConstants.defaultHeight;
+  double _selectedWeight = SignUpConstants.defaultWeight;
 
   bool _passwordVisible = false;
   bool _cPasswordVisible = false;
 
+  int _currStep = 0;
+  StepState _accountInfoCurrState = StepState.editing;
+  StepState _biometricInfoCurrState = StepState.indexed;
+
   @override
   Widget build(BuildContext context) {
+    final steps = _getStepList();
+
     return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          "Sign Up",
+          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
+        automaticallyImplyLeading: false,
+      ),
       body: Center(
-        child: SingleChildScrollView(
-          child: _buildSignUpForm(),
+        child: Stepper(
+          controlsBuilder: (BuildContext context, _) {
+            late List<Widget> rowChildren;
+
+            if (_currStep == 0) {
+              rowChildren = [
+                // Next
+                TextButton(
+                  onPressed: () {
+                    if (_accountInfoFormKey.currentState!.validate()) {
+                      setState(() {
+                        _currStep += 1;
+                        _accountInfoCurrState = StepState.complete;
+                        _biometricInfoCurrState = StepState.editing;
+                      });
+                    } else {
+                      setState(() => _accountInfoCurrState = StepState.error);
+                    }
+                  },
+                  child: const Text(
+                    "NEXT",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ),
+              ];
+            } else {
+              rowChildren = [
+                // Prev
+                TextButton(
+                  onPressed: () {
+                    if (_biometricInfoFormKey.currentState!.validate()) {
+                      setState(() {
+                        _currStep -= 1;
+                        _accountInfoCurrState = StepState.editing;
+                        _biometricInfoCurrState = StepState.editing;
+                      });
+                    } else {
+                      setState(() => _biometricInfoCurrState = StepState.error);
+                    }
+                  },
+                  child: const Text(
+                    "PREV",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ),
+                // Submit
+                TextButton(
+                  onPressed: () async {
+                    if (_biometricInfoFormKey.currentState!.validate()) {
+                      setState(
+                          () => _biometricInfoCurrState = StepState.complete);
+
+                      UserSignUpModel userData = UserSignUpModel(
+                        username: _usernameController.text,
+                        email: _emailController.text,
+                        password: _passwordController.text,
+                        birthDate: _bDateController.text,
+                        gender: _selectedGender,
+                        height: _selectedHeight,
+                        weight: _selectedWeight,
+                      );
+
+                      var result = await _userService.signUp(userData);
+
+                      if (context.mounted) {
+                        final InformativePopUp popup = InformativePopUp(
+                          message: result.$1,
+                          color: result.$2,
+                        );
+
+                        ScaffoldMessenger.of(context).removeCurrentSnackBar();
+                        ScaffoldMessenger.of(context).showSnackBar(popup);
+                      }
+
+                      debugPrint(userData.toJson().toString());
+                    } else {
+                      setState(() => _biometricInfoCurrState = StepState.error);
+                    }
+                  },
+                  child: const Text(
+                    "SUBMIT",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ),
+              ];
+            }
+
+            return Row(
+              mainAxisAlignment: _currStep == 0
+                  ? MainAxisAlignment.end
+                  : MainAxisAlignment.spaceAround,
+              children: rowChildren,
+            );
+          },
+          physics: const ClampingScrollPhysics(),
+          type: StepperType.horizontal,
+          currentStep: _currStep,
+          steps: steps,
         ),
       ),
     );
   }
 
-  Widget _buildSignUpForm() {
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _bDateController.dispose();
+
+    super.dispose();
+  }
+
+  List<Step> _getStepList() => [
+        Step(
+          title: const Text("Account Info"),
+          state: _accountInfoCurrState,
+          isActive: _currStep >= 0,
+          content: _buildAccountInfoForm(),
+        ),
+        Step(
+          title: const Text("Biometric Info"),
+          state: _biometricInfoCurrState,
+          isActive: _currStep == 1,
+          content: _buildBiometricInfoForm(),
+        )
+      ];
+
+  Widget _buildAccountInfoForm() {
     return Form(
-      key: _formKey,
+      key: _accountInfoFormKey,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Title
-          const Padding(
-            padding: EdgeInsets.all(30.0),
-            child: Text(
-              "Sign Up",
-              style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-            ),
-          ),
           // Username
           PaddedTextFormField(
             controller: _usernameController,
+            padding:
+                const EdgeInsets.only(top: 35, left: 15, right: 15, bottom: 25),
             decoration: const InputDecoration(
               label: Text("Username"),
               prefixIcon: Icon(Icons.person_outline),
@@ -101,27 +235,6 @@ class _SignUpPageState extends State<SignUpPage> {
               setState(() => _emailController.text = value);
               return null;
             },
-          ),
-          // Birth Date
-          PaddedTextFormField(
-            controller: _bDateController,
-            decoration: const InputDecoration(
-              label: Text("Birth Date"),
-              filled: true,
-              prefixIcon: Icon(Icons.calendar_month_outlined),
-              enabledBorder: OutlineInputBorder(borderSide: BorderSide.none),
-              focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.blue)),
-            ),
-            validator: (String? value) {
-              if (value == null || value.isEmpty) {
-                return "Please select your birth date";
-              }
-
-              return null;
-            },
-            readOnly: true,
-            onTap: () => _selectDate(),
           ),
           // Password
           PaddedTextFormField(
@@ -190,72 +303,110 @@ class _SignUpPageState extends State<SignUpPage> {
               return null;
             },
           ),
-          // Create account button
-          PaddedElevatedButton(
-            onPressed: () async {
-              if (_formKey.currentState!.validate()) {
-                debugPrint("Successful submit!");
-
-                UserSignUpModel userData = UserSignUpModel(
-                  username: _usernameController.text,
-                  email: _emailController.text,
-                  birthDate: _bDateController.text,
-                  password: _passwordController.text,
-                );
-
-                var result = await _userService.signUp(userData);
-
-                if (context.mounted) {
-                  final InformativePopUp popup = InformativePopUp(
-                    message: result.$1,
-                    color: result.$2,
-                  );
-
-                  ScaffoldMessenger.of(context).removeCurrentSnackBar();
-                  ScaffoldMessenger.of(context).showSnackBar(popup);
-                }
-
-                debugPrint(userData.toJson().toString());
-              } else {
-                debugPrint("Failed submittion!");
-              }
-            },
-            child: const Text('Create account'),
-          ),
-          // Sign in page reference
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text(
-                "Already have an account?",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
-              ),
-              TextButton(
-                onPressed: () {
-                  ScaffoldMessenger.of(context).clearSnackBars();
-
-                  Navigator.of(context).pop();
-                  debugPrint("-> Sign in page");
-                },
-                child: const Text(
-                  "Sign in",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
-                ),
-              ),
-            ],
-          ),
         ],
       ),
     );
   }
 
-  @override
-  void dispose() {
-    _usernameController.dispose();
-    _emailController.dispose();
-    _bDateController.dispose();
-    _passwordController.dispose();
-    super.dispose();
+  Widget _buildBiometricInfoForm() {
+    return Form(
+      key: _biometricInfoFormKey,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // Birth Date
+          PaddedTextFormField(
+            controller: _bDateController,
+            padding:
+                const EdgeInsets.only(top: 35, left: 15, right: 15, bottom: 25),
+            decoration: const InputDecoration(
+              label: Text("Birth Date"),
+              filled: true,
+              prefixIcon: Icon(Icons.calendar_month_outlined),
+              enabledBorder: OutlineInputBorder(borderSide: BorderSide.none),
+              focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.blue)),
+            ),
+            validator: (String? value) {
+              if (value == null || value.isEmpty) {
+                return "Please select your birth date";
+              }
+
+              return null;
+            },
+            readOnly: true,
+            onTap: () => _selectDate(),
+          ),
+          // Gender
+          PaddedDropdownButtonFormField(
+            decoration: const InputDecoration(
+              label: Text("Gender"),
+              filled: true,
+              prefixIcon: Icon(Icons.accessibility_new_outlined),
+              enabledBorder: OutlineInputBorder(borderSide: BorderSide.none),
+              focusedBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.blue)),
+            ),
+            onChanged: (String? value) {
+              setState(() => _selectedGender = value!);
+            },
+            items: SignUpConstants.genders
+                .map((String gender) => DropdownMenuItem(
+                      value: gender,
+                      child: Text(gender),
+                    ))
+                .toList(),
+            validator: (String? value) {
+              if (value == null || value.isEmpty) {
+                return "Please select your gender";
+              }
+
+              return null;
+            },
+          ),
+          // Height
+          Padding(
+            padding: const EdgeInsets.only(bottom: 25),
+            child: Column(
+              children: [
+                Center(
+                  child: Text("Height: ${_selectedHeight.round()} cm"),
+                ),
+                Slider.adaptive(
+                  value: _selectedHeight,
+                  min: SignUpConstants.minHeight,
+                  max: SignUpConstants.maxHeight,
+                  onChanged: (double value) {
+                    setState(() => _selectedHeight = value);
+                  },
+                ),
+              ],
+            ),
+          ),
+          // Weight
+          Padding(
+            padding: const EdgeInsets.only(bottom: 25),
+            child: Column(
+              children: [
+                Center(
+                  child:
+                      Text("Weight: ${_selectedWeight.toStringAsFixed(1)} kg"),
+                ),
+                Slider.adaptive(
+                  value: _selectedWeight,
+                  min: SignUpConstants.minWeight,
+                  max: SignUpConstants.maxWeight,
+                  onChanged: (double value) {
+                    setState(() => _selectedWeight = value);
+                  },
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Future<void> _selectDate() async {

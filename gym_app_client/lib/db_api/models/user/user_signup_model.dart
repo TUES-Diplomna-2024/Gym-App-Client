@@ -3,20 +3,29 @@ import 'dart:convert';
 class UserSignUpModel {
   final String username;
   final String email;
-  final String birthDate;
   final String password;
+  final String birthDate;
+  final String gender;
+  final double height;
+  final double weight;
 
   UserSignUpModel({
     required this.username,
     required this.email,
-    required this.birthDate,
     required this.password,
+    required this.birthDate,
+    required this.gender,
+    required this.height,
+    required this.weight,
   });
 
   String toJson() => jsonEncode({
-        "Username": username,
-        "Email": email,
-        "BirthDate": birthDate,
-        "Password": password
+        "username": username,
+        "email": email,
+        "password": password,
+        "birthDate": birthDate,
+        "gender": gender,
+        "height": height,
+        "weight": weight,
       });
 }
