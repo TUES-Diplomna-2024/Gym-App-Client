@@ -126,6 +126,7 @@ class _SignUpPageState extends State<SignUpPage> {
                         ScaffoldMessenger.of(context).showSnackBar(popup);
                       }
 
+                      debugPrint(result.toString());
                       debugPrint(userData.toJson().toString());
                     } else {
                       setState(() => _biometricInfoCurrState = StepState.error);

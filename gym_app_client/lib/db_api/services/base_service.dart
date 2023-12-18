@@ -1,13 +1,12 @@
 import 'package:global_configuration/global_configuration.dart';
 
 class BaseService {
-  late final String _dbAPIBaseUrl;
+  final String _dbAPIBaseUrl = GlobalConfiguration().getValue("dbAPIBaseURL");
   late final String _baseEndpoint;
 
   BaseService({
     required String baseEndpoint,
   }) {
-    _dbAPIBaseUrl = GlobalConfiguration().getValue("dbAPIBaseURL");
     _baseEndpoint = baseEndpoint;
   }
 
