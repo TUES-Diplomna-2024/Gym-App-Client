@@ -3,8 +3,8 @@ import 'package:http/http.dart';
 import 'package:flutter/material.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:gym_app_client/db_api/services/token_service.dart';
-import 'package:gym_app_client/db_api/models/popup_info.dart';
-import 'package:gym_app_client/db_api/models/refresh_error.dart';
+import 'package:gym_app_client/utils/common/popup_info.dart';
+import 'package:gym_app_client/utils/common/refresh_error.dart';
 
 class BaseService {
   final TokenService tokenService = TokenService();

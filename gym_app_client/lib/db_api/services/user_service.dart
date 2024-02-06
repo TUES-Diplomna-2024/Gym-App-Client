@@ -7,8 +7,8 @@ import 'package:gym_app_client/db_api/models/user/user_signin_model.dart';
 import 'package:gym_app_client/db_api/models/user/user_profile_model.dart';
 import 'package:gym_app_client/db_api/models/user/user_update_model.dart';
 import 'package:gym_app_client/db_api/models/exercise/exercise_preview_model.dart';
-import 'package:gym_app_client/db_api/models/popup_info.dart';
-import 'package:gym_app_client/db_api/models/service_result.dart';
+import 'package:gym_app_client/utils/common/popup_info.dart';
+import 'package:gym_app_client/utils/common/service_result.dart';
 import 'package:gym_app_client/db_api/services/base_service.dart';
 
 class UserService extends BaseService {

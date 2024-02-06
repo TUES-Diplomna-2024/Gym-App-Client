@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gym_app_client/db_api/models/popup_info.dart';
+import 'package:gym_app_client/utils/common/popup_info.dart';
 
 class InformativePopUp extends SnackBar {
   InformativePopUp({
