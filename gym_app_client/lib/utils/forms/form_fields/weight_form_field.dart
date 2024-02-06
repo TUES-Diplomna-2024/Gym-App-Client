@@ -12,7 +12,7 @@ class WeightFormField extends PaddedAdaptiveSlider {
           value: selectedWeight,
           min: SignUpConstants.minWeight,
           max: SignUpConstants.maxWeight,
-          displayText: "Weight: ${selectedWeight.round()} kg",
+          displayText: "Weight: ${selectedWeight.toStringAsFixed(1)} kg",
           onChanged: onWeightChanged,
           padding: padding,
         );

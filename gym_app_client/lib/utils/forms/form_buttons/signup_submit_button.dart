@@ -45,8 +45,8 @@ class SignUpSubmitButton extends StatelessWidget {
             password: passwordController.text,
             birthDate: birthDateController.text,
             gender: selectedGender,
-            height: selectedHeight,
-            weight: selectedWeight,
+            height: double.parse(selectedHeight.toStringAsFixed(1)),
+            weight: double.parse(selectedWeight.toStringAsFixed(1)),
           );
 
           var result = await userService.signUp(userData);

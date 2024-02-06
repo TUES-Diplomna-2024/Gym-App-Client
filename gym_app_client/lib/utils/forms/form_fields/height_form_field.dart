@@ -12,7 +12,7 @@ class HeightFormField extends PaddedAdaptiveSlider {
           value: selectedHeight,
           min: SignUpConstants.minHeight,
           max: SignUpConstants.maxHeight,
-          displayText: "Height: ${selectedHeight.round()} cm",
+          displayText: "Height: ${selectedHeight.toStringAsFixed(1)} cm",
           onChanged: onHeightChanged,
           padding: padding,
         );
