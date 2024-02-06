@@ -7,7 +7,7 @@ class PaddedTextFormField extends StatelessWidget {
   final bool obscureText;
   final String? Function(String?)? validator;
   final void Function()? onTap;
-  final EdgeInsetsGeometry padding;
+  final EdgeInsets padding;
 
   const PaddedTextFormField({
     super.key,

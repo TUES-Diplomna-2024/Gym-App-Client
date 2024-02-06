@@ -8,7 +8,7 @@ class BirthDateFormField extends PaddedTextFormField {
     required BuildContext context,
     required TextEditingController birthDateController,
     required void Function(String) onBirthDateChanged,
-    required EdgeInsetsGeometry padding,
+    required EdgeInsets padding,
   }) : super(
           controller: birthDateController,
           padding: padding,

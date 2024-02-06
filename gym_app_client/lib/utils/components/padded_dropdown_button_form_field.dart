@@ -5,7 +5,7 @@ class PaddedDropdownButtonFormField<T> extends StatelessWidget {
   final void Function(T?)? onChanged;
   final String? Function(T?)? validator;
   final InputDecoration? decoration;
-  final EdgeInsetsGeometry padding;
+  final EdgeInsets padding;
 
   const PaddedDropdownButtonFormField({
     super.key,

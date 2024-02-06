@@ -8,7 +8,7 @@ class SignInSubmitButton extends StatelessWidget {
   final GlobalKey<FormState> formKey;
   final TextEditingController emailController;
   final TextEditingController passwordController;
-  final EdgeInsetsGeometry padding;
+  final EdgeInsets padding;
 
   SignInSubmitButton({
     super.key,

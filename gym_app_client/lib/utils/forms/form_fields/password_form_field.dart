@@ -10,7 +10,7 @@ class PasswordFormField extends PaddedTextFormField {
     required void Function(String) onPasswordChanged,
     required bool isPasswordVisible,
     required void Function() onPasswordVisibilityChanged,
-    required EdgeInsetsGeometry padding,
+    required EdgeInsets padding,
   }) : super(
           controller: passwordController,
           padding: padding,

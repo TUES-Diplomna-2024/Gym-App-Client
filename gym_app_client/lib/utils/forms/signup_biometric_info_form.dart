@@ -15,7 +15,7 @@ class SignUpBiometricInfoForm extends Form {
     required void Function(String?) onGenderChanged,
     required void Function(double) onHeightChanged,
     required void Function(double) onWeightChanged,
-    required EdgeInsetsGeometry formFieldPadding,
+    required EdgeInsets formFieldPadding,
   }) : super(
           key: formKey,
           child: Padding(
@@ -37,12 +37,18 @@ class SignUpBiometricInfoForm extends Form {
                 HeightFormField(
                   selectedHeight: selectedHeight,
                   onHeightChanged: onHeightChanged,
-                  padding: formFieldPadding,
+                  padding: EdgeInsets.only(
+                    top: formFieldPadding.top,
+                    bottom: formFieldPadding.bottom,
+                  ),
                 ),
                 WeightFormField(
                   selectedWeight: selectedWeight,
                   onWeightChanged: onWeightChanged,
-                  padding: formFieldPadding,
+                  padding: EdgeInsets.only(
+                    top: formFieldPadding.top,
+                    bottom: formFieldPadding.bottom,
+                  ),
                 ),
               ],
             ),

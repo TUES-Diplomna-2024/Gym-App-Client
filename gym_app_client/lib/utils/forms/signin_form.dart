@@ -12,8 +12,8 @@ class SignInForm extends Form {
     required void Function(String) onEmailChanged,
     required void Function(String) onPasswordChanged,
     required void Function() onPasswordVisibilityChanged,
-    required EdgeInsetsGeometry formFieldPadding,
-    required EdgeInsetsGeometry formButtonPadding,
+    required EdgeInsets formFieldPadding,
+    required EdgeInsets formButtonPadding,
   }) : super(
           key: formKey,
           child: Column(

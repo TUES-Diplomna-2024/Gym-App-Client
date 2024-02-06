@@ -6,7 +6,7 @@ class PaddedAdaptiveSlider extends StatelessWidget {
   final double max;
   final String displayText;
   final void Function(double)? onChanged;
-  final EdgeInsetsGeometry padding;
+  final EdgeInsets padding;
 
   const PaddedAdaptiveSlider({
     super.key,

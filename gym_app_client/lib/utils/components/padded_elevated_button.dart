@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class PaddedElevatedButton extends StatelessWidget {
   final void Function()? onPressed;
   final Widget? child;
-  final EdgeInsetsGeometry padding;
+  final EdgeInsets padding;
 
   const PaddedElevatedButton({
     super.key,

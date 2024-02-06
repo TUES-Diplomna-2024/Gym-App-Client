@@ -7,7 +7,7 @@ class WeightFormField extends PaddedAdaptiveSlider {
     super.key,
     required double selectedWeight,
     required void Function(double)? onWeightChanged,
-    required EdgeInsetsGeometry padding,
+    required EdgeInsets padding,
   }) : super(
           value: selectedWeight,
           min: SignUpConstants.minWeight,

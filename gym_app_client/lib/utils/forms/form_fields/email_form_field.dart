@@ -7,7 +7,7 @@ class EmailFormField extends PaddedTextFormField {
     super.key,
     required TextEditingController emailController,
     required void Function(String) onEmailChanged,
-    required EdgeInsetsGeometry padding,
+    required EdgeInsets padding,
   }) : super(
           controller: emailController,
           padding: padding,

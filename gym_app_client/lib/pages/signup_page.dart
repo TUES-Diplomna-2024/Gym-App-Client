@@ -52,21 +52,31 @@ class _SignUpPageState extends State<SignUpPage> {
             if (_currStep == 0) {
               rowChildren = [
                 // Next
-                FilledButton(
-                  onPressed: () {
-                    if (_accountInfoFormKey.currentState!.validate()) {
-                      setState(() {
-                        _currStep += 1;
-                        _accountInfoCurrState = StepState.complete;
-                        _biometricInfoCurrState = StepState.editing;
-                      });
-                    } else {
-                      setState(() => _accountInfoCurrState = StepState.error);
-                    }
-                  },
-                  child: const Text(
-                    "Next",
-                    style: TextStyle(fontSize: 16),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      if (_accountInfoFormKey.currentState!.validate()) {
+                        setState(() {
+                          _currStep += 1;
+                          _accountInfoCurrState = StepState.complete;
+                          _biometricInfoCurrState =
+                              _biometricInfoCurrState == StepState.indexed
+                                  ? StepState.editing
+                                  : _biometricInfoCurrState;
+                        });
+                      } else {
+                        setState(() => _accountInfoCurrState = StepState.error);
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                    ),
+                    child: const Text(
+                      "Next",
+                      style: TextStyle(fontSize: 16),
+                    ),
                   ),
                 ),
               ];
@@ -74,26 +84,25 @@ class _SignUpPageState extends State<SignUpPage> {
               rowChildren = [
                 // Prev
                 Expanded(
-                  child: FilledButton(
+                  child: ElevatedButton(
                     onPressed: () {
-                      if (_biometricInfoFormKey.currentState!.validate()) {
-                        setState(() {
-                          _currStep -= 1;
-                          _accountInfoCurrState = StepState.editing;
-                          _biometricInfoCurrState = StepState.editing;
-                        });
-                      } else {
-                        setState(
-                            () => _biometricInfoCurrState = StepState.error);
-                      }
+                      setState(() {
+                        _currStep -= 1;
+                        _accountInfoCurrState = StepState.editing;
+                      });
                     },
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                    ),
                     child: const Text(
                       "Prev",
                       style: TextStyle(fontSize: 16),
                     ),
                   ),
                 ),
-                const SizedBox(width: 16),
+                const SizedBox(width: 30),
                 // Sign up
                 Expanded(
                   child: SignUpSubmitButton(
@@ -109,47 +118,41 @@ class _SignUpPageState extends State<SignUpPage> {
                         () => _biometricInfoCurrState = StepState.complete),
                     onFailedForm: () => setState(
                         () => _biometricInfoCurrState = StepState.error),
-                    padding: const EdgeInsets.only(left: 15, right: 15),
                   ),
                 ),
               ];
             }
 
-            return Column(
-              children: [
-                Row(
-                  mainAxisAlignment: _currStep == 0
-                      ? MainAxisAlignment.center
-                      : MainAxisAlignment.spaceAround,
-                  children: rowChildren,
-                ),
-                const SizedBox(height: 30),
-                // Sign up page reference
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      "Already have an account?",
-                      style: TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.normal),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).clearSnackBars();
-
-                        Navigator.of(context).pop();
-
-                        debugPrint("-> Sign in page");
-                      },
-                      child: const Text(
-                        "Sign in",
+            return Padding(
+              padding: const EdgeInsets.only(left: 15, right: 15),
+              child: Column(
+                children: [
+                  Row(children: rowChildren),
+                  const SizedBox(height: 30),
+                  // Sign up page reference
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        "Already have an account?",
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.normal),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                      TextButton(
+                        onPressed: () {
+                          ScaffoldMessenger.of(context).clearSnackBars();
+                          Navigator.of(context).pop();
+                        },
+                        child: const Text(
+                          "Sign in",
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.normal),
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             );
           },
           physics: const ClampingScrollPhysics(),
@@ -159,16 +162,6 @@ class _SignUpPageState extends State<SignUpPage> {
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _usernameController.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
-    _birthDateController.dispose();
-
-    super.dispose();
   }
 
   List<Step> _getStepList() => [
@@ -220,4 +213,14 @@ class _SignUpPageState extends State<SignUpPage> {
           ),
         )
       ];
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _birthDateController.dispose();
+
+    super.dispose();
+  }
 }

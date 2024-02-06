@@ -7,7 +7,7 @@ class HeightFormField extends PaddedAdaptiveSlider {
     super.key,
     required double selectedHeight,
     required void Function(double)? onHeightChanged,
-    required EdgeInsetsGeometry padding,
+    required EdgeInsets padding,
   }) : super(
           value: selectedHeight,
           min: SignUpConstants.minHeight,

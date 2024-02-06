@@ -15,7 +15,6 @@ class SignUpSubmitButton extends StatelessWidget {
   final double selectedWeight;
   final void Function() onSuccessfulForm;
   final void Function() onFailedForm;
-  final EdgeInsetsGeometry padding;
 
   SignUpSubmitButton({
     super.key,
@@ -29,7 +28,6 @@ class SignUpSubmitButton extends StatelessWidget {
     required this.selectedWeight,
     required this.onSuccessfulForm,
     required this.onFailedForm,
-    required this.padding,
   }) {
     userService = UserService();
   }

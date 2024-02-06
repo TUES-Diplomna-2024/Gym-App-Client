@@ -7,7 +7,7 @@ class UsernameFormField extends PaddedTextFormField {
     super.key,
     required TextEditingController usernameController,
     required void Function(String) onUsernameChanged,
-    required EdgeInsetsGeometry padding,
+    required EdgeInsets padding,
   }) : super(
           controller: usernameController,
           padding: padding,

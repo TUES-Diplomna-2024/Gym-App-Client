@@ -7,7 +7,7 @@ class ConfirmPasswordFormField extends PaddedTextFormField {
     required TextEditingController passwordController,
     required bool isConfirmPasswordVisible,
     required void Function() onConfirmPasswordVisibilityChanged,
-    required EdgeInsetsGeometry padding,
+    required EdgeInsets padding,
   }) : super(
           padding: padding,
           decoration: InputDecoration(

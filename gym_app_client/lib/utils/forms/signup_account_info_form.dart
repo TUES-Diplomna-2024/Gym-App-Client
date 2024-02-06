@@ -17,7 +17,7 @@ class SignUpAccountInfoForm extends Form {
     required void Function() onPasswordVisibilityChanged,
     required bool isConfirmPasswordVisible,
     required void Function() onConfirmPasswordVisibilityChanged,
-    required EdgeInsetsGeometry formFieldPadding,
+    required EdgeInsets formFieldPadding,
   }) : super(
           key: formKey,
           child: Padding(
