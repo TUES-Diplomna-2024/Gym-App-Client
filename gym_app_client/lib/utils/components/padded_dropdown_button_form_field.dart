@@ -13,7 +13,7 @@ class PaddedDropdownButtonFormField<T> extends StatelessWidget {
     required this.onChanged,
     required this.validator,
     required this.decoration,
-    this.padding = const EdgeInsets.only(left: 15, right: 15, bottom: 25),
+    required this.padding,
   });
 
   @override

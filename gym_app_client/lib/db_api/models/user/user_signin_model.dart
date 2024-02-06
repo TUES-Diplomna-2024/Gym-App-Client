@@ -9,5 +9,5 @@ class UserSignInModel {
     required this.password,
   });
 
-  String toJson() => jsonEncode({"Email": email, "Password": password});
+  String toJson() => jsonEncode({"email": email, "password": password});
 }

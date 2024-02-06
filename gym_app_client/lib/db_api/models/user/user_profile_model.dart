@@ -1,25 +1,36 @@
-import 'package:gym_app_client/utils/common/date_only.dart';
+import 'dart:convert';
+import 'package:http/http.dart';
 
 class UserProfileModel {
   late final String id;
   late final String username;
   late final String email;
-  late final DateOnly birthDate;
-  late final DateOnly onCreated;
 
-  UserProfileModel({
-    required this.id,
-    required this.username,
-    required this.email,
-    required this.birthDate,
-    required this.onCreated,
-  });
+  late final String roleName;
+  late final String roleColor;
 
-  UserProfileModel.loadFromMap(Map<String, dynamic> data) {
-    id = data["id"] as String;
-    username = data["username"] as String;
-    email = data["email"] as String;
-    birthDate = DateOnly.fromString(data["birthDate"] as String);
-    onCreated = DateOnly.fromString(data["onCreated"] as String);
+  late final String gender;
+  late final double height;
+  late final double weight;
+
+  late final String birthDate;
+  late final String onCreated;
+
+  UserProfileModel.loadFromResponse(Response response) {
+    Map<String, dynamic> body = json.decode(response.body);
+
+    id = body["id"];
+    username = body["username"];
+    email = body["email"];
+
+    roleName = body["roleName"];
+    roleColor = body["roleName"];
+
+    gender = body["gender"];
+    height = body["height"].toDouble();
+    weight = body["weight"].toDouble();
+
+    birthDate = body["birthDate"];
+    onCreated = body["onCreated"];
   }
 }

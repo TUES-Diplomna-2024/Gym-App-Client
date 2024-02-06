@@ -5,7 +5,7 @@ import 'package:gym_app_client/pages/signup_page.dart';
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     final args = settings.arguments;
-    debugPrint(args.toString());
+    debugPrint("Route Args: ${args.toString()}");
 
     switch (settings.name) {
       case "/signin":

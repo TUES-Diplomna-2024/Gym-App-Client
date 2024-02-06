@@ -17,7 +17,7 @@ class PaddedTextFormField extends StatelessWidget {
     this.readOnly = false,
     this.obscureText = false,
     this.onTap,
-    this.padding = const EdgeInsets.only(left: 15, right: 15, bottom: 25),
+    required this.padding,
   });
 
   @override
