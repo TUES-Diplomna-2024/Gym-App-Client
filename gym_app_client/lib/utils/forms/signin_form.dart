@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:gym_app_client/utils/forms/form_buttons/signin_submit_button.dart';
-import 'package:gym_app_client/utils/forms/form_fields/email_form_field.dart';
-import 'package:gym_app_client/utils/forms/form_fields/password_form_field.dart';
+import 'package:gym_app_client/utils/components/fields/form/email_form_field.dart';
+import 'package:gym_app_client/utils/components/fields/form/password_form_field.dart';
+import 'package:gym_app_client/utils/components/buttons/form/signin_submit_button.dart';
 
 class SignInForm extends Form {
   SignInForm({

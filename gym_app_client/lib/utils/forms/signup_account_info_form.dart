@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:gym_app_client/utils/forms/form_fields/username_form_field.dart';
-import 'package:gym_app_client/utils/forms/form_fields/email_form_field.dart';
-import 'package:gym_app_client/utils/forms/form_fields/password_form_field.dart';
-import 'package:gym_app_client/utils/forms/form_fields/confirm_password_form_field.dart';
+import 'package:gym_app_client/utils/components/fields/form/username_form_field.dart';
+import 'package:gym_app_client/utils/components/fields/form/email_form_field.dart';
+import 'package:gym_app_client/utils/components/fields/form/password_form_field.dart';
+import 'package:gym_app_client/utils/components/fields/form/confirm_password_form_field.dart';
 
 class SignUpAccountInfoForm extends Form {
   SignUpAccountInfoForm({

@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:gym_app_client/utils/components/padded_text_form_field.dart';
+import 'package:gym_app_client/utils/components/fields/form/padded_text_form_field.dart';
 import 'package:gym_app_client/utils/constants/signup_constants.dart';
 import 'package:gym_app_client/utils/constants/app_regexes.dart';
 
 class PasswordFormField extends PaddedTextFormField {
   PasswordFormField({
     super.key,
+    GlobalKey<FormFieldState<String>>? fieldKey,
     required TextEditingController passwordController,
     required void Function(String) onPasswordChanged,
     required bool isPasswordVisible,
     required void Function() onPasswordVisibilityChanged,
     required EdgeInsets padding,
   }) : super(
+          fieldKey: fieldKey,
           controller: passwordController,
           padding: padding,
           decoration: InputDecoration(

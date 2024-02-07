@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gym_app_client/utils/components/padded_dropdown_button_form_field.dart';
+import 'package:gym_app_client/utils/components/buttons/form/padded_dropdown_button_form_field.dart';
 import 'package:gym_app_client/utils/constants/signup_constants.dart';
 
 class GenderFormField extends PaddedDropdownButtonFormField<String> {

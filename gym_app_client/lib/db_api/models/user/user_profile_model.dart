@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart';
 
@@ -7,7 +8,7 @@ class UserProfileModel {
   late final String email;
 
   late final String roleName;
-  late final String roleColor;
+  late final Color roleColor;
 
   late final String gender;
   late final double height;
@@ -24,13 +25,19 @@ class UserProfileModel {
     email = body["email"];
 
     roleName = body["roleName"];
-    roleColor = body["roleName"];
+    roleColor = _getColor(body["roleColor"]);
 
     gender = body["gender"];
-    height = body["height"].toDouble();
-    weight = body["weight"].toDouble();
+    height = double.parse(body["height"].toStringAsFixed(1));
+    weight = double.parse(body["weight"].toStringAsFixed(1));
 
     birthDate = body["birthDate"];
     onCreated = body["onCreated"];
+  }
+
+  Color _getColor(String hexColor) {
+    if (hexColor.startsWith('#')) hexColor = hexColor.substring(1);
+    if (hexColor.length == 6) hexColor = "FF$hexColor";
+    return Color(int.parse(hexColor, radix: 16));
   }
 }

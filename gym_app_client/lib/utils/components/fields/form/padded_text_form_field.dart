@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class PaddedTextFormField extends StatelessWidget {
+  final GlobalKey<FormFieldState<String>>? fieldKey;
   final TextEditingController? controller;
   final InputDecoration decoration;
   final bool readOnly;
@@ -11,6 +12,7 @@ class PaddedTextFormField extends StatelessWidget {
 
   const PaddedTextFormField({
     super.key,
+    this.fieldKey,
     required this.decoration,
     required this.validator,
     this.controller,
@@ -25,6 +27,7 @@ class PaddedTextFormField extends StatelessWidget {
     return Padding(
       padding: padding,
       child: TextFormField(
+        key: fieldKey,
         controller: controller,
         decoration: decoration,
         validator: validator,

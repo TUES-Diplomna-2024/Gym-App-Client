@@ -25,7 +25,7 @@ class UserSignUpModel {
         "password": password,
         "birthDate": birthDate,
         "gender": gender,
-        "height": height,
-        "weight": weight,
+        "height": double.parse(height.toStringAsFixed(1)),
+        "weight": double.parse(weight.toStringAsFixed(1)),
       });
 }

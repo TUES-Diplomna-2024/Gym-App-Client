@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:gym_app_client/utils/forms/form_fields/birth_date_form_field.dart';
-import 'package:gym_app_client/utils/forms/form_fields/gender_form_field.dart';
-import 'package:gym_app_client/utils/forms/form_fields/height_form_field.dart';
-import 'package:gym_app_client/utils/forms/form_fields/weight_form_field.dart';
+import 'package:gym_app_client/utils/components/fields/form/birth_date_form_field.dart';
+import 'package:gym_app_client/utils/components/fields/form/gender_form_field.dart';
+import 'package:gym_app_client/utils/components/fields/form/height_form_field.dart';
+import 'package:gym_app_client/utils/components/fields/form/weight_form_field.dart';
 
 class SignUpBiometricInfoForm extends Form {
   SignUpBiometricInfoForm({

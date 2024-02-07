@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/utils/constants/signup_constants.dart';
-import 'package:gym_app_client/utils/forms/form_buttons/signup_submit_button.dart';
 import 'package:gym_app_client/utils/forms/signup_account_info_form.dart';
 import 'package:gym_app_client/utils/forms/signup_biometric_info_form.dart';
+import 'package:gym_app_client/utils/components/buttons/form/signup_submit_button.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
