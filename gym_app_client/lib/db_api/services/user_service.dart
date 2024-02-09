@@ -17,7 +17,7 @@ class UserService extends BaseService {
   Future<PopUpInfo> signUp(UserSignUpModel userSignUp) async {
     try {
       final response = await post(
-        getUri("signup"),
+        getUri(subEndpoint: "signup"),
         headers:
             await getHeaders(hasAccessToken: false, hasRefreshToken: false),
         body: userSignUp.toJson(),
@@ -48,7 +48,7 @@ class UserService extends BaseService {
   Future<PopUpInfo> signIn(UserSignInModel userSignIn) async {
     try {
       final response = await post(
-        getUri("signin"),
+        getUri(subEndpoint: "signin"),
         headers:
             await getHeaders(hasAccessToken: false, hasRefreshToken: false),
         body: userSignIn.toJson(),
@@ -79,7 +79,7 @@ class UserService extends BaseService {
   Future<ServiceResult> getCurrUser() async {
     try {
       final response = await get(
-        getUri("current"),
+        getUri(subEndpoint: "current"),
         headers: await getHeaders(),
       );
 
@@ -118,7 +118,7 @@ class UserService extends BaseService {
   Future<ServiceResult> getUserById(String userId) async {
     try {
       final response = await get(
-        getUri(userId),
+        getUri(subEndpoint: userId),
         headers: await getHeaders(),
       );
 
@@ -160,7 +160,7 @@ class UserService extends BaseService {
   Future<ServiceResult> getCurrUserCustomExercisePreviews() async {
     try {
       final response = await get(
-        getUri("current/custom-exercises"),
+        getUri(subEndpoint: "current/custom-exercises"),
         headers: await getHeaders(),
       );
 
@@ -202,7 +202,7 @@ class UserService extends BaseService {
   Future<ServiceResult> updateCurrUser(UserUpdateModel userUpdate) async {
     try {
       final response = await put(
-        getUri("current"),
+        getUri(subEndpoint: "current"),
         headers: await getHeaders(),
         body: userUpdate.toJson(),
       );
@@ -244,7 +244,7 @@ class UserService extends BaseService {
   Future<ServiceResult> deleteCurrUser(String password) async {
     try {
       final response = await delete(
-        getUri("current"),
+        getUri(subEndpoint: "current"),
         headers: await getHeaders(),
         body: jsonEncode({"password": password}),
       );

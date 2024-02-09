@@ -49,8 +49,13 @@ class BaseService {
     }
   }
 
-  Uri getUri(String subEndpoint) =>
-      Uri.parse("$_dbAPIBaseUrl/$_baseEndpoint/$subEndpoint");
+  Uri getUri({String? subEndpoint}) {
+    final uri = subEndpoint != null
+        ? "$_dbAPIBaseUrl/$_baseEndpoint/$subEndpoint"
+        : "$_dbAPIBaseUrl/$_baseEndpoint";
+
+    return Uri.parse(uri);
+  }
 
   Future<Map<String, String>> getHeaders(
       {bool hasAccessToken = true, bool hasRefreshToken = true}) async {
