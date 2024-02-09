@@ -62,11 +62,7 @@ class ProfileSaveChangesButton extends StatelessWidget {
           Navigator.of(context).pop();
         }
       }),
-      style: ElevatedButton.styleFrom(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(5),
-        ),
-      ),
+      style: ElevatedButton.styleFrom(backgroundColor: Colors.lightGreen),
       child: const Text(
         "Save Changes",
         style: TextStyle(fontSize: 16),
