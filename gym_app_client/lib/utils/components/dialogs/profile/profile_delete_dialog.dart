@@ -17,6 +17,23 @@ class _ProfileDeleteDialogState extends State<ProfileDeleteDialog> {
   final _passwordController = TextEditingController();
   bool _isPasswordVisible = false;
 
+  Future<bool> _handleProfileDeletion() async {
+    if (_fieldKey.currentState?.validate() ?? false) {
+      var result = await _userService.deleteCurrUser(_passwordController.text);
+
+      if (context.mounted) {
+        final popup = InformativePopUp(info: result.popUpInfo!);
+
+        ScaffoldMessenger.of(context).removeCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(popup);
+      }
+
+      return true;
+    }
+
+    return false;
+  }
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -54,7 +71,7 @@ class _ProfileDeleteDialogState extends State<ProfileDeleteDialog> {
           child: const Text("Cancel"),
         ),
         TextButton(
-          onPressed: () => _handleUserDeletion().then((bool isDone) {
+          onPressed: () => _handleProfileDeletion().then((bool isDone) {
             if (isDone) Navigator.of(context).pop();
           }),
           child: Text(
@@ -64,23 +81,6 @@ class _ProfileDeleteDialogState extends State<ProfileDeleteDialog> {
         ),
       ],
     );
-  }
-
-  Future<bool> _handleUserDeletion() async {
-    if (_fieldKey.currentState?.validate() ?? false) {
-      var result = await _userService.deleteCurrUser(_passwordController.text);
-
-      if (context.mounted) {
-        final popup = InformativePopUp(info: result.popUpInfo!);
-
-        ScaffoldMessenger.of(context).removeCurrentSnackBar();
-        ScaffoldMessenger.of(context).showSnackBar(popup);
-      }
-
-      return true;
-    }
-
-    return false;
   }
 
   @override

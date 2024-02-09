@@ -5,6 +5,7 @@ import 'package:gym_app_client/utils/constants/signup_constants.dart';
 class GenderFormField extends PaddedDropdownButtonFormField<String> {
   GenderFormField({
     super.key,
+    String? defaultGender,
     required void Function(String?) onGenderChanged,
     required EdgeInsets padding,
   }) : super(
@@ -24,6 +25,7 @@ class GenderFormField extends PaddedDropdownButtonFormField<String> {
                     child: Text(gender),
                   ))
               .toList(),
+          defaultItem: defaultGender,
           validator: (String? value) {
             if (value == null || value.isEmpty) {
               return "Please select your gender";

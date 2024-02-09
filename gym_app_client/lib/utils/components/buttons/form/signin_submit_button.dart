@@ -4,7 +4,7 @@ import 'package:gym_app_client/db_api/models/user/user_signin_model.dart';
 import 'package:gym_app_client/utils/components/informative_popup.dart';
 
 class SignInSubmitButton extends StatelessWidget {
-  late final UserService userService;
+  final UserService _userService = UserService();
   final GlobalKey<FormState> formKey;
   final TextEditingController emailController;
   final TextEditingController passwordController;
@@ -16,9 +16,7 @@ class SignInSubmitButton extends StatelessWidget {
     required this.emailController,
     required this.passwordController,
     required this.padding,
-  }) {
-    userService = UserService();
-  }
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +34,7 @@ class SignInSubmitButton extends StatelessWidget {
                 password: passwordController.text,
               );
 
-              var result = await userService.signIn(userData);
+              var result = await _userService.signIn(userData);
 
               if (context.mounted) {
                 final popup = InformativePopUp(info: result);

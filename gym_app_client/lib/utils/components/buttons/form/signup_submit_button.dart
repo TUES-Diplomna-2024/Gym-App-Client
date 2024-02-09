@@ -4,7 +4,7 @@ import 'package:gym_app_client/db_api/models/user/user_signup_model.dart';
 import 'package:gym_app_client/utils/components/informative_popup.dart';
 
 class SignUpSubmitButton extends StatelessWidget {
-  late final UserService userService;
+  final UserService _userService = UserService();
   final GlobalKey<FormState> formKey;
   final TextEditingController usernameController;
   final TextEditingController emailController;
@@ -28,9 +28,7 @@ class SignUpSubmitButton extends StatelessWidget {
     required this.selectedWeight,
     required this.onSuccessfulForm,
     required this.onFailedForm,
-  }) {
-    userService = UserService();
-  }
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +47,7 @@ class SignUpSubmitButton extends StatelessWidget {
             weight: selectedWeight,
           );
 
-          var result = await userService.signUp(userData);
+          var result = await _userService.signUp(userData);
 
           if (context.mounted) {
             final popup = InformativePopUp(info: result);
@@ -57,9 +55,6 @@ class SignUpSubmitButton extends StatelessWidget {
             ScaffoldMessenger.of(context).removeCurrentSnackBar();
             ScaffoldMessenger.of(context).showSnackBar(popup);
           }
-
-          debugPrint(result.toString());
-          debugPrint(userData.toJson().toString());
         } else {
           onFailedForm();
         }

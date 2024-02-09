@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:gym_app_client/db_api/models/user/user_profile_model.dart';
+import 'package:gym_app_client/db_api/models/user/user_update_model.dart';
+import 'package:gym_app_client/pages/profile_edit_page.dart';
 import 'package:gym_app_client/pages/signin_page.dart';
 import 'package:gym_app_client/pages/signup_page.dart';
 import 'package:gym_app_client/pages/root_page.dart';
@@ -15,18 +18,33 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => const SignInPage());
       case "/signup":
         return MaterialPageRoute(builder: (_) => const SignUpPage());
+      case "/profile-edit":
+        try {
+          List<dynamic> pageArgs = args as List;
+          final userStartState = pageArgs[0] as UserProfileModel;
+          final onProfileUpdated =
+              pageArgs[1] as void Function(UserUpdateModel);
+
+          return MaterialPageRoute(
+            builder: (_) => ProfileEditPage(
+              userStartState: userStartState,
+              onProfileUpdated: onProfileUpdated,
+            ),
+          );
+        } on Exception {
+          return _errorRoute();
+        }
       default:
-        return _errorRoute(settings.name);
+        return _errorRoute();
     }
   }
 
-  static Route<dynamic> _errorRoute(String? name) {
-    String route = name ?? 'nothing';
+  static Route<dynamic> _errorRoute() {
     return MaterialPageRoute(
       builder: (_) {
-        return Scaffold(
+        return const Scaffold(
           body: Center(
-            child: Text("Error! |$route|"),
+            child: Text("Error!"),
           ),
         );
       },

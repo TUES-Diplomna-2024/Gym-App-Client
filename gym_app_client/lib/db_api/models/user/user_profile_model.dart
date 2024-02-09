@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:gym_app_client/db_api/models/user/user_update_model.dart';
 import 'dart:convert';
 import 'package:http/http.dart';
 
 class UserProfileModel {
   late final String id;
-  late final String username;
   late final String email;
-
   late final String roleName;
   late final Color roleColor;
-
-  late final String gender;
-  late final double height;
-  late final double weight;
-
-  late final String birthDate;
   late final String onCreated;
+
+  late String username;
+  late String birthDate;
+  late String gender;
+  late double height;
+  late double weight;
 
   UserProfileModel.loadFromResponse(Response response) {
     Map<String, dynamic> body = json.decode(response.body);
@@ -27,12 +26,21 @@ class UserProfileModel {
     roleName = body["roleName"];
     roleColor = _getColor(body["roleColor"]);
 
-    gender = body["gender"];
+    gender = "${body["gender"][0].toUpperCase()}${body["gender"].substring(1)}";
+
     height = double.parse(body["height"].toStringAsFixed(1));
     weight = double.parse(body["weight"].toStringAsFixed(1));
 
     birthDate = body["birthDate"];
     onCreated = body["onCreated"];
+  }
+
+  void updateProfile(UserUpdateModel updateModel) {
+    username = updateModel.username;
+    birthDate = updateModel.birthDate;
+    gender = updateModel.gender;
+    height = double.parse(updateModel.height.toStringAsFixed(1));
+    weight = double.parse(updateModel.weight.toStringAsFixed(1));
   }
 
   Color _getColor(String hexColor) {

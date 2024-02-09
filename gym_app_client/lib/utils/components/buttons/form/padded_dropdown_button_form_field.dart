@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class PaddedDropdownButtonFormField<T> extends StatelessWidget {
   final List<DropdownMenuItem<T>>? items;
+  final T? defaultItem;
   final void Function(T?)? onChanged;
   final String? Function(T?)? validator;
   final InputDecoration? decoration;
@@ -10,6 +11,7 @@ class PaddedDropdownButtonFormField<T> extends StatelessWidget {
   const PaddedDropdownButtonFormField({
     super.key,
     required this.items,
+    this.defaultItem,
     required this.onChanged,
     required this.validator,
     required this.decoration,
@@ -22,6 +24,7 @@ class PaddedDropdownButtonFormField<T> extends StatelessWidget {
       padding: padding,
       child: DropdownButtonFormField<T>(
         items: items,
+        value: defaultItem,
         onChanged: onChanged,
         validator: validator,
         decoration: decoration,

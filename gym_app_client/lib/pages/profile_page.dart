@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/models/user/user_profile_model.dart';
+import 'package:gym_app_client/db_api/models/user/user_update_model.dart';
 import 'package:gym_app_client/db_api/services/user_service.dart';
 import 'package:gym_app_client/utils/components/buttons/profile/profile_delete_button.dart';
 import 'package:gym_app_client/utils/components/buttons/profile/profile_edit_button.dart';
@@ -16,7 +17,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final _userService = UserService();
-  late final UserProfileModel _userProfile;
+  late UserProfileModel _userProfile;
   bool _isLoading = true;
 
   @override
@@ -74,10 +75,19 @@ class _ProfilePageState extends State<ProfilePage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Expanded(child: ProfileEditButton()),
+                          Expanded(
+                            child: ProfileEditButton(
+                              context: context,
+                              userStartState: _userProfile,
+                              onProfileUpdated: (UserUpdateModel updateModel) =>
+                                  setState(() =>
+                                      _userProfile.updateProfile(updateModel)),
+                            ),
+                          ),
                           const SizedBox(width: 25),
                           Expanded(
-                              child: ProfileDeleteButton(context: context)),
+                            child: ProfileDeleteButton(context: context),
+                          ),
                         ],
                       ),
                       const SizedBox(height: 15),
