@@ -1,4 +1,4 @@
-class SignUpConstants {
+class UserConstants {
   static const int minUsernameLength = 3;
   static const int maxUsernameLength = 32;
 

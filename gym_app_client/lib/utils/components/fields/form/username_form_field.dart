@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/utils/components/fields/form/padded_text_form_field.dart';
-import 'package:gym_app_client/utils/constants/signup_constants.dart';
+import 'package:gym_app_client/utils/constants/user_constants.dart';
 
 class UsernameFormField extends PaddedTextFormField {
   UsernameFormField({
@@ -23,9 +23,9 @@ class UsernameFormField extends PaddedTextFormField {
           validator: (String? value) {
             if (value == null || value.isEmpty) {
               return "Username cannot be empty";
-            } else if (value.length < SignUpConstants.minUsernameLength ||
-                value.length > SignUpConstants.maxUsernameLength) {
-              return "Username must be between ${SignUpConstants.minUsernameLength} and ${SignUpConstants.maxUsernameLength} characters";
+            } else if (value.length < UserConstants.minUsernameLength ||
+                value.length > UserConstants.maxUsernameLength) {
+              return "Username must be between ${UserConstants.minUsernameLength} and ${UserConstants.maxUsernameLength} characters";
             }
 
             onUsernameChanged(value);

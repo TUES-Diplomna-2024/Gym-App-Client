@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/utils/components/fields/form/padded_text_form_field.dart';
-import 'package:gym_app_client/utils/constants/signup_constants.dart';
+import 'package:gym_app_client/utils/constants/user_constants.dart';
 
 class BirthDateFormField extends PaddedTextFormField {
   BirthDateFormField({
@@ -41,7 +41,7 @@ class BirthDateFormField extends PaddedTextFormField {
     DateTime? pickedDate = await showDatePicker(
       context: context,
       initialDate: currDate,
-      firstDate: DateTime(currDate.year - SignUpConstants.allowableYearsRange),
+      firstDate: DateTime(currDate.year - UserConstants.allowableYearsRange),
       lastDate: currDate,
     );
 

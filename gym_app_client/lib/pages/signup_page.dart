@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gym_app_client/utils/constants/signup_constants.dart';
+import 'package:gym_app_client/utils/constants/user_constants.dart';
 import 'package:gym_app_client/utils/forms/signup_account_info_form.dart';
 import 'package:gym_app_client/utils/forms/signup_biometric_info_form.dart';
 import 'package:gym_app_client/utils/components/buttons/form/signup_submit_button.dart';
@@ -21,8 +21,8 @@ class _SignUpPageState extends State<SignUpPage> {
   final _birthDateController = TextEditingController();
 
   String _selectedGender = "";
-  double _selectedHeight = SignUpConstants.defaultHeight;
-  double _selectedWeight = SignUpConstants.defaultWeight;
+  double _selectedHeight = UserConstants.defaultHeight;
+  double _selectedWeight = UserConstants.defaultWeight;
 
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;

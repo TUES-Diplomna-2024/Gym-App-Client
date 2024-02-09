@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/utils/components/padded_adaptive_slider.dart';
-import 'package:gym_app_client/utils/constants/signup_constants.dart';
+import 'package:gym_app_client/utils/constants/user_constants.dart';
 
 class WeightFormField extends PaddedAdaptiveSlider {
   WeightFormField({
@@ -10,8 +10,8 @@ class WeightFormField extends PaddedAdaptiveSlider {
     required EdgeInsets padding,
   }) : super(
           value: selectedWeight,
-          min: SignUpConstants.minWeight,
-          max: SignUpConstants.maxWeight,
+          min: UserConstants.minWeight,
+          max: UserConstants.maxWeight,
           displayText: "Weight: ${selectedWeight.toStringAsFixed(1)} kg",
           onChanged: onWeightChanged,
           padding: padding,

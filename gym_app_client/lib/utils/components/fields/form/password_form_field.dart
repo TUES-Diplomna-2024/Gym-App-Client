@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/utils/components/fields/form/padded_text_form_field.dart';
-import 'package:gym_app_client/utils/constants/signup_constants.dart';
+import 'package:gym_app_client/utils/constants/user_constants.dart';
 import 'package:gym_app_client/utils/constants/app_regexes.dart';
 
 class PasswordFormField extends PaddedTextFormField {
@@ -36,9 +36,9 @@ class PasswordFormField extends PaddedTextFormField {
           validator: (String? value) {
             if (value == null || value.isEmpty) {
               return "Please enter your password";
-            } else if (value.length < SignUpConstants.minPasswordLength ||
-                value.length > SignUpConstants.maxPasswordLength) {
-              return "Password must be between ${SignUpConstants.minPasswordLength} and ${SignUpConstants.maxPasswordLength} characters";
+            } else if (value.length < UserConstants.minPasswordLength ||
+                value.length > UserConstants.maxPasswordLength) {
+              return "Password must be between ${UserConstants.minPasswordLength} and ${UserConstants.maxPasswordLength} characters";
             } else if (!AppRegexes.isValidPassword(value)) {
               return "Password must include at least one lowercase letter, \none uppercase letter, one digit, and one special character.";
             }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:gym_app_client/pages/library_page.dart';
 import 'package:gym_app_client/pages/profile_page.dart';
 import 'package:gym_app_client/pages/signin_page.dart';
-import 'package:gym_app_client/pages/signup_page.dart';
 
 class RootPage extends StatefulWidget {
   const RootPage({super.key});
@@ -11,8 +11,12 @@ class RootPage extends StatefulWidget {
 }
 
 class _RootPageState extends State<RootPage> {
-  int _currPage = 0;
-  final List<Widget> _pages = const [SignInPage(), SignUpPage(), ProfilePage()];
+  int _currPage = 1;
+  final List<Widget> _pages = const [
+    LibraryPage(),
+    SignInPage(),
+    ProfilePage()
+  ];
 
   @override
   Widget build(BuildContext context) {

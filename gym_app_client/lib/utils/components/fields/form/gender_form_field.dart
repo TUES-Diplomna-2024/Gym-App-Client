@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/utils/components/fields/form/padded_dropdown_button_form_field.dart';
-import 'package:gym_app_client/utils/constants/signup_constants.dart';
+import 'package:gym_app_client/utils/constants/user_constants.dart';
 
 class GenderFormField extends PaddedDropdownButtonFormField<String> {
   GenderFormField({
@@ -19,7 +19,7 @@ class GenderFormField extends PaddedDropdownButtonFormField<String> {
                 OutlineInputBorder(borderSide: BorderSide(color: Colors.blue)),
           ),
           onChanged: onGenderChanged,
-          items: SignUpConstants.genders
+          items: UserConstants.genders
               .map((String gender) => DropdownMenuItem(
                     value: gender,
                     child: Text(gender),
