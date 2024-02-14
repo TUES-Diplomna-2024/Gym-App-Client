@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:gym_app_client/pages/library_custom_exercises_page.dart';
-import 'package:gym_app_client/pages/library_workouts_page.dart';
+import 'library_custom_exercises_page.dart';
+import 'library_workouts_page.dart';
 
 class LibraryPage extends StatefulWidget {
   const LibraryPage({super.key});

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/models/user/user_profile_model.dart';
 import 'package:gym_app_client/db_api/models/user/user_update_model.dart';
-import 'package:gym_app_client/pages/exercise_add_in_workouts_page.dart';
-import 'package:gym_app_client/pages/exercise_create_page.dart';
-import 'package:gym_app_client/pages/exercise_view_page.dart';
-import 'package:gym_app_client/pages/profile_edit_page.dart';
-import 'package:gym_app_client/pages/signin_page.dart';
-import 'package:gym_app_client/pages/signup_page.dart';
+import 'package:gym_app_client/pages/exercise/exercise_add_in_workouts_page.dart';
+import 'package:gym_app_client/pages/exercise/exercise_create_page.dart';
+import 'package:gym_app_client/pages/exercise/exercise_view_page.dart';
+import 'package:gym_app_client/pages/profile/profile_edit_page.dart';
+import 'package:gym_app_client/pages/sign/signin_page.dart';
+import 'package:gym_app_client/pages/sign/signup_page.dart';
 import 'package:gym_app_client/pages/root_page.dart';
 
 class RouteGenerator {
