@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:gym_app_client/utils/components/fields/form/username_form_field.dart';
+import 'package:gym_app_client/utils/components/fields/form/name_form_field.dart';
 import 'package:gym_app_client/utils/components/fields/form/email_form_field.dart';
 import 'package:gym_app_client/utils/components/fields/form/password_form_field.dart';
 import 'package:gym_app_client/utils/components/fields/form/confirm_password_form_field.dart';
+import 'package:gym_app_client/utils/constants/user_constants.dart';
 
 class SignUpAccountInfoForm extends Form {
   SignUpAccountInfoForm({
@@ -26,9 +27,14 @@ class SignUpAccountInfoForm extends Form {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                UsernameFormField(
-                  usernameController: usernameController,
-                  onUsernameChanged: onUsernameChanged,
+                NameFormField(
+                  controller: usernameController,
+                  label: "Username",
+                  hintText: "Enter your username",
+                  prefixIcon: Icons.person_outline,
+                  minLength: UserConstants.minUsernameLength,
+                  maxLength: UserConstants.maxUsernameLength,
+                  onChanged: onUsernameChanged,
                   padding: formFieldPadding,
                 ),
                 EmailFormField(

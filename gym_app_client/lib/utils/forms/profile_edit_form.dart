@@ -4,8 +4,9 @@ import 'package:gym_app_client/utils/components/buttons/profile/profile_save_cha
 import 'package:gym_app_client/utils/components/fields/form/birth_date_form_field.dart';
 import 'package:gym_app_client/utils/components/fields/form/gender_form_field.dart';
 import 'package:gym_app_client/utils/components/fields/form/height_form_field.dart';
-import 'package:gym_app_client/utils/components/fields/form/username_form_field.dart';
+import 'package:gym_app_client/utils/components/fields/form/name_form_field.dart';
 import 'package:gym_app_client/utils/components/fields/form/weight_form_field.dart';
+import 'package:gym_app_client/utils/constants/user_constants.dart';
 
 class ProfileEditForm extends Form {
   ProfileEditForm({
@@ -29,9 +30,14 @@ class ProfileEditForm extends Form {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              UsernameFormField(
-                usernameController: usernameController,
-                onUsernameChanged: onUsernameChanged,
+              NameFormField(
+                controller: usernameController,
+                label: "Username",
+                hintText: "Enter your username",
+                prefixIcon: Icons.person_outline,
+                minLength: UserConstants.minUsernameLength,
+                maxLength: UserConstants.maxUsernameLength,
+                onChanged: onUsernameChanged,
                 padding: formFieldPadding,
               ),
               BirthDateFormField(

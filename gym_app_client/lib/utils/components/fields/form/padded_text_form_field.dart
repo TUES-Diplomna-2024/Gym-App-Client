@@ -6,6 +6,7 @@ class PaddedTextFormField extends StatelessWidget {
   final InputDecoration decoration;
   final bool readOnly;
   final bool obscureText;
+  final int? maxLines;
   final String? Function(String?)? validator;
   final void Function()? onTap;
   final EdgeInsets padding;
@@ -13,6 +14,7 @@ class PaddedTextFormField extends StatelessWidget {
   const PaddedTextFormField({
     super.key,
     this.fieldKey,
+    this.maxLines = 1,
     required this.decoration,
     required this.validator,
     this.controller,
@@ -33,6 +35,7 @@ class PaddedTextFormField extends StatelessWidget {
         validator: validator,
         readOnly: readOnly,
         obscureText: obscureText,
+        maxLines: maxLines,
         onTap: onTap,
       ),
     );

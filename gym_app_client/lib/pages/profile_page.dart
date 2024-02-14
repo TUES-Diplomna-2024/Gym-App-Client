@@ -5,8 +5,8 @@ import 'package:gym_app_client/db_api/services/user_service.dart';
 import 'package:gym_app_client/utils/components/buttons/profile/profile_delete_button.dart';
 import 'package:gym_app_client/utils/components/buttons/profile/profile_edit_button.dart';
 import 'package:gym_app_client/utils/components/informative_popup.dart';
-import 'package:gym_app_client/utils/components/fields/profile/profile_field.dart';
-import 'package:gym_app_client/utils/components/fields/profile/profile_date_field.dart';
+import 'package:gym_app_client/utils/components/fields/content/content_field.dart';
+import 'package:gym_app_client/utils/components/fields/content/date_field.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -29,11 +29,13 @@ class _ProfilePageState extends State<ProfilePage> {
   Future<void> _getUserProfile() async {
     final serviceResult = await _userService.getCurrUser();
 
-    if (context.mounted && serviceResult.popUpInfo != null) {
+    if (serviceResult.popUpInfo != null) {
       final popup = InformativePopUp(info: serviceResult.popUpInfo!);
 
-      ScaffoldMessenger.of(context).removeCurrentSnackBar();
-      ScaffoldMessenger.of(context).showSnackBar(popup);
+      if (mounted) {
+        ScaffoldMessenger.of(context).removeCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(popup);
+      }
     } else {
       _userProfile = serviceResult.data!;
       setState(() => _isLoading = false);
@@ -91,37 +93,37 @@ class _ProfilePageState extends State<ProfilePage> {
                         ],
                       ),
                       const SizedBox(height: 15),
-                      ProfileDateField(
+                      DateField(
                         dateIcon: Icons.calendar_month_outlined,
                         dateName: "Member Since",
                         dateValue: _userProfile.onCreated,
                         padding: const EdgeInsets.only(bottom: 15),
                       ),
-                      ProfileField(
+                      ContentField(
                         fieldIcon: Icons.mail_outline,
                         fieldName: "Email",
                         fieldValue: _userProfile.email,
                         padding: const EdgeInsets.only(bottom: 15),
                       ),
-                      ProfileField(
+                      ContentField(
                         fieldIcon: Icons.accessibility_new_outlined,
                         fieldName: "Gender",
                         fieldValue: _userProfile.gender,
                         padding: const EdgeInsets.only(bottom: 15),
                       ),
-                      ProfileDateField(
+                      DateField(
                         dateIcon: Icons.cake_outlined,
                         dateName: "Birth Date",
                         dateValue: _userProfile.birthDate,
                         padding: const EdgeInsets.only(bottom: 15),
                       ),
-                      ProfileField(
+                      ContentField(
                         fieldIcon: Icons.height_outlined,
                         fieldName: "Height",
                         fieldValue: "${_userProfile.height} cm",
                         padding: const EdgeInsets.only(bottom: 15),
                       ),
-                      ProfileField(
+                      ContentField(
                         fieldIcon: Icons.scale_outlined,
                         fieldName: "Weight",
                         fieldValue: "${_userProfile.height} kg",

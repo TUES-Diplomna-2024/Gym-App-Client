@@ -85,7 +85,7 @@ class _ProfileDeleteDialogState extends State<ProfileDeleteDialog> {
 
   @override
   void dispose() {
-    super.dispose();
     _passwordController.dispose();
+    super.dispose();
   }
 }

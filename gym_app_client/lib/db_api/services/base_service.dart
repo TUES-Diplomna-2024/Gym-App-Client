@@ -57,9 +57,16 @@ class BaseService {
     return Uri.parse(uri);
   }
 
-  Future<Map<String, String>> getHeaders(
-      {bool hasAccessToken = true, bool hasRefreshToken = true}) async {
-    Map<String, String> headers = {"content-type": "application/json"};
+  Future<Map<String, String>> getHeaders({
+    bool hasAccessToken = true,
+    bool hasRefreshToken = true,
+    bool includeContentType = true,
+  }) async {
+    Map<String, String> headers = {};
+
+    if (includeContentType) {
+      headers["content-type"] = "application/json";
+    }
 
     if (hasAccessToken) {
       var accessToken = await tokenService.getAccessTokenFromStorage() ?? "";
