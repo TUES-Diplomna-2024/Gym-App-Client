@@ -37,6 +37,11 @@ class ExercisePreviewModel {
       Response response) {
     List<dynamic> body = json.decode(response.body);
 
+    return getExercisePreviewsFromBody(body);
+  }
+
+  static List<ExercisePreviewModel> getExercisePreviewsFromBody(
+      List<dynamic> body) {
     return List<ExercisePreviewModel>.from(
         body.map((e) => ExercisePreviewModel.loadFromMap(e)));
   }

@@ -8,6 +8,7 @@ import 'package:gym_app_client/pages/profile/profile_edit_page.dart';
 import 'package:gym_app_client/pages/sign/signin_page.dart';
 import 'package:gym_app_client/pages/sign/signup_page.dart';
 import 'package:gym_app_client/pages/root_page.dart';
+import 'package:gym_app_client/pages/workout/workout_view_page.dart';
 
 class RouteGenerator {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -37,16 +38,20 @@ class RouteGenerator {
         } on Exception {
           return _errorRoute();
         }
-      case "/exercise-create":
-        return MaterialPageRoute(builder: (_) => const ExerciseCreatePage());
       case "/exercise":
         String exerciseId = args.toString();
         return MaterialPageRoute(
             builder: (_) => ExerciseViewPage(exerciseId: exerciseId));
+      case "/exercise-create":
+        return MaterialPageRoute(builder: (_) => const ExerciseCreatePage());
       case "/exercise-add-in-workouts":
         String exerciseId = args.toString();
         return MaterialPageRoute(
             builder: (_) => ExerciseAddInWorkoutsPage(exerciseId: exerciseId));
+      case "/workout":
+        String workoutId = args.toString();
+        return MaterialPageRoute(
+            builder: (_) => WorkoutViewPage(workoutId: workoutId));
       default:
         return _errorRoute();
     }

@@ -59,7 +59,8 @@ class _LibraryWorkoutsPageState extends State<LibraryWorkoutsPage> {
           itemBuilder: (_, int index) {
             return GestureDetector(
               child: WorkoutPreview(workout: _userWorkouts[index]),
-              onTap: () => debugPrint("ID: ${_userWorkouts[index].id}"),
+              onTap: () => Navigator.of(context)
+                  .pushNamed("/workout", arguments: _userWorkouts[index].id),
             );
           }),
     );
