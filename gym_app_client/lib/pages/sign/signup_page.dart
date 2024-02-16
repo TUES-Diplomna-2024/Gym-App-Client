@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gym_app_client/utils/components/common/custom_app_bar.dart';
 import 'package:gym_app_client/utils/constants/user_constants.dart';
 import 'package:gym_app_client/utils/forms/signup_account_info_form.dart';
 import 'package:gym_app_client/utils/forms/signup_biometric_info_form.dart';
@@ -36,14 +37,7 @@ class _SignUpPageState extends State<SignUpPage> {
     final steps = _getStepList();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Create Account",
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-      ),
+      appBar: CustomAppBar(title: "Create Account"),
       body: Center(
         child: Stepper(
           controlsBuilder: (BuildContext context, _) {

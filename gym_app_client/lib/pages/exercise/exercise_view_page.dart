@@ -3,8 +3,9 @@ import 'package:gym_app_client/db_api/models/exercise/exercise_view_model.dart';
 import 'package:gym_app_client/db_api/services/exercise_service.dart';
 import 'package:gym_app_client/db_api/services/token_service.dart';
 import 'package:gym_app_client/utils/components/buttons/exercise/exercise_actions_popup_menu_button.dart';
+import 'package:gym_app_client/utils/components/common/back_leading_app_bar.dart';
 import 'package:gym_app_client/utils/components/fields/content/content_field.dart';
-import 'package:gym_app_client/utils/components/informative_popup.dart';
+import 'package:gym_app_client/utils/components/common/informative_popup.dart';
 import 'package:gym_app_client/utils/constants/role_constants.dart';
 
 class ExerciseViewPage extends StatefulWidget {
@@ -56,27 +57,14 @@ class _ExerciseViewPageState extends State<ExerciseViewPage> {
         _areEditAndDeleteAllowed = true;
       }
 
-      setState(() => _isLoading = false);
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Exercise",
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-        leading: IconButton(
-          onPressed: () {
-            if (mounted) Navigator.of(context).pop();
-          },
-          icon: const Icon(Icons.arrow_back_ios_new_rounded),
-        ),
-      ),
+      appBar: BackLeadingAppBar(title: "Exercise", context: context),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(

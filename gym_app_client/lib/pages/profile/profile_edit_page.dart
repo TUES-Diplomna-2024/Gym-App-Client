@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/models/user/user_profile_model.dart';
 import 'package:gym_app_client/db_api/models/user/user_update_model.dart';
+import 'package:gym_app_client/utils/components/common/back_leading_app_bar.dart';
 import 'package:gym_app_client/utils/forms/profile_edit_form.dart';
 
 class ProfileEditPage extends StatefulWidget {
@@ -51,20 +52,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Edit Profile",
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-        leading: IconButton(
-          onPressed: () {
-            if (mounted) Navigator.of(context).pop();
-          },
-          icon: const Icon(Icons.arrow_back_ios_new_rounded),
-        ),
-      ),
+      appBar: BackLeadingAppBar(title: "Edit Profile", context: context),
       body: Center(
         child: SingleChildScrollView(
           child: Padding(

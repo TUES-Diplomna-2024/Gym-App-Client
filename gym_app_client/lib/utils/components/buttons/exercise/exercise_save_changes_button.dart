@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/models/exercise/exercise_update_model.dart';
 import 'package:gym_app_client/db_api/services/exercise_service.dart';
-import 'package:gym_app_client/utils/components/informative_popup.dart';
+import 'package:gym_app_client/utils/components/common/informative_popup.dart';
 
 class ExerciseSaveChangesButton extends StatelessWidget {
   final ExerciseService _exerciseService = ExerciseService();

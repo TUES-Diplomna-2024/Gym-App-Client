@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/models/workout/workout_preview_model.dart';
 import 'package:gym_app_client/db_api/services/workout_service.dart';
 import 'package:gym_app_client/utils/components/buttons/exercise/exercise_add_in_workout_done_button.dart';
-import 'package:gym_app_client/utils/components/informative_popup.dart';
+import 'package:gym_app_client/utils/components/common/back_leading_app_bar.dart';
+import 'package:gym_app_client/utils/components/common/informative_popup.dart';
 import 'package:gym_app_client/utils/components/previews/selectable_workout_preview.dart';
 
 class ExerciseAddInWorkoutsPage extends StatefulWidget {
@@ -43,7 +44,7 @@ class _ExerciseAddInWorkoutsPageState extends State<ExerciseAddInWorkoutsPage> {
       }
     } else {
       _userWorkouts = serviceResult.data!;
-      setState(() => _isLoading = false);
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -68,8 +69,12 @@ class _ExerciseAddInWorkoutsPageState extends State<ExerciseAddInWorkoutsPage> {
           itemBuilder: (_, int index) {
             return SelectableWorkoutPreview(
               workout: _userWorkouts[index],
-              onSelect: (id) => setState(() => selectedWorkoutIds.add(id)),
-              onUnselect: (id) => setState(() => selectedWorkoutIds.remove(id)),
+              onSelect: (id) {
+                if (mounted) setState(() => selectedWorkoutIds.add(id));
+              },
+              onUnselect: (id) {
+                if (mounted) setState(() => selectedWorkoutIds.remove(id));
+              },
             );
           }),
     );
@@ -78,20 +83,7 @@ class _ExerciseAddInWorkoutsPageState extends State<ExerciseAddInWorkoutsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Add In Workouts",
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-        leading: IconButton(
-          onPressed: () {
-            if (mounted) Navigator.of(context).pop();
-          },
-          icon: const Icon(Icons.arrow_back_ios_new_rounded),
-        ),
-      ),
+      appBar: BackLeadingAppBar(title: "Add In Workouts", context: context),
       body: _getBody(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: ExerciseAddInWorkoutDoneButton(

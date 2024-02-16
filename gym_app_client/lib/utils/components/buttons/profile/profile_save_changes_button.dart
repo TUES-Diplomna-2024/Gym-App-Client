@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/models/user/user_update_model.dart';
 import 'package:gym_app_client/db_api/services/user_service.dart';
-import 'package:gym_app_client/utils/components/informative_popup.dart';
+import 'package:gym_app_client/utils/components/common/informative_popup.dart';
 
 class ProfileSaveChangesButton extends StatelessWidget {
   final UserService _userService = UserService();
@@ -37,7 +37,7 @@ class ProfileSaveChangesButton extends StatelessWidget {
 
       var result = await _userService.updateCurrUser(userUpdate);
 
-      if (context.mounted && context.mounted) {
+      if (context.mounted) {
         final popup = InformativePopUp(info: result.popUpInfo!);
 
         ScaffoldMessenger.of(context).removeCurrentSnackBar();

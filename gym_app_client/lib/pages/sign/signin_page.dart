@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gym_app_client/utils/components/common/custom_app_bar.dart';
 import 'package:gym_app_client/utils/forms/signin_form.dart';
 
 class SignInPage extends StatefulWidget {
@@ -19,14 +20,7 @@ class _SignInPageState extends State<SignInPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Welcome Back",
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-      ),
+      appBar: CustomAppBar(title: "Welcome Back"),
       body: Center(
         child: SingleChildScrollView(
           child: Column(

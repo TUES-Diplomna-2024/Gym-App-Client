@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/models/workout/workout_preview_model.dart';
 import 'package:gym_app_client/db_api/services/workout_service.dart';
-import 'package:gym_app_client/utils/components/informative_popup.dart';
+import 'package:gym_app_client/utils/components/common/informative_popup.dart';
 import 'package:gym_app_client/utils/components/previews/workout_preview.dart';
 
 class LibraryWorkoutsPage extends StatefulWidget {

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gym_app_client/utils/components/padded_adaptive_slider.dart';
+import 'package:gym_app_client/utils/components/fields/form/padded_adaptive_slider.dart';
 import 'package:gym_app_client/utils/constants/user_constants.dart';
 
 class HeightFormField extends PaddedAdaptiveSlider {

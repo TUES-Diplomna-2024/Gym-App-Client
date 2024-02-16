@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/models/exercise/exercise_update_model.dart';
 import 'package:gym_app_client/db_api/models/exercise/exercise_view_model.dart';
+import 'package:gym_app_client/utils/components/common/back_leading_app_bar.dart';
 import 'package:gym_app_client/utils/forms/exercise_edit_form.dart';
 
 class ExerciseEditPage extends StatefulWidget {
@@ -21,20 +22,7 @@ class _ExerciseEditPageState extends State<ExerciseEditPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Edit Exercise",
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-        leading: IconButton(
-          onPressed: () {
-            if (mounted) Navigator.of(context).pop();
-          },
-          icon: const Icon(Icons.arrow_back_ios_new_rounded),
-        ),
-      ),
+      appBar: BackLeadingAppBar(title: "Edit Exercise", context: context),
       body: Center(
         child: SingleChildScrollView(
           child: Padding(

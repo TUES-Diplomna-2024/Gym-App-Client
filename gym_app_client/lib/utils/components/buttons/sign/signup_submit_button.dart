@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/services/user_service.dart';
 import 'package:gym_app_client/db_api/models/user/user_signup_model.dart';
-import 'package:gym_app_client/utils/components/informative_popup.dart';
+import 'package:gym_app_client/utils/components/common/informative_popup.dart';
 
 class SignUpSubmitButton extends StatelessWidget {
   final UserService _userService = UserService();

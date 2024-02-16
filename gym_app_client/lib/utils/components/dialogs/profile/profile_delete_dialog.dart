@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/services/user_service.dart';
 import 'package:gym_app_client/utils/components/fields/form/password_form_field.dart';
-import 'package:gym_app_client/utils/components/informative_popup.dart';
+import 'package:gym_app_client/utils/components/common/informative_popup.dart';
 
 class ProfileDeleteDialog extends StatefulWidget {
   const ProfileDeleteDialog({super.key});

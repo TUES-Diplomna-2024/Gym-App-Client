@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/models/workout/workout_view_model.dart';
 import 'package:gym_app_client/db_api/services/workout_service.dart';
+import 'package:gym_app_client/utils/components/common/back_leading_app_bar.dart';
 import 'package:gym_app_client/utils/components/fields/content/content_field.dart';
-import 'package:gym_app_client/utils/components/informative_popup.dart';
+import 'package:gym_app_client/utils/components/common/informative_popup.dart';
 import 'package:gym_app_client/utils/components/previews/exercise_preview.dart';
 
 class WorkoutViewPage extends StatefulWidget {
@@ -41,7 +42,7 @@ class _WorkoutViewPageState extends State<WorkoutViewPage> {
       }
     } else {
       _workoutView = serviceResult.data!;
-      setState(() => _isLoading = false);
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -77,20 +78,7 @@ class _WorkoutViewPageState extends State<WorkoutViewPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Workout",
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-        leading: IconButton(
-          onPressed: () {
-            if (mounted) Navigator.of(context).pop();
-          },
-          icon: const Icon(Icons.arrow_back_ios_new_rounded),
-        ),
-      ),
+      appBar: BackLeadingAppBar(title: "Workout", context: context),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(

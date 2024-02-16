@@ -4,7 +4,8 @@ import 'package:gym_app_client/db_api/models/user/user_update_model.dart';
 import 'package:gym_app_client/db_api/services/user_service.dart';
 import 'package:gym_app_client/utils/components/buttons/profile/profile_delete_button.dart';
 import 'package:gym_app_client/utils/components/buttons/profile/profile_edit_button.dart';
-import 'package:gym_app_client/utils/components/informative_popup.dart';
+import 'package:gym_app_client/utils/components/common/custom_app_bar.dart';
+import 'package:gym_app_client/utils/components/common/informative_popup.dart';
 import 'package:gym_app_client/utils/components/fields/content/content_field.dart';
 import 'package:gym_app_client/utils/components/fields/content/date_field.dart';
 
@@ -38,21 +39,14 @@ class _ProfilePageState extends State<ProfilePage> {
       }
     } else {
       _userProfile = serviceResult.data!;
-      setState(() => _isLoading = false);
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Profile",
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-      ),
+      appBar: CustomAppBar(title: "Profile"),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
