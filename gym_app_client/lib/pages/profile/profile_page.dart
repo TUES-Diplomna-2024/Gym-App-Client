@@ -22,8 +22,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   void initState() {
-    super.initState();
     _getUserProfile();
+    super.initState();
   }
 
   Future<void> _getUserProfile() async {
@@ -81,9 +81,10 @@ class _ProfilePageState extends State<ProfilePage> {
                             child: ProfileEditButton(
                               context: context,
                               userStartState: _userProfile,
-                              onProfileUpdated: (UserUpdateModel updateModel) =>
-                                  setState(() =>
-                                      _userProfile.updateProfile(updateModel)),
+                              onProfileUpdated: (updateModel) {
+                                setState(() =>
+                                    _userProfile.updateProfile(updateModel));
+                              },
                             ),
                           ),
                           const SizedBox(width: 25),

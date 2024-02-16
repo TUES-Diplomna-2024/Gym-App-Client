@@ -15,8 +15,8 @@ class _LibraryPageState extends State<LibraryPage>
 
   @override
   void initState() {
-    super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    super.initState();
   }
 
   @override

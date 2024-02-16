@@ -26,7 +26,7 @@ class UserProfileModel {
     roleName = body["roleName"];
     roleColor = _getColor(body["roleColor"]);
 
-    gender = "${body["gender"][0].toUpperCase()}${body["gender"].substring(1)}";
+    gender = _normalizeData(body["gender"]);
 
     height = double.parse(body["height"].toStringAsFixed(1));
     weight = double.parse(body["weight"].toStringAsFixed(1));
@@ -48,4 +48,7 @@ class UserProfileModel {
     if (hexColor.length == 6) hexColor = "FF$hexColor";
     return Color(int.parse(hexColor, radix: 16));
   }
+
+  String _normalizeData(String data) =>
+      "${data[0].toUpperCase()}${data.substring(1)}";
 }

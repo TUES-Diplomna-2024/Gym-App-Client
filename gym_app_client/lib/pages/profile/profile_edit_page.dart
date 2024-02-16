@@ -4,12 +4,12 @@ import 'package:gym_app_client/db_api/models/user/user_update_model.dart';
 import 'package:gym_app_client/utils/forms/profile_edit_form.dart';
 
 class ProfileEditPage extends StatefulWidget {
-  final UserProfileModel userStartState;
+  final UserProfileModel userInitState;
   final void Function(UserUpdateModel) onProfileUpdated;
 
   const ProfileEditPage({
     super.key,
-    required this.userStartState,
+    required this.userInitState,
     required this.onProfileUpdated,
   });
 
@@ -20,8 +20,8 @@ class ProfileEditPage extends StatefulWidget {
 class _ProfileEditPageState extends State<ProfileEditPage> {
   final _formKey = GlobalKey<FormState>();
 
-  late TextEditingController _usernameController;
-  late TextEditingController _birthDateController;
+  late final TextEditingController _usernameController;
+  late final TextEditingController _birthDateController;
 
   late String _selectedGender;
   late double _selectedHeight;
@@ -29,16 +29,16 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
 
   @override
   void initState() {
-    super.initState();
-
     _usernameController =
-        TextEditingController(text: widget.userStartState.username);
+        TextEditingController(text: widget.userInitState.username);
     _birthDateController =
-        TextEditingController(text: widget.userStartState.birthDate);
+        TextEditingController(text: widget.userInitState.birthDate);
 
-    _selectedGender = widget.userStartState.gender;
-    _selectedHeight = widget.userStartState.height;
-    _selectedWeight = widget.userStartState.weight;
+    _selectedGender = widget.userInitState.gender;
+    _selectedHeight = widget.userInitState.height;
+    _selectedWeight = widget.userInitState.weight;
+
+    super.initState();
   }
 
   @override
@@ -62,28 +62,29 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
       body: Center(
         child: SingleChildScrollView(
           child: Padding(
-              padding: const EdgeInsets.only(top: 35, left: 25, right: 25),
-              child: ProfileEditForm(
-                context: context,
-                formKey: _formKey,
-                usernameController: _usernameController,
-                birthDateController: _birthDateController,
-                selectedGender: _selectedGender,
-                selectedHeight: _selectedHeight,
-                selectedWeight: _selectedWeight,
-                onUsernameChanged: (String value) =>
-                    setState(() => _usernameController.text = value),
-                onBirthDateChanged: (String value) =>
-                    setState(() => _birthDateController.text = value),
-                onGenderChanged: (String? value) =>
-                    setState(() => _selectedGender = value!),
-                onHeightChanged: (double value) =>
-                    setState(() => _selectedHeight = value),
-                onWeightChanged: (double value) =>
-                    setState(() => _selectedWeight = value),
-                onProfileUpdated: widget.onProfileUpdated,
-                formFieldPadding: const EdgeInsets.only(bottom: 25),
-              )),
+            padding: const EdgeInsets.only(top: 35, left: 25, right: 25),
+            child: ProfileEditForm(
+              context: context,
+              formKey: _formKey,
+              usernameController: _usernameController,
+              birthDateController: _birthDateController,
+              selectedGender: _selectedGender,
+              selectedHeight: _selectedHeight,
+              selectedWeight: _selectedWeight,
+              onUsernameChanged: (String value) =>
+                  setState(() => _usernameController.text = value),
+              onBirthDateChanged: (String value) =>
+                  setState(() => _birthDateController.text = value),
+              onGenderChanged: (String? value) =>
+                  setState(() => _selectedGender = value!),
+              onHeightChanged: (double value) =>
+                  setState(() => _selectedHeight = value),
+              onWeightChanged: (double value) =>
+                  setState(() => _selectedWeight = value),
+              onProfileUpdated: widget.onProfileUpdated,
+              formFieldPadding: const EdgeInsets.only(bottom: 25),
+            ),
+          ),
         ),
       ),
     );

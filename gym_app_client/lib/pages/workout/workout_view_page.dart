@@ -24,8 +24,8 @@ class _WorkoutViewPageState extends State<WorkoutViewPage> {
 
   @override
   void initState() {
-    super.initState();
     _getWorkoutView();
+    super.initState();
   }
 
   Future<void> _getWorkoutView() async {

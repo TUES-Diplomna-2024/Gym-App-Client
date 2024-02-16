@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:gym_app_client/db_api/models/exercise/exercise_update_model.dart';
+import 'package:gym_app_client/db_api/models/exercise/exercise_view_model.dart';
 import 'package:gym_app_client/db_api/models/user/user_profile_model.dart';
 import 'package:gym_app_client/db_api/models/user/user_update_model.dart';
 import 'package:gym_app_client/pages/exercise/exercise_add_in_workouts_page.dart';
 import 'package:gym_app_client/pages/exercise/exercise_create_page.dart';
+import 'package:gym_app_client/pages/exercise/exercise_edit_page.dart';
 import 'package:gym_app_client/pages/exercise/exercise_view_page.dart';
 import 'package:gym_app_client/pages/profile/profile_edit_page.dart';
 import 'package:gym_app_client/pages/sign/signin_page.dart';
@@ -25,13 +28,13 @@ class RouteGenerator {
       case "/profile-edit":
         try {
           List<dynamic> pageArgs = args as List;
-          final userStartState = pageArgs[0] as UserProfileModel;
+          final userInitState = pageArgs[0] as UserProfileModel;
           final onProfileUpdated =
               pageArgs[1] as void Function(UserUpdateModel);
 
           return MaterialPageRoute(
             builder: (_) => ProfileEditPage(
-              userStartState: userStartState,
+              userInitState: userInitState,
               onProfileUpdated: onProfileUpdated,
             ),
           );
@@ -44,6 +47,22 @@ class RouteGenerator {
             builder: (_) => ExerciseViewPage(exerciseId: exerciseId));
       case "/exercise-create":
         return MaterialPageRoute(builder: (_) => const ExerciseCreatePage());
+      case "/exercise-edit":
+        try {
+          List<dynamic> pageArgs = args as List;
+          final exerciseInitState = pageArgs[0] as ExerciseViewModel;
+          final onExerciseUpdated =
+              pageArgs[1] as void Function(ExerciseUpdateModel);
+
+          return MaterialPageRoute(
+            builder: (_) => ExerciseEditPage(
+              exerciseInitState: exerciseInitState,
+              onExerciseUpdated: onExerciseUpdated,
+            ),
+          );
+        } on Exception {
+          return _errorRoute();
+        }
       case "/exercise-add-in-workouts":
         String exerciseId = args.toString();
         return MaterialPageRoute(

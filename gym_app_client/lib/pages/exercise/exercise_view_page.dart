@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/models/exercise/exercise_view_model.dart';
 import 'package:gym_app_client/db_api/services/exercise_service.dart';
-import 'package:gym_app_client/utils/components/buttons/exercise/exercise_add_in_workout_icon_button.dart';
+import 'package:gym_app_client/db_api/services/token_service.dart';
+import 'package:gym_app_client/utils/components/buttons/exercise/exercise_actions_popup_menu_button.dart';
 import 'package:gym_app_client/utils/components/fields/content/content_field.dart';
 import 'package:gym_app_client/utils/components/informative_popup.dart';
+import 'package:gym_app_client/utils/constants/role_constants.dart';
 
 class ExerciseViewPage extends StatefulWidget {
   final String exerciseId;
@@ -19,13 +21,16 @@ class ExerciseViewPage extends StatefulWidget {
 
 class _ExerciseViewPageState extends State<ExerciseViewPage> {
   final _exerciseService = ExerciseService();
+  final _tokenService = TokenService();
+
   late ExerciseViewModel _exerciseView;
+  late final bool _areEditAndDeleteAllowed;
   bool _isLoading = true;
 
   @override
   void initState() {
-    super.initState();
     _getExerciseView();
+    super.initState();
   }
 
   Future<void> _getExerciseView() async {
@@ -41,6 +46,16 @@ class _ExerciseViewPageState extends State<ExerciseViewPage> {
       }
     } else {
       _exerciseView = serviceResult.data!;
+
+      final currUserRole = await _tokenService.getCurrUserRole();
+
+      if (_exerciseView.isPrivate == false &&
+          !RoleConstants.adminRoles.contains(currUserRole)) {
+        _areEditAndDeleteAllowed = false;
+      } else {
+        _areEditAndDeleteAllowed = true;
+      }
+
       setState(() => _isLoading = false);
     }
   }
@@ -77,14 +92,21 @@ class _ExerciseViewPageState extends State<ExerciseViewPage> {
                               style: const TextStyle(fontSize: 26),
                             ),
                           ),
-                          const SizedBox(width: 36),
-                          ExerciseAddInWorkoutIconButton(
+                          const SizedBox(width: 16),
+                          ExerciseActionsPopupMenuButton(
                             context: context,
-                            exerciseId: _exerciseView.id,
+                            areEditAndDeleteAllowed: _areEditAndDeleteAllowed,
+                            exerciseCurrState: _exerciseView,
+                            onExerciseUpdated: (updateModel) {
+                              setState(
+                                  () => _exerciseView.updateView(updateModel));
+                            },
                           ),
-                          Icon(_exerciseView.isPrivate
-                              ? Icons.lock_outlined
-                              : Icons.public_outlined),
+                          Icon(
+                            _exerciseView.isPrivate
+                                ? Icons.lock_outlined
+                                : Icons.public_outlined,
+                          ),
                         ],
                       ),
                       const SizedBox(height: 15),

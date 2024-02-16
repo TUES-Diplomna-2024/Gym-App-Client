@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:gym_app_client/db_api/models/exercise/exercise_update_model.dart';
 import 'package:gym_app_client/db_api/models/exercise/exercise_view_model.dart';
 import 'package:http/http.dart';
 import 'package:gym_app_client/db_api/models/exercise/exercise_create_model.dart';
@@ -156,6 +157,53 @@ class ExerciseService extends BaseService {
         return ServiceResult(
           popUpInfo: fail("Exercise was not added in any workout!"),
         );
+      }
+
+      throw Exception();
+    } on SocketException {
+      return ServiceResult(
+          popUpInfo: fail(
+              "Network error! Please check your internet connection and try again!"));
+    } on Exception {
+      return ServiceResult(
+          popUpInfo: fail("Something went wrong! Try again later!"));
+    }
+  }
+
+  Future<ServiceResult> updateExerciseById(
+      String exerciseId, ExerciseUpdateModel exerciseUpdate) async {
+    try {
+      final response = await put(
+        getUri(subEndpoint: exerciseId),
+        headers: await getHeaders(),
+        body: exerciseUpdate.toJson(),
+      );
+
+      final statusCode = response.statusCode;
+
+      if (statusCode == HttpStatus.unauthorized) {
+        var error = await refreshAccessToken();
+
+        if (error != null) {
+          return ServiceResult(
+              popUpInfo: error.popUpInfo,
+              shouldSignOutUser: error.shouldSignOutUser);
+        }
+
+        return await updateExerciseById(exerciseId, exerciseUpdate);
+      }
+
+      await tokenService
+          .saveRefreshTokenInStorage(response.headers["x-refresh-token"]!);
+
+      if (statusCode == HttpStatus.ok) {
+        return ServiceResult(popUpInfo: success("Successfully updated!"));
+      } else if (statusCode == HttpStatus.badRequest) {
+        return ServiceResult(popUpInfo: fail("Invalid user data!"));
+      } else if (statusCode == HttpStatus.notFound) {
+        return ServiceResult(popUpInfo: fail("Exercise could not be found!"));
+      } else if (statusCode == HttpStatus.forbidden) {
+        return ServiceResult(popUpInfo: fail(response.body));
       }
 
       throw Exception();

@@ -14,14 +14,14 @@ class ExercisePreviewModel {
   ExercisePreviewModel.loadFromMap(Map<String, dynamic> data) {
     id = data["id"];
     name = data["name"];
-    type = data["type"];
+    type = _normalizeData(data["type"]);
     difficulty = _getDifficultyColor(data["difficulty"]);
     muscleGroups = data["muscleGroups"];
     isPrivate = data["isPrivate"];
   }
 
   Color _getDifficultyColor(String difficulty) {
-    switch (difficulty) {
+    switch (difficulty.toLowerCase()) {
       case "beginner":
         return ExerciseConstants.beginnerDifficultyColor;
       case "intermediate":
@@ -32,6 +32,9 @@ class ExercisePreviewModel {
         return ExerciseConstants.unknownDifficultyColor;
     }
   }
+
+  String _normalizeData(String data) =>
+      "${data[0].toUpperCase()}${data.substring(1)}";
 
   static List<ExercisePreviewModel> getExercisePreviewsFromResponse(
       Response response) {

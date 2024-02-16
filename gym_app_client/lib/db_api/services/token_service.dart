@@ -13,14 +13,22 @@ class TokenService {
     return await _storage.read(key: "accessToken");
   }
 
-  Future<String?> getCurrUserRole() async {
+  Future<Map<String, dynamic>?> getAccessTokenPayload() async {
     String? accessToken = await getAccessTokenFromStorage();
 
     if (accessToken == null || accessToken.isEmpty) return null;
 
-    final payload = JwtDecoder.tryDecode(accessToken);
+    return JwtDecoder.tryDecode(accessToken);
+  }
 
+  Future<String?> getCurrUserRole() async {
+    final payload = await getAccessTokenPayload();
     return payload?["userRole"];
+  }
+
+  Future<String?> getCurrUserId() async {
+    final payload = await getAccessTokenPayload();
+    return payload?["userId"];
   }
 
   Future<void> saveRefreshTokenInStorage(String refreshToken) async {

@@ -18,8 +18,8 @@ class _LibraryWorkoutsPageState extends State<LibraryWorkoutsPage> {
 
   @override
   void initState() {
-    super.initState();
     _getUserWorkouts();
+    super.initState();
   }
 
   Future<void> _getUserWorkouts() async {

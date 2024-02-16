@@ -37,7 +37,7 @@ class ProfileSaveChangesButton extends StatelessWidget {
 
       var result = await _userService.updateCurrUser(userUpdate);
 
-      if (context.mounted) {
+      if (context.mounted && context.mounted) {
         final popup = InformativePopUp(info: result.popUpInfo!);
 
         ScaffoldMessenger.of(context).removeCurrentSnackBar();

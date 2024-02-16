@@ -20,8 +20,8 @@ class _LibraryCustomExercisesPageState
 
   @override
   void initState() {
-    super.initState();
     _getUserCustomExercises();
+    super.initState();
   }
 
   Future<void> _getUserCustomExercises() async {

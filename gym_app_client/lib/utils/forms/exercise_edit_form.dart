@@ -1,53 +1,65 @@
 import 'package:flutter/material.dart';
-import 'package:gym_app_client/db_api/services/token_service.dart';
-import 'package:gym_app_client/utils/components/buttons/exercise/exercise_create_button.dart';
+import 'package:gym_app_client/db_api/models/exercise/exercise_update_model.dart';
+import 'package:gym_app_client/db_api/models/exercise/exercise_view_model.dart';
+import 'package:gym_app_client/utils/components/buttons/exercise/exercise_save_changes_button.dart';
 import 'package:gym_app_client/utils/components/fields/form/exercise_difficulty_form_field.dart';
 import 'package:gym_app_client/utils/components/fields/form/exercise_type_form_field.dart';
 import 'package:gym_app_client/utils/components/fields/form/multiline_text_form_field.dart';
 import 'package:gym_app_client/utils/components/fields/form/name_form_field.dart';
-import 'package:gym_app_client/utils/components/fields/form/exercise_visibility_form_field.dart';
 import 'package:gym_app_client/utils/constants/exercise_constants.dart';
-import 'package:gym_app_client/utils/constants/role_constants.dart';
 
-class ExerciseCreateForm extends StatefulWidget {
+class ExerciseEditForm extends StatefulWidget {
+  final ExerciseViewModel exerciseInitState;
+  final void Function(ExerciseUpdateModel) onExerciseUpdated;
   final EdgeInsets formFieldPadding;
 
-  const ExerciseCreateForm({
+  const ExerciseEditForm({
     super.key,
+    required this.exerciseInitState,
+    required this.onExerciseUpdated,
     required this.formFieldPadding,
   });
 
   @override
-  State<ExerciseCreateForm> createState() => _ExerciseCreateFormState();
+  State<ExerciseEditForm> createState() => _ExerciseEditFormState();
 }
 
-class _ExerciseCreateFormState extends State<ExerciseCreateForm> {
-  final _tokenService = TokenService();
-  bool _isCurrUserAdmin = false;
-
+class _ExerciseEditFormState extends State<ExerciseEditForm> {
   final _formKey = GlobalKey<FormState>();
 
-  final _nameController = TextEditingController();
-  final _muscleGroupController = TextEditingController();
-  final _equipmentController = TextEditingController();
-  final _instructionsController = TextEditingController();
+  late final TextEditingController _nameController;
+  late final TextEditingController _muscleGroupController;
+  late final TextEditingController _equipmentController;
+  late final TextEditingController _instructionsController;
 
-  bool _selectedVisibility = ExerciseConstants.privateVisibility;
-  String _selectedDifficulty = "";
-  String _selectedType = "";
+  late String _selectedDifficulty;
+  late String _selectedType;
 
   @override
   void initState() {
-    _setCurrentUserAdmin();
+    _nameController =
+        TextEditingController(text: widget.exerciseInitState.name);
+    _muscleGroupController =
+        TextEditingController(text: widget.exerciseInitState.muscleGroups);
+    _equipmentController =
+        TextEditingController(text: widget.exerciseInitState.equipment);
+    _instructionsController =
+        TextEditingController(text: widget.exerciseInitState.instructions);
+
+    _selectedDifficulty = widget.exerciseInitState.difficulty;
+    _selectedType = widget.exerciseInitState.type;
+
     super.initState();
   }
 
-  Future<void> _setCurrentUserAdmin() async {
-    final currUserRole = await _tokenService.getCurrUserRole();
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _muscleGroupController.dispose();
+    _equipmentController.dispose();
+    _instructionsController.dispose();
 
-    setState(() {
-      _isCurrUserAdmin = RoleConstants.adminRoles.contains(currUserRole);
-    });
+    super.dispose();
   }
 
   @override
@@ -69,19 +81,14 @@ class _ExerciseCreateFormState extends State<ExerciseCreateForm> {
                 setState(() => _nameController.text = value),
             padding: widget.formFieldPadding,
           ),
-          if (_isCurrUserAdmin)
-            ExerciseVisibilityFormField(
-              defaultVisibility: _selectedVisibility,
-              onVisibilityChanged: (bool? visibility) =>
-                  setState(() => _selectedVisibility = visibility!),
-              padding: widget.formFieldPadding,
-            ),
           ExerciseDifficultyFormField(
+            defaultDifficulty: _selectedDifficulty,
             onDifficultyChanged: (String? difficulty) =>
                 setState(() => _selectedDifficulty = difficulty!),
             padding: widget.formFieldPadding,
           ),
           ExerciseTypeFormField(
+            defaultType: _selectedType,
             onTypeChanged: (String? type) =>
                 setState(() => _selectedType = type!),
             padding: widget.formFieldPadding,
@@ -116,49 +123,19 @@ class _ExerciseCreateFormState extends State<ExerciseCreateForm> {
                 setState(() => _instructionsController.text = value!),
             padding: widget.formFieldPadding,
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                  ),
-                  child: const Text(
-                    "Exit",
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 25),
-              Expanded(
-                child: ExerciseCreateButton(
-                  formKey: _formKey,
-                  nameController: _nameController,
-                  muscleGroupController: _muscleGroupController,
-                  equipmentController: _equipmentController,
-                  instructionsController: _instructionsController,
-                  selectedVisibility: _selectedVisibility,
-                  selectedDifficulty: _selectedDifficulty,
-                  selectedType: _selectedType,
-                ),
-              ),
-            ],
+          ExerciseSaveChangesButton(
+            formKey: _formKey,
+            exerciseId: widget.exerciseInitState.id,
+            nameController: _nameController,
+            muscleGroupController: _muscleGroupController,
+            equipmentController: _equipmentController,
+            instructionsController: _instructionsController,
+            selectedDifficulty: _selectedDifficulty,
+            selectedType: _selectedType,
+            onExerciseUpdated: widget.onExerciseUpdated,
           ),
         ],
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _nameController.dispose();
-    _muscleGroupController.dispose();
-    _equipmentController.dispose();
-    _instructionsController.dispose();
-    super.dispose();
   }
 }
