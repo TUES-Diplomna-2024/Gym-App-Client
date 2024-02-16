@@ -82,8 +82,10 @@ class _ProfilePageState extends State<ProfilePage> {
                               context: context,
                               userStartState: _userProfile,
                               onProfileUpdated: (updateModel) {
-                                setState(() =>
-                                    _userProfile.updateProfile(updateModel));
+                                if (mounted) {
+                                  setState(() =>
+                                      _userProfile.updateProfile(updateModel));
+                                }
                               },
                             ),
                           ),

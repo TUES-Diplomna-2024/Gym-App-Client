@@ -71,16 +71,21 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
               selectedGender: _selectedGender,
               selectedHeight: _selectedHeight,
               selectedWeight: _selectedWeight,
-              onUsernameChanged: (String value) =>
-                  setState(() => _usernameController.text = value),
-              onBirthDateChanged: (String value) =>
-                  setState(() => _birthDateController.text = value),
-              onGenderChanged: (String? value) =>
-                  setState(() => _selectedGender = value!),
-              onHeightChanged: (double value) =>
-                  setState(() => _selectedHeight = value),
-              onWeightChanged: (double value) =>
-                  setState(() => _selectedWeight = value),
+              onUsernameChanged: (String value) {
+                if (mounted) setState(() => _usernameController.text = value);
+              },
+              onBirthDateChanged: (String value) {
+                if (mounted) setState(() => _birthDateController.text = value);
+              },
+              onGenderChanged: (String? value) {
+                if (mounted) setState(() => _selectedGender = value!);
+              },
+              onHeightChanged: (double value) {
+                if (mounted) setState(() => _selectedHeight = value);
+              },
+              onWeightChanged: (double value) {
+                if (mounted) setState(() => _selectedWeight = value);
+              },
               onProfileUpdated: widget.onProfileUpdated,
               formFieldPadding: const EdgeInsets.only(bottom: 25),
             ),

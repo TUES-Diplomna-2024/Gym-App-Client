@@ -41,7 +41,8 @@ class ExerciseSaveChangesButton extends StatelessWidget {
         muscleGroups: muscleGroupController.text,
         type: selectedType,
         difficulty: selectedDifficulty,
-        equipment: equipmentController.text,
+        equipment:
+            equipmentController.text.isEmpty ? null : equipmentController.text,
       );
 
       var result =

@@ -62,8 +62,14 @@ class _WorkoutViewPageState extends State<WorkoutViewPage> {
         itemBuilder: (_, int index) {
           return GestureDetector(
             child: ExercisePreview(exercise: _workoutView.exercises![index]),
-            onTap: () => Navigator.of(context).pushNamed("/exercise",
-                arguments: _workoutView.exercises![index].id),
+            onTap: () {
+              if (mounted) {
+                Navigator.of(context).pushNamed(
+                  "/exercise",
+                  arguments: _workoutView.exercises![index].id,
+                );
+              }
+            },
           );
         });
   }
@@ -79,7 +85,9 @@ class _WorkoutViewPageState extends State<WorkoutViewPage> {
         centerTitle: true,
         automaticallyImplyLeading: false,
         leading: IconButton(
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () {
+            if (mounted) Navigator.of(context).pop();
+          },
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
         ),
       ),

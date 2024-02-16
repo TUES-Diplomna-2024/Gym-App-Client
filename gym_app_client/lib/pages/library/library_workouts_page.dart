@@ -34,7 +34,7 @@ class _LibraryWorkoutsPageState extends State<LibraryWorkoutsPage> {
       }
     } else {
       _userWorkouts = serviceResult.data!;
-      setState(() => _isLoading = false);
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -59,8 +59,14 @@ class _LibraryWorkoutsPageState extends State<LibraryWorkoutsPage> {
           itemBuilder: (_, int index) {
             return GestureDetector(
               child: WorkoutPreview(workout: _userWorkouts[index]),
-              onTap: () => Navigator.of(context)
-                  .pushNamed("/workout", arguments: _userWorkouts[index].id),
+              onTap: () {
+                if (mounted) {
+                  Navigator.of(context).pushNamed(
+                    "/workout",
+                    arguments: _userWorkouts[index].id,
+                  );
+                }
+              },
             );
           }),
     );

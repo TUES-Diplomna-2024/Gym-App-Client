@@ -77,20 +77,23 @@ class _ExerciseEditFormState extends State<ExerciseEditForm> {
             prefixIcon: Icons.title_outlined,
             minLength: ExerciseConstants.minNameLength,
             maxLength: ExerciseConstants.maxNameLength,
-            onChanged: (String value) =>
-                setState(() => _nameController.text = value),
+            onChanged: (String value) {
+              if (mounted) setState(() => _nameController.text = value);
+            },
             padding: widget.formFieldPadding,
           ),
           ExerciseDifficultyFormField(
             defaultDifficulty: _selectedDifficulty,
-            onDifficultyChanged: (String? difficulty) =>
-                setState(() => _selectedDifficulty = difficulty!),
+            onDifficultyChanged: (String? difficulty) {
+              if (mounted) setState(() => _selectedDifficulty = difficulty!);
+            },
             padding: widget.formFieldPadding,
           ),
           ExerciseTypeFormField(
             defaultType: _selectedType,
-            onTypeChanged: (String? type) =>
-                setState(() => _selectedType = type!),
+            onTypeChanged: (String? type) {
+              if (mounted) setState(() => _selectedType = type!);
+            },
             padding: widget.formFieldPadding,
           ),
           MultilineTextFormField(
@@ -98,8 +101,9 @@ class _ExerciseEditFormState extends State<ExerciseEditForm> {
             label: "Muscle Groups",
             hintText: "Enter activated muscle groups",
             prefixIcon: Icons.directions_run,
-            onChanged: (String? value) =>
-                setState(() => _muscleGroupController.text = value!),
+            onChanged: (String? value) {
+              if (mounted) setState(() => _muscleGroupController.text = value!);
+            },
             padding: widget.formFieldPadding,
           ),
           MultilineTextFormField(
@@ -108,8 +112,9 @@ class _ExerciseEditFormState extends State<ExerciseEditForm> {
             hintText: "What exercise equipment is needed?",
             prefixIcon: Icons.fitness_center_outlined,
             isOptional: true,
-            onChanged: (String? value) =>
-                setState(() => _equipmentController.text = value!),
+            onChanged: (String? value) {
+              if (mounted) setState(() => _equipmentController.text = value!);
+            },
             padding: widget.formFieldPadding,
           ),
           MultilineTextFormField(
@@ -119,8 +124,11 @@ class _ExerciseEditFormState extends State<ExerciseEditForm> {
             prefixIcon: Icons.sports,
             minLength: ExerciseConstants.minInstructionsLength,
             maxLength: ExerciseConstants.maxInstructionsLength,
-            onChanged: (String? value) =>
-                setState(() => _instructionsController.text = value!),
+            onChanged: (String? value) {
+              if (mounted) {
+                setState(() => _instructionsController.text = value!);
+              }
+            },
             padding: widget.formFieldPadding,
           ),
           ExerciseSaveChangesButton(

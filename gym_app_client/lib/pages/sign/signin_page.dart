@@ -35,43 +35,21 @@ class _SignInPageState extends State<SignInPage> {
                 formKey: _formKey,
                 emailController: _emailController,
                 passwordController: _passwordController,
-                onEmailChanged: (String value) =>
-                    setState(() => _emailController.text = value),
-                onPasswordChanged: (String value) =>
-                    setState(() => _passwordController.text = value),
+                onEmailChanged: (String value) {
+                  if (mounted) setState(() => _emailController.text = value);
+                },
+                onPasswordChanged: (String value) {
+                  if (mounted) setState(() => _passwordController.text = value);
+                },
                 isPasswordVisible: _isPasswordVisible,
-                onPasswordVisibilityChanged: () =>
-                    setState(() => _isPasswordVisible = !_isPasswordVisible),
+                onPasswordVisibilityChanged: () {
+                  if (mounted) {
+                    setState(() => _isPasswordVisible = !_isPasswordVisible);
+                  }
+                },
                 formFieldPadding:
                     const EdgeInsets.only(left: 40, right: 40, bottom: 25),
                 formButtonPadding: const EdgeInsets.only(left: 40, right: 40),
-              ),
-              const SizedBox(height: 30),
-              // Sign up page reference
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text(
-                    "Don't have an account?",
-                    style:
-                        TextStyle(fontSize: 16, fontWeight: FontWeight.normal),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      _emailController.clear();
-                      _passwordController.clear();
-
-                      ScaffoldMessenger.of(context).clearSnackBars();
-
-                      Navigator.of(context).pushNamed("/signup");
-                    },
-                    child: const Text(
-                      "Sign up",
-                      style: TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.normal),
-                    ),
-                  ),
-                ],
               ),
             ],
           ),

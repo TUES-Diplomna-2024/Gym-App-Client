@@ -60,8 +60,14 @@ class _LibraryCustomExercisesPageState
           itemBuilder: (_, int index) {
             return GestureDetector(
               child: ExercisePreview(exercise: _userCustomExercises[index]),
-              onTap: () => Navigator.of(context).pushNamed("/exercise",
-                  arguments: _userCustomExercises[index].id),
+              onTap: () {
+                if (mounted) {
+                  Navigator.of(context).pushNamed(
+                    "/exercise",
+                    arguments: _userCustomExercises[index].id,
+                  );
+                }
+              },
             );
           }),
     );
@@ -72,7 +78,9 @@ class _LibraryCustomExercisesPageState
     return Scaffold(
       body: _getBody(),
       floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.of(context).pushNamed("/exercise-create"),
+        onPressed: () {
+          if (mounted) Navigator.of(context).pushNamed("/exercise-create");
+        },
         child: const Icon(Icons.add),
       ),
     );

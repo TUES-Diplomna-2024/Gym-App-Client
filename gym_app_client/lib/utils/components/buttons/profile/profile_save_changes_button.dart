@@ -57,7 +57,7 @@ class ProfileSaveChangesButton extends StatelessWidget {
         bool isDone = result.$1;
         UserUpdateModel? updateModel = result.$2;
 
-        if (isDone) {
+        if (isDone && context.mounted) {
           onProfileUpdated(updateModel!);
           Navigator.of(context).pop();
         }

@@ -9,8 +9,14 @@ class ProfileEditButton extends ElevatedButton {
     required UserProfileModel userStartState,
     required void Function(UserUpdateModel) onProfileUpdated,
   }) : super(
-          onPressed: () => Navigator.of(context).pushNamed("/profile-edit",
-              arguments: [userStartState, onProfileUpdated]),
+          onPressed: () {
+            if (context.mounted) {
+              Navigator.of(context).pushNamed(
+                "/profile-edit",
+                arguments: [userStartState, onProfileUpdated],
+              );
+            }
+          },
           style:
               ElevatedButton.styleFrom(backgroundColor: Colors.amber.shade400),
           child: const Text("Edit"),

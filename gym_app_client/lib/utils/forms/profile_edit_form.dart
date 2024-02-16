@@ -66,7 +66,9 @@ class ProfileEditForm extends Form {
                 children: [
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () => Navigator.of(context).pop(),
+                      onPressed: () {
+                        if (context.mounted) Navigator.of(context).pop();
+                      },
                       style: ElevatedButton.styleFrom(
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(5),

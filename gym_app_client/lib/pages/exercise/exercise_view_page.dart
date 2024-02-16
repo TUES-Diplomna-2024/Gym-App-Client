@@ -71,7 +71,9 @@ class _ExerciseViewPageState extends State<ExerciseViewPage> {
         centerTitle: true,
         automaticallyImplyLeading: false,
         leading: IconButton(
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () {
+            if (mounted) Navigator.of(context).pop();
+          },
           icon: const Icon(Icons.arrow_back_ios_new_rounded),
         ),
       ),
@@ -98,8 +100,10 @@ class _ExerciseViewPageState extends State<ExerciseViewPage> {
                             areEditAndDeleteAllowed: _areEditAndDeleteAllowed,
                             exerciseCurrState: _exerciseView,
                             onExerciseUpdated: (updateModel) {
-                              setState(
-                                  () => _exerciseView.updateView(updateModel));
+                              if (mounted) {
+                                setState(() =>
+                                    _exerciseView.updateView(updateModel));
+                              }
                             },
                           ),
                           Icon(

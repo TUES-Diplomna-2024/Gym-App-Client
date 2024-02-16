@@ -17,7 +17,9 @@ class ExerciseAddInWorkoutDoneButton extends StatelessWidget {
     if (selectedWorkoutIds.isEmpty) return;
 
     var result = await _exerciseService.addExerciseInWorkouts(
-        exerciseId, selectedWorkoutIds);
+      exerciseId,
+      selectedWorkoutIds,
+    );
 
     if (context.mounted) {
       final popup = InformativePopUp(info: result.popUpInfo!);
@@ -34,7 +36,9 @@ class ExerciseAddInWorkoutDoneButton extends StatelessWidget {
       child: FloatingActionButton.extended(
         onPressed: () {
           _handleExerciseAddedInWorkouts(context).then(
-            (_) => Navigator.of(context).pop(),
+            (_) {
+              if (context.mounted) Navigator.of(context).pop();
+            },
           );
         },
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),

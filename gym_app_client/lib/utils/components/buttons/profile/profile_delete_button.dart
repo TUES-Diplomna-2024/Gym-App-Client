@@ -7,10 +7,12 @@ class ProfileDeleteButton extends ElevatedButton {
     required BuildContext context,
   }) : super(
           onPressed: () {
-            showDialog(
-              context: context,
-              builder: (_) => const ProfileDeleteDialog(),
-            );
+            if (context.mounted) {
+              showDialog(
+                context: context,
+                builder: (_) => const ProfileDeleteDialog(),
+              );
+            }
           },
           style: ElevatedButton.styleFrom(backgroundColor: Colors.red.shade400),
           child: const Text("Delete"),

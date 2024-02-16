@@ -26,7 +26,7 @@ class _RootPageState extends State<RootPage> {
       body: PageView(
         controller: _pageController,
         onPageChanged: (int index) {
-          setState(() => _currIndex = index);
+          if (mounted) setState(() => _currIndex = index);
         },
         children: _pages,
       ),

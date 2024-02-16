@@ -56,23 +56,29 @@ class _ProfileDeleteDialogState extends State<ProfileDeleteDialog> {
           PasswordFormField(
             fieldKey: _fieldKey,
             passwordController: _passwordController,
-            onPasswordChanged: (String value) =>
-                setState(() => _passwordController.text = value),
+            onPasswordChanged: (String value) {
+              if (mounted) setState(() => _passwordController.text = value);
+            },
             isPasswordVisible: _isPasswordVisible,
-            onPasswordVisibilityChanged: () =>
-                setState(() => _isPasswordVisible = !_isPasswordVisible),
+            onPasswordVisibilityChanged: () {
+              if (mounted) {
+                setState(() => _isPasswordVisible = !_isPasswordVisible);
+              }
+            },
             padding: const EdgeInsets.only(left: 10, right: 10),
           ),
         ],
       ),
       actions: [
         TextButton(
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () {
+            if (mounted) Navigator.of(context).pop();
+          },
           child: const Text("Cancel"),
         ),
         TextButton(
           onPressed: () => _handleProfileDeletion().then((bool isDone) {
-            if (isDone) Navigator.of(context).pop();
+            if (isDone && mounted) Navigator.of(context).pop();
           }),
           child: Text(
             "Delete",

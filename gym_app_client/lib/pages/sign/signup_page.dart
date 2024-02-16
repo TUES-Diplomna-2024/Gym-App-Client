@@ -55,6 +55,8 @@ class _SignUpPageState extends State<SignUpPage> {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
+                      if (!mounted) return;
+
                       if (_accountInfoFormKey.currentState!.validate()) {
                         setState(() {
                           _currStep += 1;
@@ -86,10 +88,12 @@ class _SignUpPageState extends State<SignUpPage> {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      setState(() {
-                        _currStep -= 1;
-                        _accountInfoCurrState = StepState.editing;
-                      });
+                      if (mounted) {
+                        setState(() {
+                          _currStep -= 1;
+                          _accountInfoCurrState = StepState.editing;
+                        });
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(
@@ -114,10 +118,18 @@ class _SignUpPageState extends State<SignUpPage> {
                     selectedGender: _selectedGender,
                     selectedHeight: _selectedHeight,
                     selectedWeight: _selectedWeight,
-                    onSuccessfulForm: () => setState(
-                        () => _biometricInfoCurrState = StepState.complete),
-                    onFailedForm: () => setState(
-                        () => _biometricInfoCurrState = StepState.error),
+                    onSuccessfulForm: () {
+                      if (mounted) {
+                        setState(
+                            () => _biometricInfoCurrState = StepState.complete);
+                      }
+                    },
+                    onFailedForm: () {
+                      if (mounted) {
+                        setState(
+                            () => _biometricInfoCurrState = StepState.error);
+                      }
+                    },
                   ),
                 ),
               ];
@@ -128,29 +140,6 @@ class _SignUpPageState extends State<SignUpPage> {
               child: Column(
                 children: [
                   Row(children: rowChildren),
-                  const SizedBox(height: 30),
-                  // Sign up page reference
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        "Already have an account?",
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.normal),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          ScaffoldMessenger.of(context).clearSnackBars();
-                          Navigator.of(context).pop();
-                        },
-                        child: const Text(
-                          "Sign in",
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.normal),
-                        ),
-                      ),
-                    ],
-                  ),
                 ],
               ),
             );
@@ -174,18 +163,28 @@ class _SignUpPageState extends State<SignUpPage> {
             usernameController: _usernameController,
             emailController: _emailController,
             passwordController: _passwordController,
-            onUsernameChanged: (String value) =>
-                setState(() => _usernameController.text = value),
-            onEmailChanged: (String value) =>
-                setState(() => _emailController.text = value),
-            onPasswordChanged: (String value) =>
-                setState(() => _passwordController.text = value),
+            onUsernameChanged: (String value) {
+              if (mounted) setState(() => _usernameController.text = value);
+            },
+            onEmailChanged: (String value) {
+              if (mounted) setState(() => _emailController.text = value);
+            },
+            onPasswordChanged: (String value) {
+              if (mounted) setState(() => _passwordController.text = value);
+            },
             isPasswordVisible: _isPasswordVisible,
-            onPasswordVisibilityChanged: () =>
-                setState(() => _isPasswordVisible = !_isPasswordVisible),
+            onPasswordVisibilityChanged: () {
+              if (mounted) {
+                setState(() => _isPasswordVisible = !_isPasswordVisible);
+              }
+            },
             isConfirmPasswordVisible: _isConfirmPasswordVisible,
-            onConfirmPasswordVisibilityChanged: () => setState(
-                () => _isConfirmPasswordVisible = !_isConfirmPasswordVisible),
+            onConfirmPasswordVisibilityChanged: () {
+              if (mounted) {
+                setState(() =>
+                    _isConfirmPasswordVisible = !_isConfirmPasswordVisible);
+              }
+            },
             formFieldPadding:
                 const EdgeInsets.only(left: 15, right: 15, bottom: 25),
           ),
@@ -200,14 +199,18 @@ class _SignUpPageState extends State<SignUpPage> {
             birthDateController: _birthDateController,
             selectedHeight: _selectedHeight,
             selectedWeight: _selectedWeight,
-            onBirthDateChanged: (String value) =>
-                setState(() => _birthDateController.text = value),
-            onGenderChanged: (String? value) =>
-                setState(() => _selectedGender = value!),
-            onHeightChanged: (double value) =>
-                setState(() => _selectedHeight = value),
-            onWeightChanged: (double value) =>
-                setState(() => _selectedWeight = value),
+            onBirthDateChanged: (String value) {
+              if (mounted) setState(() => _birthDateController.text = value);
+            },
+            onGenderChanged: (String? value) {
+              if (mounted) setState(() => _selectedGender = value!);
+            },
+            onHeightChanged: (double value) {
+              if (mounted) setState(() => _selectedHeight = value);
+            },
+            onWeightChanged: (double value) {
+              if (mounted) setState(() => _selectedWeight = value);
+            },
             formFieldPadding:
                 const EdgeInsets.only(left: 15, right: 15, bottom: 25),
           ),

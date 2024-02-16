@@ -40,15 +40,19 @@ class _SelectableWorkoutPreviewState extends State<SelectableWorkoutPreview> {
           ),
         ],
       ),
-      onTap: () => setState(() {
-        isSelected = !isSelected;
+      onTap: () {
+        if (!mounted) return;
 
-        if (isSelected) {
-          widget.onSelect(widget.workout.id);
-        } else {
-          widget.onUnselect(widget.workout.id);
-        }
-      }),
+        setState(() {
+          isSelected = !isSelected;
+
+          if (isSelected) {
+            widget.onSelect(widget.workout.id);
+          } else {
+            widget.onUnselect(widget.workout.id);
+          }
+        });
+      },
     );
   }
 }

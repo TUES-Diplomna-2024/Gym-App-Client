@@ -62,7 +62,7 @@ class ExerciseCreateButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: () {
         _handleExerciseCreate(context).then((bool isDone) {
-          if (isDone) Navigator.of(context).pop();
+          if (isDone && context.mounted) Navigator.of(context).pop();
         });
       },
       style: ElevatedButton.styleFrom(backgroundColor: Colors.lightGreen),
