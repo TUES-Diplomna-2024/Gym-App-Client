@@ -61,38 +61,14 @@ class ProfileEditForm extends Form {
                 onWeightChanged: onWeightChanged,
                 padding: formFieldPadding,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        if (context.mounted) Navigator.of(context).pop();
-                      },
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5),
-                        ),
-                      ),
-                      child: const Text(
-                        "Exit",
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 25),
-                  Expanded(
-                    child: ProfileSaveChangesButton(
-                      formKey: formKey,
-                      usernameController: usernameController,
-                      birthDateController: birthDateController,
-                      gender: selectedGender,
-                      height: selectedHeight,
-                      weight: selectedWeight,
-                      onProfileUpdated: onProfileUpdated,
-                    ),
-                  ),
-                ],
+              ProfileSaveChangesButton(
+                formKey: formKey,
+                usernameController: usernameController,
+                birthDateController: birthDateController,
+                gender: selectedGender,
+                height: selectedHeight,
+                weight: selectedWeight,
+                onProfileUpdated: onProfileUpdated,
               ),
             ],
           ),

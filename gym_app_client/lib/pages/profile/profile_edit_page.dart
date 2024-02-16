@@ -58,6 +58,12 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
         ),
         centerTitle: true,
         automaticallyImplyLeading: false,
+        leading: IconButton(
+          onPressed: () {
+            if (mounted) Navigator.of(context).pop();
+          },
+          icon: const Icon(Icons.arrow_back_ios_new_rounded),
+        ),
       ),
       body: Center(
         child: SingleChildScrollView(

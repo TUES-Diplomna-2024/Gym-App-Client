@@ -127,39 +127,15 @@ class _ExerciseCreateFormState extends State<ExerciseCreateForm> {
             },
             padding: widget.formFieldPadding,
           ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: () {
-                    if (mounted) Navigator.of(context).pop();
-                  },
-                  style: ElevatedButton.styleFrom(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                  ),
-                  child: const Text(
-                    "Exit",
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 25),
-              Expanded(
-                child: ExerciseCreateButton(
-                  formKey: _formKey,
-                  nameController: _nameController,
-                  muscleGroupController: _muscleGroupController,
-                  equipmentController: _equipmentController,
-                  instructionsController: _instructionsController,
-                  selectedVisibility: _selectedVisibility,
-                  selectedDifficulty: _selectedDifficulty,
-                  selectedType: _selectedType,
-                ),
-              ),
-            ],
+          ExerciseCreateButton(
+            formKey: _formKey,
+            nameController: _nameController,
+            muscleGroupController: _muscleGroupController,
+            equipmentController: _equipmentController,
+            instructionsController: _instructionsController,
+            selectedVisibility: _selectedVisibility,
+            selectedDifficulty: _selectedDifficulty,
+            selectedType: _selectedType,
           ),
         ],
       ),
