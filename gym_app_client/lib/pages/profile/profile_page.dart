@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/models/user/user_profile_model.dart';
-import 'package:gym_app_client/db_api/models/user/user_update_model.dart';
 import 'package:gym_app_client/db_api/services/user_service.dart';
 import 'package:gym_app_client/utils/components/buttons/profile/profile_delete_button.dart';
 import 'package:gym_app_client/utils/components/buttons/profile/profile_edit_button.dart';

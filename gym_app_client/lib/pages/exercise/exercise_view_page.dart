@@ -84,7 +84,6 @@ class _ExerciseViewPageState extends State<ExerciseViewPage> {
                           ),
                           const SizedBox(width: 16),
                           ExerciseActionsPopupMenuButton(
-                            context: context,
                             areEditAndDeleteAllowed: _areEditAndDeleteAllowed,
                             exerciseCurrState: _exerciseView,
                             onExerciseUpdated: (updateModel) {

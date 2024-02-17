@@ -54,7 +54,7 @@ class BaseService {
         ? "$_dbAPIBaseUrl/$_baseEndpoint/$subEndpoint"
         : "$_dbAPIBaseUrl/$_baseEndpoint";
 
-    return Uri.parse(uri);
+    return Uri.parse(Uri.encodeFull(uri));
   }
 
   Future<Map<String, String>> getHeaders({

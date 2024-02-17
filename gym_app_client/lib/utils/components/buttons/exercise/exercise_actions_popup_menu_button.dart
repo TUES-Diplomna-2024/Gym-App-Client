@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/models/exercise/exercise_update_model.dart';
 import 'package:gym_app_client/db_api/models/exercise/exercise_view_model.dart';
+import 'package:gym_app_client/utils/components/dialogs/exercise/exercise_delete_dialog.dart';
 
 class ExerciseActionsPopupMenuButton extends PopupMenuButton {
   ExerciseActionsPopupMenuButton({
     super.key,
-    required BuildContext context,
     required bool areEditAndDeleteAllowed,
     required ExerciseViewModel exerciseCurrState,
     required void Function(ExerciseUpdateModel) onExerciseUpdated,
@@ -50,9 +50,12 @@ class ExerciseActionsPopupMenuButton extends PopupMenuButton {
                 PopupMenuItem(
                   onTap: () {
                     if (context.mounted) {
-                      Navigator.of(context).pushNamed(
-                        "/exercise-add-in-workouts",
-                        arguments: exerciseCurrState.id,
+                      showDialog(
+                        context: context,
+                        builder: (_) => ExerciseDeleteDialog(
+                          context: context,
+                          exerciseId: exerciseCurrState.id,
+                        ),
                       );
                     }
                   },

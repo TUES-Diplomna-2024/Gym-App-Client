@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:gym_app_client/db_api/models/exercise/exercise_preview_model.dart';
 import 'package:gym_app_client/db_api/models/exercise/exercise_update_model.dart';
 import 'package:gym_app_client/db_api/models/exercise/exercise_view_model.dart';
 import 'package:http/http.dart';
@@ -207,6 +208,91 @@ class ExerciseService extends BaseService {
       }
 
       throw Exception();
+    } on SocketException {
+      return ServiceResult(
+          popUpInfo: fail(
+              "Network error! Please check your internet connection and try again!"));
+    } on Exception {
+      return ServiceResult(
+          popUpInfo: fail("Something went wrong! Try again later!"));
+    }
+  }
+
+  Future<ServiceResult> deleteExerciseById(String exerciseId) async {
+    try {
+      final response = await delete(
+        getUri(subEndpoint: exerciseId),
+        headers: await getHeaders(),
+      );
+
+      final statusCode = response.statusCode;
+
+      if (statusCode == HttpStatus.unauthorized) {
+        var error = await refreshAccessToken();
+
+        if (error != null) {
+          return ServiceResult(
+              popUpInfo: error.popUpInfo,
+              shouldSignOutUser: error.shouldSignOutUser);
+        }
+
+        return await deleteExerciseById(exerciseId);
+      }
+
+      await tokenService
+          .saveRefreshTokenInStorage(response.headers["x-refresh-token"]!);
+
+      if (statusCode == HttpStatus.ok) {
+        return ServiceResult(popUpInfo: success("Successfully deleted!"));
+      } else if (statusCode == HttpStatus.notFound) {
+        return ServiceResult(popUpInfo: fail("Exercise could not be found!"));
+      } else if (statusCode == HttpStatus.forbidden) {
+        return ServiceResult(popUpInfo: fail(response.body));
+      }
+
+      throw Exception();
+    } on SocketException {
+      return ServiceResult(
+          popUpInfo: fail(
+              "Network error! Please check your internet connection and try again!"));
+    } on Exception {
+      return ServiceResult(
+          popUpInfo: fail("Something went wrong! Try again later!"));
+    }
+  }
+
+  Future<ServiceResult> getExerciseSearchResults(String exerciseName) async {
+    try {
+      final response = await get(
+        getUri(subEndpoint: "search?name=$exerciseName"),
+        headers: await getHeaders(),
+      );
+
+      final statusCode = response.statusCode;
+
+      if (statusCode == HttpStatus.unauthorized) {
+        var error = await refreshAccessToken();
+
+        if (error != null) {
+          return ServiceResult(
+              popUpInfo: error.popUpInfo,
+              shouldSignOutUser: error.shouldSignOutUser);
+        }
+
+        return await getExerciseSearchResults(exerciseName);
+      }
+
+      await tokenService
+          .saveRefreshTokenInStorage(response.headers["x-refresh-token"]!);
+
+      if (statusCode == HttpStatus.ok) {
+        final exercisePreviews =
+            ExercisePreviewModel.getExercisePreviewsFromResponse(response);
+
+        return ServiceResult(data: exercisePreviews);
+      }
+
+      throw Exception(statusCode);
     } on SocketException {
       return ServiceResult(
           popUpInfo: fail(

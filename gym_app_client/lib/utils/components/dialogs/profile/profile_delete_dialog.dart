@@ -48,7 +48,7 @@ class _ProfileDeleteDialogState extends State<ProfileDeleteDialog> {
           Padding(
             padding: const EdgeInsets.only(left: 10, right: 10),
             child: Text(
-              "Are you absolutely sure you want to delete your account? This action is permanent and cannot be undone. To proceed with deletion, please provide your password.",
+              "Are you absolutely sure you want to delete your account? This action is permanent and cannot be undone! To proceed with deletion, please provide your password!",
               style: TextStyle(color: Colors.red.shade500),
             ),
           ),

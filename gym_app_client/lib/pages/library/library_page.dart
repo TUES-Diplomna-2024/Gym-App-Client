@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gym_app_client/utils/components/common/back_leading_app_bar.dart';
 import 'package:gym_app_client/utils/components/common/custom_app_bar.dart';
 import 'library_custom_exercises_page.dart';
 import 'library_workouts_page.dart';

@@ -49,9 +49,15 @@ class _WorkoutViewPageState extends State<WorkoutViewPage> {
   Widget _getExercisePreviews() {
     if (_workoutView.exerciseCount == 0) {
       return const Center(
-        child: Text(
-          "You don't have any exercises added in this workout!",
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+        child: Column(
+          children: [
+            SizedBox(height: 180),
+            Text(
+              "You don't have any exercises added in this workout!",
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ),
       );
     }
