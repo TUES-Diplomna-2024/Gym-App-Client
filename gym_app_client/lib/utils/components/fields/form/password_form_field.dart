@@ -8,7 +8,6 @@ class PasswordFormField extends PaddedTextFormField {
     super.key,
     GlobalKey<FormFieldState<String>>? fieldKey,
     required TextEditingController passwordController,
-    required void Function(String) onPasswordChanged,
     required bool isPasswordVisible,
     required void Function() onPasswordVisibilityChanged,
     required EdgeInsets padding,
@@ -43,7 +42,6 @@ class PasswordFormField extends PaddedTextFormField {
               return "Password must include at least one lowercase letter, \none uppercase letter, one digit, and one special character.";
             }
 
-            onPasswordChanged(value);
             return null;
           },
         );

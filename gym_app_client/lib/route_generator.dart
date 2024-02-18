@@ -11,6 +11,7 @@ import 'package:gym_app_client/pages/profile/profile_edit_page.dart';
 import 'package:gym_app_client/pages/sign/signin_page.dart';
 import 'package:gym_app_client/pages/sign/signup_page.dart';
 import 'package:gym_app_client/pages/root_page.dart';
+import 'package:gym_app_client/pages/sign/welcome_page.dart';
 import 'package:gym_app_client/pages/workout/workout_view_page.dart';
 
 class RouteGenerator {
@@ -21,10 +22,12 @@ class RouteGenerator {
     switch (settings.name) {
       case "/":
         return MaterialPageRoute(builder: (_) => const RootPage());
+      case "/welcome":
+        return MaterialPageRoute(builder: (_) => const WelcomePage());
       case "/signin":
-        return MaterialPageRoute(builder: (_) => const SignInPage());
+        return MaterialPageRoute(builder: (_) => SignInPage());
       case "/signup":
-        return MaterialPageRoute(builder: (_) => const SignUpPage());
+        return MaterialPageRoute(builder: (_) => SignUpPage());
       case "/profile-edit":
         try {
           List<dynamic> pageArgs = args as List;
@@ -46,7 +49,7 @@ class RouteGenerator {
         return MaterialPageRoute(
             builder: (_) => ExerciseViewPage(exerciseId: exerciseId));
       case "/exercise-create":
-        return MaterialPageRoute(builder: (_) => const ExerciseCreatePage());
+        return MaterialPageRoute(builder: (_) => ExerciseCreatePage());
       case "/exercise-edit":
         try {
           List<dynamic> pageArgs = args as List;

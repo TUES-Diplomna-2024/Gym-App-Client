@@ -56,9 +56,6 @@ class _ProfileDeleteDialogState extends State<ProfileDeleteDialog> {
           PasswordFormField(
             fieldKey: _fieldKey,
             passwordController: _passwordController,
-            onPasswordChanged: (String value) {
-              if (mounted) setState(() => _passwordController.text = value);
-            },
             isPasswordVisible: _isPasswordVisible,
             onPasswordVisibilityChanged: () {
               if (mounted) {

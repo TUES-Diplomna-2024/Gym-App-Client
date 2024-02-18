@@ -7,7 +7,6 @@ class BirthDateFormField extends PaddedTextFormField {
     super.key,
     required BuildContext context,
     required TextEditingController birthDateController,
-    required void Function(String) onBirthDateChanged,
     required EdgeInsets padding,
   }) : super(
           controller: birthDateController,
@@ -31,7 +30,7 @@ class BirthDateFormField extends PaddedTextFormField {
           onTap: () async {
             String? birthDate = await _selectDate(context);
 
-            if (birthDate != null) onBirthDateChanged(birthDate);
+            if (birthDate != null) birthDateController.text = birthDate;
           },
         );
 

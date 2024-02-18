@@ -11,7 +11,6 @@ class MultilineTextFormField extends PaddedTextFormField {
     int? minLength,
     int? maxLength,
     bool isOptional = false,
-    required void Function(String) onChanged,
     required EdgeInsets padding,
   }) : super(
           padding: padding,
@@ -36,7 +35,6 @@ class MultilineTextFormField extends PaddedTextFormField {
               return "$label must be up to $maxLength characters long";
             }
 
-            onChanged(value);
             return null;
           },
         );

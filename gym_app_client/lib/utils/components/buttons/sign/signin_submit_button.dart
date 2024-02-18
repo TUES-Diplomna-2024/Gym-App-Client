@@ -8,52 +8,42 @@ class SignInSubmitButton extends StatelessWidget {
   final GlobalKey<FormState> formKey;
   final TextEditingController emailController;
   final TextEditingController passwordController;
-  final EdgeInsets padding;
 
   SignInSubmitButton({
     super.key,
     required this.formKey,
     required this.emailController,
     required this.passwordController,
-    required this.padding,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.only(top: 30),
-      width: double.infinity,
-      height: 50,
-      child: Padding(
-        padding: padding,
-        child: ElevatedButton(
-          onPressed: () async {
-            if (formKey.currentState!.validate()) {
-              UserSignInModel userData = UserSignInModel(
-                email: emailController.text,
-                password: passwordController.text,
-              );
+    return ElevatedButton(
+      onPressed: () async {
+        if (formKey.currentState!.validate()) {
+          UserSignInModel userData = UserSignInModel(
+            email: emailController.text,
+            password: passwordController.text,
+          );
 
-              var result = await _userService.signIn(userData);
+          var result = await _userService.signIn(userData);
 
-              if (context.mounted) {
-                final popup = InformativePopUp(info: result);
+          if (context.mounted) {
+            final popup = InformativePopUp(info: result);
 
-                ScaffoldMessenger.of(context).removeCurrentSnackBar();
-                ScaffoldMessenger.of(context).showSnackBar(popup);
-              }
-            }
-          },
-          style: ElevatedButton.styleFrom(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(5),
-            ),
-          ),
-          child: const Text(
-            "Sign in",
-            style: TextStyle(fontSize: 16),
-          ),
+            ScaffoldMessenger.of(context).removeCurrentSnackBar();
+            ScaffoldMessenger.of(context).showSnackBar(popup);
+          }
+        }
+      },
+      style: ElevatedButton.styleFrom(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(5),
         ),
+      ),
+      child: const Text(
+        "Sign In",
+        style: TextStyle(fontSize: 16),
       ),
     );
   }

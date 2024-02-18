@@ -4,16 +4,15 @@ import 'package:gym_app_client/utils/components/fields/form/padded_text_form_fie
 class NameFormField extends PaddedTextFormField {
   NameFormField({
     super.key,
-    required TextEditingController controller,
+    required TextEditingController nameController,
     required String label,
     required String hintText,
     required IconData prefixIcon,
     required int minLength,
     required int maxLength,
-    required void Function(String) onChanged,
     required EdgeInsets padding,
   }) : super(
-          controller: controller,
+          controller: nameController,
           padding: padding,
           decoration: InputDecoration(
             label: Text(label),
@@ -32,7 +31,6 @@ class NameFormField extends PaddedTextFormField {
               return "$label must be between $minLength and $maxLength characters";
             }
 
-            onChanged(value);
             return null;
           },
         );

@@ -6,7 +6,6 @@ class EmailFormField extends PaddedTextFormField {
   EmailFormField({
     super.key,
     required TextEditingController emailController,
-    required void Function(String) onEmailChanged,
     required EdgeInsets padding,
   }) : super(
           controller: emailController,
@@ -27,7 +26,6 @@ class EmailFormField extends PaddedTextFormField {
               return "Invalid email format";
             }
 
-            onEmailChanged(value);
             return null;
           },
         );

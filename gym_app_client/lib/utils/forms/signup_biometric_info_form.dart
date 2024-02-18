@@ -4,54 +4,62 @@ import 'package:gym_app_client/utils/components/fields/form/gender_form_field.da
 import 'package:gym_app_client/utils/components/fields/form/height_form_field.dart';
 import 'package:gym_app_client/utils/components/fields/form/weight_form_field.dart';
 
-class SignUpBiometricInfoForm extends Form {
-  SignUpBiometricInfoForm({
-    required BuildContext context,
-    required GlobalKey<FormState> formKey,
-    required TextEditingController birthDateController,
-    required double selectedHeight,
-    required double selectedWeight,
-    required void Function(String) onBirthDateChanged,
-    required void Function(String?) onGenderChanged,
-    required void Function(double) onHeightChanged,
-    required void Function(double) onWeightChanged,
-    required EdgeInsets formFieldPadding,
-  }) : super(
-          key: formKey,
-          child: Padding(
-            padding: const EdgeInsets.only(top: 35),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                BirthDateFormField(
-                  context: context,
-                  birthDateController: birthDateController,
-                  onBirthDateChanged: onBirthDateChanged,
-                  padding: formFieldPadding,
-                ),
-                GenderFormField(
-                  onGenderChanged: onGenderChanged,
-                  padding: formFieldPadding,
-                ),
-                HeightFormField(
-                  selectedHeight: selectedHeight,
-                  onHeightChanged: onHeightChanged,
-                  padding: EdgeInsets.only(
-                    top: formFieldPadding.top,
-                    bottom: formFieldPadding.bottom,
-                  ),
-                ),
-                WeightFormField(
-                  selectedWeight: selectedWeight,
-                  onWeightChanged: onWeightChanged,
-                  padding: EdgeInsets.only(
-                    top: formFieldPadding.top,
-                    bottom: formFieldPadding.bottom,
-                  ),
-                ),
-              ],
+class SignUpBiometricInfoForm extends StatelessWidget {
+  final GlobalKey<FormState> formKey;
+  final TextEditingController birthDateController;
+  final double selectedHeight;
+  final double selectedWeight;
+  final void Function(String?) onGenderChanged;
+  final void Function(double) onHeightChanged;
+  final void Function(double) onWeightChanged;
+  final EdgeInsets formPadding;
+  final EdgeInsets betweenFieldsPadding;
+
+  const SignUpBiometricInfoForm({
+    super.key,
+    required this.formKey,
+    required this.birthDateController,
+    required this.selectedHeight,
+    required this.selectedWeight,
+    required this.onGenderChanged,
+    required this.onHeightChanged,
+    required this.onWeightChanged,
+    required this.formPadding,
+    required this.betweenFieldsPadding,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: formPadding,
+      child: Form(
+        key: formKey,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            BirthDateFormField(
+              context: context,
+              birthDateController: birthDateController,
+              padding: betweenFieldsPadding,
             ),
-          ),
-        );
+            GenderFormField(
+              onGenderChanged: onGenderChanged,
+              padding: betweenFieldsPadding,
+            ),
+            HeightFormField(
+              selectedHeight: selectedHeight,
+              onHeightChanged: onHeightChanged,
+              padding: betweenFieldsPadding,
+            ),
+            WeightFormField(
+              selectedWeight: selectedWeight,
+              onWeightChanged: onWeightChanged,
+              padding: betweenFieldsPadding,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }

@@ -10,12 +10,21 @@ import 'package:gym_app_client/utils/constants/exercise_constants.dart';
 import 'package:gym_app_client/utils/constants/role_constants.dart';
 
 class ExerciseCreateForm extends StatefulWidget {
-  final EdgeInsets formFieldPadding;
+  late final EdgeInsets formPadding;
+  late final EdgeInsets betweenFieldsPadding;
 
-  const ExerciseCreateForm({
+  ExerciseCreateForm({
     super.key,
-    required this.formFieldPadding,
-  });
+    required EdgeInsets padding,
+  }) {
+    formPadding = EdgeInsets.only(
+      top: padding.top,
+      left: padding.left,
+      right: padding.right,
+    );
+
+    betweenFieldsPadding = EdgeInsets.only(bottom: padding.bottom);
+  }
 
   @override
   State<ExerciseCreateForm> createState() => _ExerciseCreateFormState();
@@ -54,90 +63,81 @@ class _ExerciseCreateFormState extends State<ExerciseCreateForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          NameFormField(
-            controller: _nameController,
-            label: "Name",
-            hintText: "Enter exercise name",
-            prefixIcon: Icons.title_outlined,
-            minLength: ExerciseConstants.minNameLength,
-            maxLength: ExerciseConstants.maxNameLength,
-            onChanged: (String value) {
-              if (mounted) setState(() => _nameController.text = value);
-            },
-            padding: widget.formFieldPadding,
-          ),
-          if (_isCurrUserAdmin)
-            ExerciseVisibilityFormField(
-              defaultVisibility: _selectedVisibility,
-              onVisibilityChanged: (bool? visibility) {
-                if (mounted) setState(() => _selectedVisibility = visibility!);
-              },
-              padding: widget.formFieldPadding,
+    return Padding(
+      padding: widget.formPadding,
+      child: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            NameFormField(
+              nameController: _nameController,
+              label: "Name",
+              hintText: "Enter exercise name",
+              prefixIcon: Icons.title_outlined,
+              minLength: ExerciseConstants.minNameLength,
+              maxLength: ExerciseConstants.maxNameLength,
+              padding: widget.betweenFieldsPadding,
             ),
-          ExerciseDifficultyFormField(
-            onDifficultyChanged: (String? difficulty) {
-              if (mounted) setState(() => _selectedDifficulty = difficulty!);
-            },
-            padding: widget.formFieldPadding,
-          ),
-          ExerciseTypeFormField(
-            onTypeChanged: (String? type) {
-              if (mounted) setState(() => _selectedType = type!);
-            },
-            padding: widget.formFieldPadding,
-          ),
-          MultilineTextFormField(
-            controller: _muscleGroupController,
-            label: "Muscle Groups",
-            hintText: "Enter activated muscle groups",
-            prefixIcon: Icons.directions_run,
-            onChanged: (String? value) {
-              if (mounted) setState(() => _muscleGroupController.text = value!);
-            },
-            padding: widget.formFieldPadding,
-          ),
-          MultilineTextFormField(
-            controller: _equipmentController,
-            label: "Equipment (Optional)",
-            hintText: "What exercise equipment is needed?",
-            prefixIcon: Icons.fitness_center_outlined,
-            isOptional: true,
-            onChanged: (String? value) {
-              if (mounted) setState(() => _equipmentController.text = value!);
-            },
-            padding: widget.formFieldPadding,
-          ),
-          MultilineTextFormField(
-            controller: _instructionsController,
-            label: "Instructions",
-            hintText: "How to do the exercise?",
-            prefixIcon: Icons.sports,
-            minLength: ExerciseConstants.minInstructionsLength,
-            maxLength: ExerciseConstants.maxInstructionsLength,
-            onChanged: (String? value) {
-              if (mounted) {
-                setState(() => _instructionsController.text = value!);
-              }
-            },
-            padding: widget.formFieldPadding,
-          ),
-          ExerciseCreateButton(
-            formKey: _formKey,
-            nameController: _nameController,
-            muscleGroupController: _muscleGroupController,
-            equipmentController: _equipmentController,
-            instructionsController: _instructionsController,
-            selectedVisibility: _selectedVisibility,
-            selectedDifficulty: _selectedDifficulty,
-            selectedType: _selectedType,
-          ),
-        ],
+            if (_isCurrUserAdmin)
+              ExerciseVisibilityFormField(
+                defaultVisibility: _selectedVisibility,
+                onVisibilityChanged: (bool? visibility) {
+                  if (mounted) {
+                    setState(() => _selectedVisibility = visibility!);
+                  }
+                },
+                padding: widget.betweenFieldsPadding,
+              ),
+            ExerciseDifficultyFormField(
+              onDifficultyChanged: (String? difficulty) {
+                if (mounted) setState(() => _selectedDifficulty = difficulty!);
+              },
+              padding: widget.betweenFieldsPadding,
+            ),
+            ExerciseTypeFormField(
+              onTypeChanged: (String? type) {
+                if (mounted) setState(() => _selectedType = type!);
+              },
+              padding: widget.betweenFieldsPadding,
+            ),
+            MultilineTextFormField(
+              controller: _muscleGroupController,
+              label: "Muscle Groups",
+              hintText: "Enter activated muscle groups",
+              prefixIcon: Icons.directions_run,
+              padding: widget.betweenFieldsPadding,
+            ),
+            MultilineTextFormField(
+              controller: _equipmentController,
+              label: "Equipment (Optional)",
+              hintText: "What exercise equipment is needed?",
+              prefixIcon: Icons.fitness_center_outlined,
+              isOptional: true,
+              padding: widget.betweenFieldsPadding,
+            ),
+            MultilineTextFormField(
+              controller: _instructionsController,
+              label: "Instructions",
+              hintText: "How to do the exercise?",
+              prefixIcon: Icons.sports,
+              minLength: ExerciseConstants.minInstructionsLength,
+              maxLength: ExerciseConstants.maxInstructionsLength,
+              padding: widget.betweenFieldsPadding,
+            ),
+            ExerciseCreateButton(
+              formKey: _formKey,
+              nameController: _nameController,
+              muscleGroupController: _muscleGroupController,
+              equipmentController: _equipmentController,
+              instructionsController: _instructionsController,
+              selectedVisibility: _selectedVisibility,
+              selectedDifficulty: _selectedDifficulty,
+              selectedType: _selectedType,
+            ),
+          ],
+        ),
       ),
     );
   }

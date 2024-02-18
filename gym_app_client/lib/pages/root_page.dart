@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:gym_app_client/pages/exercise/exercise_search_page.dart';
 import 'package:gym_app_client/pages/library/library_page.dart';
 import 'package:gym_app_client/pages/profile/profile_page.dart';
-import 'package:gym_app_client/pages/sign/signin_page.dart';
 
 class RootPage extends StatefulWidget {
   const RootPage({super.key});
@@ -15,7 +14,6 @@ class _RootPageState extends State<RootPage> {
   final List<Widget> _pages = const [
     LibraryPage(),
     ExerciseSearchPage(),
-    SignInPage(),
     ProfilePage()
   ];
 
@@ -38,8 +36,6 @@ class _RootPageState extends State<RootPage> {
               icon: Icon(Icons.fitness_center_outlined), label: "Library"),
           NavigationDestination(
               icon: Icon(Icons.search_outlined), label: "Search"),
-          NavigationDestination(
-              icon: Icon(Icons.sign_language_outlined), label: "Sign In"),
           NavigationDestination(
               icon: Icon(Icons.person_outline), label: "Profile")
         ],

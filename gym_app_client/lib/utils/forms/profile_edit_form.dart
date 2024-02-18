@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gym_app_client/db_api/models/user/user_profile_model.dart';
 import 'package:gym_app_client/db_api/models/user/user_update_model.dart';
 import 'package:gym_app_client/utils/components/buttons/profile/profile_save_changes_button.dart';
 import 'package:gym_app_client/utils/components/fields/form/birth_date_form_field.dart';
@@ -8,69 +9,119 @@ import 'package:gym_app_client/utils/components/fields/form/name_form_field.dart
 import 'package:gym_app_client/utils/components/fields/form/weight_form_field.dart';
 import 'package:gym_app_client/utils/constants/user_constants.dart';
 
-class ProfileEditForm extends Form {
+class ProfileEditForm extends StatefulWidget {
+  final UserProfileModel userInitState;
+  final void Function(UserUpdateModel) onProfileUpdated;
+  late final EdgeInsets formPadding;
+  late final EdgeInsets betweenFieldsPadding;
+
   ProfileEditForm({
-    required BuildContext context,
-    required GlobalKey<FormState> formKey,
-    required TextEditingController usernameController,
-    required TextEditingController birthDateController,
-    required String selectedGender,
-    required double selectedHeight,
-    required double selectedWeight,
-    required void Function(String) onUsernameChanged,
-    required void Function(String) onBirthDateChanged,
-    required void Function(String?) onGenderChanged,
-    required void Function(double) onHeightChanged,
-    required void Function(double) onWeightChanged,
-    required void Function(UserUpdateModel) onProfileUpdated,
-    required EdgeInsets formFieldPadding,
-  }) : super(
-          key: formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              NameFormField(
-                controller: usernameController,
-                label: "Username",
-                hintText: "Enter your username",
-                prefixIcon: Icons.person_outline,
-                minLength: UserConstants.minUsernameLength,
-                maxLength: UserConstants.maxUsernameLength,
-                onChanged: onUsernameChanged,
-                padding: formFieldPadding,
-              ),
-              BirthDateFormField(
-                context: context,
-                birthDateController: birthDateController,
-                onBirthDateChanged: onBirthDateChanged,
-                padding: formFieldPadding,
-              ),
-              GenderFormField(
-                defaultGender: selectedGender,
-                onGenderChanged: onGenderChanged,
-                padding: formFieldPadding,
-              ),
-              HeightFormField(
-                selectedHeight: selectedHeight,
-                onHeightChanged: onHeightChanged,
-                padding: formFieldPadding,
-              ),
-              WeightFormField(
-                selectedWeight: selectedWeight,
-                onWeightChanged: onWeightChanged,
-                padding: formFieldPadding,
-              ),
-              ProfileSaveChangesButton(
-                formKey: formKey,
-                usernameController: usernameController,
-                birthDateController: birthDateController,
-                gender: selectedGender,
-                height: selectedHeight,
-                weight: selectedWeight,
-                onProfileUpdated: onProfileUpdated,
-              ),
-            ],
-          ),
-        );
+    super.key,
+    required this.userInitState,
+    required this.onProfileUpdated,
+    required EdgeInsets padding,
+  }) {
+    formPadding = EdgeInsets.only(
+      top: padding.top,
+      left: padding.left,
+      right: padding.right,
+    );
+
+    betweenFieldsPadding = EdgeInsets.only(bottom: padding.bottom);
+  }
+
+  @override
+  State<ProfileEditForm> createState() => _ProfileEditFormState();
+}
+
+class _ProfileEditFormState extends State<ProfileEditForm> {
+  final _formKey = GlobalKey<FormState>();
+
+  late final TextEditingController _usernameController;
+  late final TextEditingController _birthDateController;
+
+  late String _selectedGender;
+  late double _selectedHeight;
+  late double _selectedWeight;
+
+  @override
+  void initState() {
+    _usernameController =
+        TextEditingController(text: widget.userInitState.username);
+    _birthDateController =
+        TextEditingController(text: widget.userInitState.birthDate);
+
+    _selectedGender = widget.userInitState.gender;
+    _selectedHeight = widget.userInitState.height;
+    _selectedWeight = widget.userInitState.weight;
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _birthDateController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: widget.formPadding,
+      child: Form(
+        key: _formKey,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            NameFormField(
+              nameController: _usernameController,
+              label: "Username",
+              hintText: "Enter your username",
+              prefixIcon: Icons.person_outline,
+              minLength: UserConstants.minUsernameLength,
+              maxLength: UserConstants.maxUsernameLength,
+              padding: widget.betweenFieldsPadding,
+            ),
+            BirthDateFormField(
+              context: context,
+              birthDateController: _birthDateController,
+              padding: widget.betweenFieldsPadding,
+            ),
+            GenderFormField(
+              defaultGender: _selectedGender,
+              onGenderChanged: (String? value) {
+                if (mounted) setState(() => _selectedGender = value!);
+              },
+              padding: widget.betweenFieldsPadding,
+            ),
+            HeightFormField(
+              selectedHeight: _selectedHeight,
+              onHeightChanged: (double value) {
+                if (mounted) setState(() => _selectedHeight = value);
+              },
+              padding: widget.betweenFieldsPadding,
+            ),
+            WeightFormField(
+              selectedWeight: _selectedWeight,
+              onWeightChanged: (double value) {
+                if (mounted) setState(() => _selectedWeight = value);
+              },
+              padding: widget.betweenFieldsPadding,
+            ),
+            ProfileSaveChangesButton(
+              formKey: _formKey,
+              usernameController: _usernameController,
+              birthDateController: _birthDateController,
+              gender: _selectedGender,
+              height: _selectedHeight,
+              weight: _selectedWeight,
+              onProfileUpdated: widget.onProfileUpdated,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
