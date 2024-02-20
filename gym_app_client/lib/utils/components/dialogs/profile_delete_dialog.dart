@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/services/user_service.dart';
 import 'package:gym_app_client/utils/components/fields/form/password_form_field.dart';
-import 'package:gym_app_client/utils/components/common/informative_popup.dart';
 
 class ProfileDeleteDialog extends StatefulWidget {
   const ProfileDeleteDialog({super.key});
@@ -17,21 +16,18 @@ class _ProfileDeleteDialogState extends State<ProfileDeleteDialog> {
   final _passwordController = TextEditingController();
   bool _isPasswordVisible = false;
 
-  Future<bool> _handleProfileDeletion() async {
+  void _handleProfileDeletion() {
     if (_fieldKey.currentState?.validate() ?? false) {
-      var result = await _userService.deleteCurrUser(_passwordController.text);
+      _userService.deleteCurrUser(_passwordController.text).then(
+        (serviceResult) {
+          serviceResult.showPopUp(context);
 
-      if (context.mounted) {
-        final popup = InformativePopUp(info: result.popUpInfo!);
-
-        ScaffoldMessenger.of(context).removeCurrentSnackBar();
-        ScaffoldMessenger.of(context).showSnackBar(popup);
-      }
-
-      return true;
+          if (serviceResult.shouldSignOutUser) {
+            _userService.signOut(context);
+          }
+        },
+      );
     }
-
-    return false;
   }
 
   @override
@@ -74,9 +70,7 @@ class _ProfileDeleteDialogState extends State<ProfileDeleteDialog> {
           child: const Text("Cancel"),
         ),
         TextButton(
-          onPressed: () => _handleProfileDeletion().then((bool isDone) {
-            if (isDone && mounted) Navigator.of(context).pop();
-          }),
+          onPressed: _handleProfileDeletion,
           child: Text(
             "Delete",
             style: TextStyle(color: Colors.red.shade400),

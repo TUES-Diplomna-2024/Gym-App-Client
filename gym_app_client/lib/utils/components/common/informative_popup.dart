@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:gym_app_client/utils/common/popup_info.dart';
 
 class InformativePopUp extends SnackBar {
   InformativePopUp({
     super.key,
-    required PopUpInfo info,
+    required String message,
+    required Color color,
   }) : super(
           content: Center(
-            child: Text(info.message,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                )),
+            child: Text(
+              message,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+              textAlign: TextAlign.center,
+            ),
           ),
-          backgroundColor: info.color,
+          backgroundColor: color,
           duration: const Duration(seconds: 3),
         );
 }

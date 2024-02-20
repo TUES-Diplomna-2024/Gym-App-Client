@@ -27,7 +27,7 @@ class RouteGenerator {
       case "/signin":
         return MaterialPageRoute(builder: (_) => SignInPage());
       case "/signup":
-        return MaterialPageRoute(builder: (_) => SignUpPage());
+        return MaterialPageRoute(builder: (_) => const SignUpPage());
       case "/profile-edit":
         try {
           List<dynamic> pageArgs = args as List;

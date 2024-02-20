@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gym_app_client/utils/components/dialogs/profile/profile_delete_dialog.dart';
+import 'package:gym_app_client/utils/components/dialogs/profile_delete_dialog.dart';
 
 class ProfileDeleteButton extends ElevatedButton {
   ProfileDeleteButton({

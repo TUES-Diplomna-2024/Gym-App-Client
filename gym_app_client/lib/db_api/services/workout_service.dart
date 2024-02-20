@@ -1,100 +1,68 @@
 import 'dart:io';
 import 'package:gym_app_client/db_api/models/workout/workout_preview_model.dart';
 import 'package:gym_app_client/db_api/models/workout/workout_view_model.dart';
-import 'package:http/http.dart';
+import 'package:gym_app_client/utils/common/http_methods.dart';
 import 'package:gym_app_client/db_api/services/base_service.dart';
 import 'package:gym_app_client/utils/common/service_result.dart';
 
 class WorkoutService extends BaseService {
   WorkoutService() : super(baseEndpoint: "users/current/workouts");
 
-  Future<ServiceResult> getCurrUserWorkoutPreviews() async {
-    try {
-      final response = await get(
-        getUri(),
-        headers: await getHeaders(),
+  Future<ServiceResult> getWorkoutById(String workoutId) async {
+    final requestResult = await sendRequest(
+      method: HttpMethods.get,
+      subEndpoint: workoutId,
+      headers: await getHeaders(),
+    );
+
+    final baseServiceResult = await baseAuthResponseHandle(
+      requestResult: requestResult,
+      currMethod: () => getWorkoutById(workoutId),
+    );
+
+    if (baseServiceResult != null) return baseServiceResult;
+
+    final response = requestResult.response!;
+    final statusCode = response.statusCode;
+
+    if (statusCode == HttpStatus.ok) {
+      return ServiceResult.success(
+        data: WorkoutViewModel.loadFromResponse(response),
       );
-
-      final statusCode = response.statusCode;
-
-      if (statusCode == HttpStatus.unauthorized) {
-        var error = await refreshAccessToken();
-
-        if (error != null) {
-          return ServiceResult(
-              popUpInfo: error.popUpInfo,
-              shouldSignOutUser: error.shouldSignOutUser);
-        }
-
-        return await getCurrUserWorkoutPreviews();
-      }
-
-      await tokenService
-          .saveRefreshTokenInStorage(response.headers["x-refresh-token"]!);
-
-      if (statusCode == HttpStatus.ok) {
-        return ServiceResult(
-            data: WorkoutPreviewModel.getWorkoutPreviewsFromResponse(response));
-      }
-
-      throw Exception();
-    } on SocketException {
-      return ServiceResult(
-          popUpInfo: fail(
-              "Network error! Please check your internet connection and try again!"));
-    } on Exception {
-      return ServiceResult(
-          popUpInfo: fail("Something went wrong! Try again later!"));
+    } else if (statusCode == HttpStatus.notFound ||
+        statusCode == HttpStatus.badRequest) {
+      return ServiceResult.fail(message: "This workout could not be found!");
+    } else if (statusCode == HttpStatus.forbidden) {
+      return ServiceResult.fail(
+        message: "You cannot access workouts that are owned by another user!",
+      );
     }
+
+    return ServiceResult.fail(message: defaultErrorMessage);
   }
 
-  Future<ServiceResult> getWorkoutById(String workoutId) async {
-    try {
-      final response = await get(
-        getUri(subEndpoint: workoutId),
-        headers: await getHeaders(),
+  Future<ServiceResult> getCurrUserWorkoutPreviews() async {
+    final requestResult = await sendRequest(
+      method: HttpMethods.get,
+      headers: await getHeaders(),
+    );
+
+    final baseServiceResult = await baseAuthResponseHandle(
+      requestResult: requestResult,
+      currMethod: () => getCurrUserWorkoutPreviews(),
+    );
+
+    if (baseServiceResult != null) return baseServiceResult;
+
+    final response = requestResult.response!;
+    final statusCode = response.statusCode;
+
+    if (statusCode == HttpStatus.ok) {
+      return ServiceResult.success(
+        data: WorkoutPreviewModel.getWorkoutPreviewsFromResponse(response),
       );
-
-      final statusCode = response.statusCode;
-
-      if (statusCode == HttpStatus.unauthorized) {
-        var error = await refreshAccessToken();
-
-        if (error != null) {
-          return ServiceResult(
-              popUpInfo: error.popUpInfo,
-              shouldSignOutUser: error.shouldSignOutUser);
-        }
-
-        return await getWorkoutById(workoutId);
-      }
-
-      await tokenService
-          .saveRefreshTokenInStorage(response.headers["x-refresh-token"]!);
-
-      if (statusCode == HttpStatus.ok) {
-        return ServiceResult(
-          data: WorkoutViewModel.loadFromResponse(response),
-        );
-      } else if (statusCode == HttpStatus.notFound) {
-        return ServiceResult(
-          popUpInfo: fail("This workout could not be found!"),
-        );
-      } else if (statusCode == HttpStatus.forbidden) {
-        return ServiceResult(
-          popUpInfo: fail(
-              "You cannot access workouts that are owned by another user!"),
-        );
-      }
-
-      throw Exception();
-    } on SocketException {
-      return ServiceResult(
-          popUpInfo: fail(
-              "Network error! Please check your internet connection and try again!"));
-    } on Exception {
-      return ServiceResult(
-          popUpInfo: fail("Something went wrong! Try again later!"));
     }
+
+    return ServiceResult.fail(message: defaultErrorMessage);
   }
 }

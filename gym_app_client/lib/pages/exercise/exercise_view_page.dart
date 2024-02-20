@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/models/exercise/exercise_view_model.dart';
 import 'package:gym_app_client/db_api/services/exercise_service.dart';
 import 'package:gym_app_client/db_api/services/token_service.dart';
+import 'package:gym_app_client/db_api/services/user_service.dart';
 import 'package:gym_app_client/utils/components/buttons/exercise/exercise_actions_popup_menu_button.dart';
 import 'package:gym_app_client/utils/components/common/back_leading_app_bar.dart';
 import 'package:gym_app_client/utils/components/fields/content/content_field.dart';
-import 'package:gym_app_client/utils/components/common/informative_popup.dart';
 import 'package:gym_app_client/utils/constants/role_constants.dart';
 
 class ExerciseViewPage extends StatefulWidget {
@@ -21,6 +21,7 @@ class ExerciseViewPage extends StatefulWidget {
 }
 
 class _ExerciseViewPageState extends State<ExerciseViewPage> {
+  final _userService = UserService();
   final _exerciseService = ExerciseService();
   final _tokenService = TokenService();
 
@@ -30,35 +31,29 @@ class _ExerciseViewPageState extends State<ExerciseViewPage> {
 
   @override
   void initState() {
-    _getExerciseView();
+    _exerciseService.getExerciseById(widget.exerciseId).then(
+      (serviceResult) async {
+        if (serviceResult.isSuccessful) {
+          _exerciseView = serviceResult.data!;
+
+          final currUserRole = await _tokenService.getCurrUserRole();
+
+          if (_exerciseView.isPrivate == false &&
+              !RoleConstants.adminRoles.contains(currUserRole)) {
+            _areEditAndDeleteAllowed = false;
+          } else {
+            _areEditAndDeleteAllowed = true;
+          }
+
+          if (mounted) setState(() => _isLoading = false);
+        } else {
+          serviceResult.showPopUp(context);
+          if (serviceResult.shouldSignOutUser) _userService.signOut(context);
+        }
+      },
+    );
+
     super.initState();
-  }
-
-  Future<void> _getExerciseView() async {
-    final serviceResult =
-        await _exerciseService.getExerciseById(widget.exerciseId);
-
-    if (serviceResult.popUpInfo != null) {
-      final popup = InformativePopUp(info: serviceResult.popUpInfo!);
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).removeCurrentSnackBar();
-        ScaffoldMessenger.of(context).showSnackBar(popup);
-      }
-    } else {
-      _exerciseView = serviceResult.data!;
-
-      final currUserRole = await _tokenService.getCurrUserRole();
-
-      if (_exerciseView.isPrivate == false &&
-          !RoleConstants.adminRoles.contains(currUserRole)) {
-        _areEditAndDeleteAllowed = false;
-      } else {
-        _areEditAndDeleteAllowed = true;
-      }
-
-      if (mounted) setState(() => _isLoading = false);
-    }
   }
 
   @override

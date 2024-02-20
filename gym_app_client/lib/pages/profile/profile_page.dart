@@ -4,7 +4,6 @@ import 'package:gym_app_client/db_api/services/user_service.dart';
 import 'package:gym_app_client/utils/components/buttons/profile/profile_delete_button.dart';
 import 'package:gym_app_client/utils/components/buttons/profile/profile_edit_button.dart';
 import 'package:gym_app_client/utils/components/common/custom_app_bar.dart';
-import 'package:gym_app_client/utils/components/common/informative_popup.dart';
 import 'package:gym_app_client/utils/components/fields/content/content_field.dart';
 import 'package:gym_app_client/utils/components/fields/content/date_field.dart';
 
@@ -22,24 +21,19 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   void initState() {
-    _getUserProfile();
+    _userService.getCurrUser().then(
+      (serviceResult) {
+        if (serviceResult.isSuccessful) {
+          _userProfile = serviceResult.data!;
+          if (mounted) setState(() => _isLoading = false);
+        } else {
+          serviceResult.showPopUp(context);
+          if (serviceResult.shouldSignOutUser) _userService.signOut(context);
+        }
+      },
+    );
+
     super.initState();
-  }
-
-  Future<void> _getUserProfile() async {
-    final serviceResult = await _userService.getCurrUser();
-
-    if (serviceResult.popUpInfo != null) {
-      final popup = InformativePopUp(info: serviceResult.popUpInfo!);
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).removeCurrentSnackBar();
-        ScaffoldMessenger.of(context).showSnackBar(popup);
-      }
-    } else {
-      _userProfile = serviceResult.data!;
-      if (mounted) setState(() => _isLoading = false);
-    }
   }
 
   @override

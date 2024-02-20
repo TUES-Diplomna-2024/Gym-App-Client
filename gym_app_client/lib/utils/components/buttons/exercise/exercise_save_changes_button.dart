@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/models/exercise/exercise_update_model.dart';
 import 'package:gym_app_client/db_api/services/exercise_service.dart';
-import 'package:gym_app_client/utils/components/common/informative_popup.dart';
+import 'package:gym_app_client/db_api/services/user_service.dart';
 
 class ExerciseSaveChangesButton extends StatelessWidget {
-  final ExerciseService _exerciseService = ExerciseService();
+  final _userService = UserService();
+  final _exerciseService = ExerciseService();
+
   final GlobalKey<FormState> formKey;
 
   final String exerciseId;
@@ -32,8 +34,7 @@ class ExerciseSaveChangesButton extends StatelessWidget {
     required this.onExerciseUpdated,
   });
 
-  Future<(bool, ExerciseUpdateModel?)> _handleExerciseUpdate(
-      BuildContext context) async {
+  void _handleExerciseUpdate(BuildContext context) {
     if (formKey.currentState!.validate()) {
       var exerciseUpdate = ExerciseUpdateModel(
         name: nameController.text,
@@ -45,34 +46,25 @@ class ExerciseSaveChangesButton extends StatelessWidget {
             equipmentController.text.isEmpty ? null : equipmentController.text,
       );
 
-      var result =
-          await _exerciseService.updateExerciseById(exerciseId, exerciseUpdate);
+      _exerciseService.updateExerciseById(exerciseId, exerciseUpdate).then(
+        (serviceResult) {
+          serviceResult.showPopUp(context);
 
-      if (context.mounted) {
-        final popup = InformativePopUp(info: result.popUpInfo!);
-
-        ScaffoldMessenger.of(context).removeCurrentSnackBar();
-        ScaffoldMessenger.of(context).showSnackBar(popup);
-      }
-
-      return (true, exerciseUpdate);
+          if (serviceResult.isSuccessful) {
+            onExerciseUpdated(exerciseUpdate);
+            if (context.mounted) Navigator.of(context).pop();
+          } else if (serviceResult.shouldSignOutUser) {
+            _userService.signOut(context);
+          }
+        },
+      );
     }
-
-    return (false, null);
   }
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: () => _handleExerciseUpdate(context).then((result) {
-        bool isDone = result.$1;
-        ExerciseUpdateModel? updateModel = result.$2;
-
-        if (isDone && context.mounted) {
-          onExerciseUpdated(updateModel!);
-          Navigator.of(context).pop();
-        }
-      }),
+      onPressed: () => _handleExerciseUpdate(context),
       style: ElevatedButton.styleFrom(backgroundColor: Colors.lightGreen),
       child: const Text(
         "Save Changes",

@@ -9,8 +9,26 @@ class TokenService {
     await _storage.write(key: "accessToken", value: accessToken);
   }
 
+  Future<void> saveRefreshTokenInStorage(String refreshToken) async {
+    await _storage.write(key: "refreshToken", value: refreshToken);
+  }
+
+  Future<void> saveTokensInStorage(AuthModel authModel) async {
+    await saveAccessTokenInStorage(authModel.accessToken);
+    await saveRefreshTokenInStorage(authModel.refreshToken);
+  }
+
+  Future<void> removeTokensFromStorage() async {
+    await _storage.delete(key: "accessToken");
+    await _storage.delete(key: "refreshToken");
+  }
+
   Future<String?> getAccessTokenFromStorage() async {
     return await _storage.read(key: "accessToken");
+  }
+
+  Future<String?> getRefreshTokenFromStorage() async {
+    return await _storage.read(key: "refreshToken");
   }
 
   Future<Map<String, dynamic>?> getAccessTokenPayload() async {
@@ -31,21 +49,18 @@ class TokenService {
     return payload?["userId"];
   }
 
-  Future<void> saveRefreshTokenInStorage(String refreshToken) async {
-    await _storage.write(key: "refreshToken", value: refreshToken);
-  }
+  Future<bool> isCurrUserLoggedIn() async {
+    String? refreshToken = await getRefreshTokenFromStorage();
+    String? accessToken = await getAccessTokenFromStorage();
 
-  Future<String?> getRefreshTokenFromStorage() async {
-    return await _storage.read(key: "refreshToken");
-  }
+    try {
+      if (refreshToken == null || JwtDecoder.isExpired(refreshToken)) {
+        return !(accessToken == null || JwtDecoder.isExpired(accessToken));
+      }
 
-  Future<void> saveTokensInStorage(AuthModel authModel) async {
-    await saveAccessTokenInStorage(authModel.accessToken);
-    await saveRefreshTokenInStorage(authModel.refreshToken);
-  }
-
-  Future<void> removeTokensFromStorage() async {
-    await _storage.delete(key: "accessToken");
-    await _storage.delete(key: "refreshToken");
+      return true;
+    } on FormatException {
+      return false;
+    }
   }
 }

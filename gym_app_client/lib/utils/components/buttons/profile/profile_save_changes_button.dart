@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/models/user/user_update_model.dart';
 import 'package:gym_app_client/db_api/services/user_service.dart';
-import 'package:gym_app_client/utils/components/common/informative_popup.dart';
 
 class ProfileSaveChangesButton extends StatelessWidget {
   final UserService _userService = UserService();
@@ -24,8 +23,7 @@ class ProfileSaveChangesButton extends StatelessWidget {
     required this.onProfileUpdated,
   });
 
-  Future<(bool, UserUpdateModel?)> _handleProfileUpdate(
-      BuildContext context) async {
+  void _handleProfileUpdate(BuildContext context) {
     if (formKey.currentState!.validate()) {
       var userUpdate = UserUpdateModel(
         username: usernameController.text,
@@ -35,33 +33,25 @@ class ProfileSaveChangesButton extends StatelessWidget {
         weight: weight,
       );
 
-      var result = await _userService.updateCurrUser(userUpdate);
+      _userService.updateCurrUser(userUpdate).then(
+        (serviceResult) {
+          serviceResult.showPopUp(context);
 
-      if (context.mounted) {
-        final popup = InformativePopUp(info: result.popUpInfo!);
-
-        ScaffoldMessenger.of(context).removeCurrentSnackBar();
-        ScaffoldMessenger.of(context).showSnackBar(popup);
-      }
-
-      return (true, userUpdate);
+          if (serviceResult.isSuccessful) {
+            onProfileUpdated(userUpdate);
+            if (context.mounted) Navigator.of(context).pop();
+          } else if (serviceResult.shouldSignOutUser) {
+            _userService.signOut(context);
+          }
+        },
+      );
     }
-
-    return (false, null);
   }
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: () => _handleProfileUpdate(context).then((result) {
-        bool isDone = result.$1;
-        UserUpdateModel? updateModel = result.$2;
-
-        if (isDone && context.mounted) {
-          onProfileUpdated(updateModel!);
-          Navigator.of(context).pop();
-        }
-      }),
+      onPressed: () => _handleProfileUpdate(context),
       style: ElevatedButton.styleFrom(backgroundColor: Colors.lightGreen),
       child: const Text(
         "Save Changes",

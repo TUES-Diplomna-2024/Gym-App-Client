@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/services/exercise_service.dart';
-import 'package:gym_app_client/utils/components/common/informative_popup.dart';
+import 'package:gym_app_client/db_api/services/user_service.dart';
 
 class ExerciseDeleteDialog extends StatelessWidget {
+  final _userService = UserService();
   final _exerciseService = ExerciseService();
   final BuildContext context;
   final String exerciseId;
@@ -13,15 +14,20 @@ class ExerciseDeleteDialog extends StatelessWidget {
     required this.exerciseId,
   });
 
-  Future<void> _handleExerciseDeletion() async {
-    var result = await _exerciseService.deleteExerciseById(exerciseId);
+  void _handleExerciseDeletion() {
+    _exerciseService.deleteExerciseById(exerciseId).then(
+      (serviceResult) {
+        serviceResult.showPopUp(context);
 
-    if (context.mounted) {
-      final popup = InformativePopUp(info: result.popUpInfo!);
-
-      ScaffoldMessenger.of(context).removeCurrentSnackBar();
-      ScaffoldMessenger.of(context).showSnackBar(popup);
-    }
+        if (serviceResult.isSuccessful && context.mounted) {
+          Navigator.of(context).popUntil(
+            (route) => ["/workout", "/"].contains(route.settings.name),
+          );
+        } else if (serviceResult.shouldSignOutUser) {
+          _userService.signOut(context);
+        }
+      },
+    );
   }
 
   @override
@@ -45,9 +51,7 @@ class ExerciseDeleteDialog extends StatelessWidget {
           child: const Text("Cancel"),
         ),
         TextButton(
-          onPressed: () => _handleExerciseDeletion().then((_) {
-            if (context.mounted) Navigator.of(context).pop();
-          }),
+          onPressed: _handleExerciseDeletion,
           child: Text(
             "Delete",
             style: TextStyle(color: Colors.red.shade400),
