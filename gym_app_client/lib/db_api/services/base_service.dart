@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:http/http.dart';
+import 'dart:async';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:gym_app_client/db_api/services/token_service.dart';
 import 'package:gym_app_client/utils/common/http_methods.dart';
@@ -11,6 +12,7 @@ class BaseService {
   final String _dbAPIBaseUrl = GlobalConfiguration().getValue("dbAPIBaseURL");
   late final Uri _refreshUrl;
   final String baseEndpoint;
+  final connectionTimeout = const Duration(seconds: 3);
   final String defaultErrorMessage = "Something went wrong! Try again later!";
 
   BaseService({
@@ -64,27 +66,33 @@ class BaseService {
 
       switch (method) {
         case HttpMethods.get:
-          response = await get(url, headers: headers);
+          response =
+              await get(url, headers: headers).timeout(connectionTimeout);
           break;
         case HttpMethods.post:
-          response = await post(url, headers: headers, body: body);
+          response = await post(url, headers: headers, body: body)
+              .timeout(connectionTimeout);
           break;
         case HttpMethods.put:
-          response = await put(url, headers: headers, body: body);
+          response = await put(url, headers: headers, body: body)
+              .timeout(connectionTimeout);
           break;
         case HttpMethods.delete:
-          response = await delete(url, headers: headers, body: body);
+          response = await delete(url, headers: headers, body: body)
+              .timeout(connectionTimeout);
           break;
       }
 
       return RequestResult.success(response: response);
-    } on SocketException {
-      return RequestResult.fail(
-        errorMessage:
-            "Network error! Please check your internet connection and try again!",
-      );
-    } on Exception {
-      return RequestResult.fail(errorMessage: defaultErrorMessage);
+    } catch (e) {
+      var errorMessage = defaultErrorMessage;
+
+      if (e is SocketException || e is TimeoutException) {
+        errorMessage =
+            "Network error! Please check your internet connection and try again!";
+      }
+
+      return RequestResult.fail(errorMessage: errorMessage);
     }
   }
 
