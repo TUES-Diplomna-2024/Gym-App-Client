@@ -20,9 +20,8 @@ class ExerciseDeleteDialog extends StatelessWidget {
         serviceResult.showPopUp(context);
 
         if (serviceResult.isSuccessful && context.mounted) {
-          Navigator.of(context).popUntil(
-            (route) => ["/workout", "/"].contains(route.settings.name),
-          );
+          Navigator.of(context).pop();
+          Navigator.of(context).pop();
         } else if (serviceResult.shouldSignOutUser) {
           _userService.signOut(context);
         }

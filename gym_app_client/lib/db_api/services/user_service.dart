@@ -227,6 +227,7 @@ class UserService extends BaseService {
       return ServiceResult.success(
         message: "Your account is deleted successfully!",
         shouldSignOutUser: true,
+        popUpColor: Colors.amber.shade800,
       );
     } else if (statusCode == HttpStatus.badRequest) {
       return ServiceResult.fail(message: "Invalid password format!");

@@ -48,7 +48,7 @@ class SignUpSubmitButton extends StatelessWidget {
           serviceResult.showPopUp(context);
 
           if (serviceResult.isSuccessful && context.mounted) {
-            Navigator.of(context).pushReplacementNamed("/");
+            Navigator.of(context).pushNamedAndRemoveUntil("/", (_) => false);
           }
         },
       );

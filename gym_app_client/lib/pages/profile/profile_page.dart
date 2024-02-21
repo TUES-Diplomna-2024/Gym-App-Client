@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/models/user/user_profile_model.dart';
 import 'package:gym_app_client/db_api/services/user_service.dart';
-import 'package:gym_app_client/utils/components/buttons/profile/profile_delete_button.dart';
-import 'package:gym_app_client/utils/components/buttons/profile/profile_edit_button.dart';
+import 'package:gym_app_client/utils/components/buttons/profile/profile_actions_popup_menu_button.dart';
 import 'package:gym_app_client/utils/components/common/custom_app_bar.dart';
 import 'package:gym_app_client/utils/components/fields/content/content_field.dart';
 import 'package:gym_app_client/utils/components/fields/content/date_field.dart';
@@ -48,7 +47,19 @@ class _ProfilePageState extends State<ProfilePage> {
                   padding: const EdgeInsets.only(left: 25, right: 25),
                   child: Column(
                     children: [
-                      const SizedBox(height: 23),
+                      Align(
+                        alignment: Alignment.topRight,
+                        child: ProfileActionsPopupMenuButton(
+                          userStartState: _userProfile,
+                          onProfileUpdated: (updateModel) {
+                            if (mounted) {
+                              setState(() =>
+                                  _userProfile.updateProfile(updateModel));
+                            }
+                          },
+                        ),
+                      ),
+                      // const SizedBox(height: 23),
                       Text(
                         _userProfile.username,
                         style: const TextStyle(fontSize: 26),
@@ -59,28 +70,6 @@ class _ProfilePageState extends State<ProfilePage> {
                           fontSize: 16,
                           color: _userProfile.roleColor,
                         ),
-                      ),
-                      const SizedBox(height: 15),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            child: ProfileEditButton(
-                              context: context,
-                              userStartState: _userProfile,
-                              onProfileUpdated: (updateModel) {
-                                if (mounted) {
-                                  setState(() =>
-                                      _userProfile.updateProfile(updateModel));
-                                }
-                              },
-                            ),
-                          ),
-                          const SizedBox(width: 25),
-                          Expanded(
-                            child: ProfileDeleteButton(context: context),
-                          ),
-                        ],
                       ),
                       const SizedBox(height: 15),
                       DateField(

@@ -6,24 +6,27 @@ class ServiceResult {
   final String message;
   final dynamic data;
   final bool shouldSignOutUser;
+  final Color? popUpColor;
 
   ServiceResult.success({
     this.message = "",
     this.data,
     this.shouldSignOutUser = false,
+    this.popUpColor,
   }) : isSuccessful = true;
 
   ServiceResult.fail({
     this.message = "",
     this.data,
     this.shouldSignOutUser = false,
+    this.popUpColor,
   }) : isSuccessful = false;
 
   void showPopUp(BuildContext context) {
     if (context.mounted) {
       final popup = InformativePopUp(
         message: message,
-        color: _getPopUpColor(),
+        color: popUpColor ?? _getPopUpColor(),
       );
 
       ScaffoldMessenger.of(context).removeCurrentSnackBar();

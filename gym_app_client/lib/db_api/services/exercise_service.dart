@@ -194,7 +194,8 @@ class ExerciseService extends BaseService {
     final statusCode = response.statusCode;
 
     if (statusCode == HttpStatus.ok) {
-      return ServiceResult.success(message: "Successfully deleted!");
+      return ServiceResult.success(
+          message: "Exercise was successfully deleted!");
     } else if (statusCode == HttpStatus.notFound ||
         statusCode == HttpStatus.badRequest) {
       return ServiceResult.fail(message: "Exercise could not be found!");

@@ -10,6 +10,9 @@ class ExerciseActionsPopupMenuButton extends PopupMenuButton {
     required ExerciseViewModel exerciseCurrState,
     required void Function(ExerciseUpdateModel) onExerciseUpdated,
   }) : super(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5),
+          ),
           itemBuilder: (context) {
             return [
               PopupMenuItem(
