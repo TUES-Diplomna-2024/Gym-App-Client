@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:gym_app_client/db_api/models/workout/workout_create_model.dart';
 import 'package:gym_app_client/db_api/models/workout/workout_preview_model.dart';
 import 'package:gym_app_client/db_api/models/workout/workout_view_model.dart';
 import 'package:gym_app_client/utils/common/http_methods.dart';
@@ -7,6 +8,35 @@ import 'package:gym_app_client/utils/common/service_result.dart';
 
 class WorkoutService extends BaseService {
   WorkoutService() : super(baseEndpoint: "users/current/workouts");
+
+  Future<ServiceResult> createNewWorkout(
+      WorkoutCreateModel workoutCreate) async {
+    final requestResult = await sendRequest(
+      method: HttpMethods.post,
+      subEndpoint: "create",
+      headers: await getHeaders(),
+      body: workoutCreate.toJson(),
+    );
+
+    final baseServiceResult = await baseAuthResponseHandle(
+      requestResult: requestResult,
+      currMethod: () => createNewWorkout(workoutCreate),
+    );
+
+    if (baseServiceResult != null) return baseServiceResult;
+
+    final statusCode = requestResult.response!.statusCode;
+
+    if (statusCode == HttpStatus.ok) {
+      return ServiceResult.success(
+        message: "Workout has been successfully created!",
+      );
+    } else if (statusCode == HttpStatus.badRequest) {
+      return ServiceResult.fail(message: "Invalid workout data!");
+    }
+
+    return ServiceResult.fail(message: defaultErrorMessage);
+  }
 
   Future<ServiceResult> getWorkoutById(String workoutId) async {
     final requestResult = await sendRequest(

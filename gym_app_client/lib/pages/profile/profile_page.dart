@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/models/user/user_profile_model.dart';
+import 'package:gym_app_client/db_api/services/token_service.dart';
 import 'package:gym_app_client/db_api/services/user_service.dart';
 import 'package:gym_app_client/utils/components/buttons/profile/profile_actions_popup_menu_button.dart';
 import 'package:gym_app_client/utils/components/common/custom_app_bar.dart';
 import 'package:gym_app_client/utils/components/fields/content/content_field.dart';
 import 'package:gym_app_client/utils/components/fields/content/date_field.dart';
+import 'package:gym_app_client/utils/constants/role_constants.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -15,15 +17,22 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final _userService = UserService();
+  final _tokenService = TokenService();
+
   late UserProfileModel _userProfile;
+  late final bool _isDeleteAllowed;
   bool _isLoading = true;
 
   @override
   void initState() {
     _userService.getCurrUser().then(
-      (serviceResult) {
+      (serviceResult) async {
         if (serviceResult.isSuccessful) {
           _userProfile = serviceResult.data!;
+
+          final currUserRole = await _tokenService.getCurrUserRole();
+          _isDeleteAllowed = currUserRole != RoleConstants.superAdminRole;
+
           if (mounted) setState(() => _isLoading = false);
         } else {
           serviceResult.showPopUp(context);
@@ -50,6 +59,7 @@ class _ProfilePageState extends State<ProfilePage> {
                       Align(
                         alignment: Alignment.topRight,
                         child: ProfileActionsPopupMenuButton(
+                          isDeleteAllowed: _isDeleteAllowed,
                           userStartState: _userProfile,
                           onProfileUpdated: (updateModel) {
                             if (mounted) {
@@ -59,7 +69,6 @@ class _ProfilePageState extends State<ProfilePage> {
                           },
                         ),
                       ),
-                      // const SizedBox(height: 23),
                       Text(
                         _userProfile.username,
                         style: const TextStyle(fontSize: 26),

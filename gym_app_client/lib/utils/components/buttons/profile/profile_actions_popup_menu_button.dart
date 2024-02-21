@@ -7,6 +7,7 @@ import 'package:gym_app_client/utils/components/dialogs/profile_delete_dialog.da
 class ProfileActionsPopupMenuButton extends PopupMenuButton {
   ProfileActionsPopupMenuButton({
     super.key,
+    required bool isDeleteAllowed,
     required UserProfileModel userStartState,
     required void Function(UserUpdateModel) onProfileUpdated,
   }) : super(
@@ -43,23 +44,25 @@ class ProfileActionsPopupMenuButton extends PopupMenuButton {
                   ],
                 ),
               ),
-              PopupMenuItem(
-                onTap: () {
-                  if (context.mounted) {
-                    showDialog(
-                      context: context,
-                      builder: (_) => const ProfileDeleteDialog(),
-                    );
-                  }
-                },
-                child: const Row(
-                  children: [
-                    Icon(Icons.delete),
-                    SizedBox(width: 16),
-                    Text("Delete"),
-                  ],
+              if (isDeleteAllowed) ...{
+                PopupMenuItem(
+                  onTap: () {
+                    if (context.mounted) {
+                      showDialog(
+                        context: context,
+                        builder: (_) => const ProfileDeleteDialog(),
+                      );
+                    }
+                  },
+                  child: const Row(
+                    children: [
+                      Icon(Icons.delete),
+                      SizedBox(width: 16),
+                      Text("Delete"),
+                    ],
+                  ),
                 ),
-              ),
+              },
             ];
           },
         );

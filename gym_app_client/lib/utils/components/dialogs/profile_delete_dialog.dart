@@ -11,6 +11,7 @@ class ProfileDeleteDialog extends StatefulWidget {
 
 class _ProfileDeleteDialogState extends State<ProfileDeleteDialog> {
   final _userService = UserService();
+
   final GlobalKey<FormFieldState<String>> _fieldKey =
       GlobalKey<FormFieldState<String>>();
   final _passwordController = TextEditingController();

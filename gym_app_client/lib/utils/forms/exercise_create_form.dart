@@ -111,7 +111,7 @@ class _ExerciseCreateFormState extends State<ExerciseCreateForm> {
             ),
             MultilineTextFormField(
               controller: _equipmentController,
-              label: "Equipment (Optional)",
+              label: "Equipment",
               hintText: "What exercise equipment is needed?",
               prefixIcon: Icons.fitness_center_outlined,
               isOptional: true,

@@ -17,7 +17,7 @@ class MultilineTextFormField extends PaddedTextFormField {
           controller: controller,
           maxLines: null,
           decoration: InputDecoration(
-            label: Text(label),
+            label: Text("$label${isOptional ? ' (Optional)' : ''}"),
             prefixIcon: Icon(prefixIcon),
             hintText: hintText,
             filled: true,
