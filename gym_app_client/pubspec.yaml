@@ -11,12 +11,14 @@ dependencies:
   flutter:
     sdk: flutter
   http: ^1.1.0
-  intl:
   global_configuration: ^2.0.0
   flutter_secure_storage:
   jwt_decoder:
+  intl:
 
   cupertino_icons: ^1.0.2
+
+  flutter_slidable: ^3.0.1
 
 dev_dependencies:
   flutter_test:

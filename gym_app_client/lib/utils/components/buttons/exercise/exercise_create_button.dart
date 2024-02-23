@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/models/exercise/exercise_create_model.dart';
 import 'package:gym_app_client/db_api/services/exercise_service.dart';
-import 'package:gym_app_client/utils/components/common/informative_popup.dart';
+import 'package:gym_app_client/db_api/services/user_service.dart';
 
 class ExerciseCreateButton extends StatelessWidget {
-  final ExerciseService _exerciseService = ExerciseService();
+  final _userService = UserService();
+  final _exerciseService = ExerciseService();
+
   final GlobalKey<FormState> formKey;
 
   final TextEditingController nameController;
@@ -28,8 +30,8 @@ class ExerciseCreateButton extends StatelessWidget {
     required this.selectedType,
   });
 
-  Future<bool> _handleExerciseCreate(BuildContext context) async {
-    if (formKey.currentState!.validate()) {
+  void _handleExerciseCreate(BuildContext context) {
+    if (formKey.currentState?.validate() ?? false) {
       var exercise = ExerciseCreateModel(
         name: nameController.text,
         type: selectedType,
@@ -41,30 +43,24 @@ class ExerciseCreateButton extends StatelessWidget {
         isPrivate: selectedVisibility,
       );
 
-      var result = await _exerciseService.createNewExercise(exercise);
+      _exerciseService.createNewExercise(exercise).then(
+        (serviceResult) {
+          serviceResult.showPopUp(context);
 
-      if (context.mounted) {
-        debugPrint(result.popUpInfo!.message);
-        final popup = InformativePopUp(info: result.popUpInfo!);
-
-        ScaffoldMessenger.of(context).removeCurrentSnackBar();
-        ScaffoldMessenger.of(context).showSnackBar(popup);
-      }
-
-      return true;
+          if (serviceResult.isSuccessful && context.mounted) {
+            Navigator.of(context).pop();
+          } else if (serviceResult.shouldSignOutUser) {
+            _userService.signOut(context);
+          }
+        },
+      );
     }
-
-    return false;
   }
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: () {
-        _handleExerciseCreate(context).then((bool isDone) {
-          if (isDone && context.mounted) Navigator.of(context).pop();
-        });
-      },
+      onPressed: () => _handleExerciseCreate(context),
       style: ElevatedButton.styleFrom(backgroundColor: Colors.lightGreen),
       child: const Text(
         "Create",

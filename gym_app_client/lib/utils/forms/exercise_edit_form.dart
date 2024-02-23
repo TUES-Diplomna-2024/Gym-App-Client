@@ -113,7 +113,7 @@ class _ExerciseEditFormState extends State<ExerciseEditForm> {
             ),
             MultilineTextFormField(
               controller: _equipmentController,
-              label: "Equipment (Optional)",
+              label: "Equipment",
               hintText: "What exercise equipment is needed?",
               prefixIcon: Icons.fitness_center_outlined,
               isOptional: true,

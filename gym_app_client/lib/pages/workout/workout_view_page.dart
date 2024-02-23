@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/models/workout/workout_view_model.dart';
+import 'package:gym_app_client/db_api/services/user_service.dart';
 import 'package:gym_app_client/db_api/services/workout_service.dart';
+import 'package:gym_app_client/utils/components/buttons/workout/workout_actions_popup_menu_button.dart';
 import 'package:gym_app_client/utils/components/common/back_leading_app_bar.dart';
 import 'package:gym_app_client/utils/components/fields/content/content_field.dart';
-import 'package:gym_app_client/utils/components/common/informative_popup.dart';
 import 'package:gym_app_client/utils/components/previews/exercise_preview.dart';
 
 class WorkoutViewPage extends StatefulWidget {
@@ -19,31 +20,26 @@ class WorkoutViewPage extends StatefulWidget {
 }
 
 class _WorkoutViewPageState extends State<WorkoutViewPage> {
+  final _userService = UserService();
   final _workoutService = WorkoutService();
   late WorkoutViewModel _workoutView;
   bool _isLoading = true;
 
   @override
   void initState() {
-    _getWorkoutView();
+    _workoutService.getWorkoutById(widget.workoutId).then(
+      (serviceResult) {
+        if (serviceResult.isSuccessful) {
+          _workoutView = serviceResult.data!;
+          if (mounted) setState(() => _isLoading = false);
+        } else {
+          serviceResult.showPopUp(context);
+          if (serviceResult.shouldSignOutUser) _userService.signOut(context);
+        }
+      },
+    );
+
     super.initState();
-  }
-
-  Future<void> _getWorkoutView() async {
-    final serviceResult =
-        await _workoutService.getWorkoutById(widget.workoutId);
-
-    if (serviceResult.popUpInfo != null) {
-      final popup = InformativePopUp(info: serviceResult.popUpInfo!);
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).removeCurrentSnackBar();
-        ScaffoldMessenger.of(context).showSnackBar(popup);
-      }
-    } else {
-      _workoutView = serviceResult.data!;
-      if (mounted) setState(() => _isLoading = false);
-    }
   }
 
   Widget _getExercisePreviews() {
@@ -63,22 +59,23 @@ class _WorkoutViewPageState extends State<WorkoutViewPage> {
     }
 
     return ListView.builder(
-        physics: const NeverScrollableScrollPhysics(),
-        shrinkWrap: true,
-        itemCount: _workoutView.exerciseCount,
-        itemBuilder: (_, int index) {
-          return GestureDetector(
-            child: ExercisePreview(exercise: _workoutView.exercises![index]),
-            onTap: () {
-              if (mounted) {
-                Navigator.of(context).pushNamed(
-                  "/exercise",
-                  arguments: _workoutView.exercises![index].id,
-                );
-              }
-            },
-          );
-        });
+      physics: const NeverScrollableScrollPhysics(),
+      shrinkWrap: true,
+      itemCount: _workoutView.exerciseCount,
+      itemBuilder: (_, int index) {
+        return GestureDetector(
+          child: ExercisePreview(exercise: _workoutView.exercises![index]),
+          onTap: () {
+            if (mounted) {
+              Navigator.of(context).pushNamed(
+                "/exercise",
+                arguments: _workoutView.exercises![index].id,
+              );
+            }
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -94,19 +91,28 @@ class _WorkoutViewPageState extends State<WorkoutViewPage> {
                   child: Column(
                     children: [
                       const SizedBox(height: 23),
-                      Text(
-                        _workoutView.name,
-                        style: const TextStyle(fontSize: 26),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              _workoutView.name,
+                              style: const TextStyle(fontSize: 26),
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          WorkoutActionsPopupMenuButton(
+                            workoutCurrState: _workoutView,
+                            onWorkoutUpdated: (name, description, exercises) {
+                              if (mounted) {
+                                setState(
+                                  () => _workoutView.updateView(
+                                      name, description, exercises),
+                                );
+                              }
+                            },
+                          ),
+                        ],
                       ),
-                      // const SizedBox(height: 10),
-                      // Row(
-                      //   children: [
-                      //     IconButton(
-                      //       onPressed: () => debugPrint("Add +"),
-                      //       icon: const Icon(Icons.add_box_rounded),
-                      //     ),
-                      //   ],
-                      // ),
                       const SizedBox(height: 15),
                       ContentField(
                         fieldIcon: Icons.description_outlined,

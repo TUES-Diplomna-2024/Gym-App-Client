@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/models/user/user_profile_model.dart';
+import 'package:gym_app_client/db_api/services/token_service.dart';
 import 'package:gym_app_client/db_api/services/user_service.dart';
-import 'package:gym_app_client/utils/components/buttons/profile/profile_delete_button.dart';
-import 'package:gym_app_client/utils/components/buttons/profile/profile_edit_button.dart';
+import 'package:gym_app_client/utils/components/buttons/profile/profile_actions_popup_menu_button.dart';
 import 'package:gym_app_client/utils/components/common/custom_app_bar.dart';
-import 'package:gym_app_client/utils/components/common/informative_popup.dart';
 import 'package:gym_app_client/utils/components/fields/content/content_field.dart';
 import 'package:gym_app_client/utils/components/fields/content/date_field.dart';
+import 'package:gym_app_client/utils/constants/role_constants.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -17,29 +17,31 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   final _userService = UserService();
+  final _tokenService = TokenService();
+
   late UserProfileModel _userProfile;
+  late final bool _isDeleteAllowed;
   bool _isLoading = true;
 
   @override
   void initState() {
-    _getUserProfile();
+    _userService.getCurrUser().then(
+      (serviceResult) async {
+        if (serviceResult.isSuccessful) {
+          _userProfile = serviceResult.data!;
+
+          final currUserRole = await _tokenService.getCurrUserRole();
+          _isDeleteAllowed = currUserRole != RoleConstants.superAdminRole;
+
+          if (mounted) setState(() => _isLoading = false);
+        } else {
+          serviceResult.showPopUp(context);
+          if (serviceResult.shouldSignOutUser) _userService.signOut(context);
+        }
+      },
+    );
+
     super.initState();
-  }
-
-  Future<void> _getUserProfile() async {
-    final serviceResult = await _userService.getCurrUser();
-
-    if (serviceResult.popUpInfo != null) {
-      final popup = InformativePopUp(info: serviceResult.popUpInfo!);
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).removeCurrentSnackBar();
-        ScaffoldMessenger.of(context).showSnackBar(popup);
-      }
-    } else {
-      _userProfile = serviceResult.data!;
-      if (mounted) setState(() => _isLoading = false);
-    }
   }
 
   @override
@@ -54,7 +56,19 @@ class _ProfilePageState extends State<ProfilePage> {
                   padding: const EdgeInsets.only(left: 25, right: 25),
                   child: Column(
                     children: [
-                      const SizedBox(height: 23),
+                      Align(
+                        alignment: Alignment.topRight,
+                        child: ProfileActionsPopupMenuButton(
+                          isDeleteAllowed: _isDeleteAllowed,
+                          userStartState: _userProfile,
+                          onProfileUpdated: (updateModel) {
+                            if (mounted) {
+                              setState(() =>
+                                  _userProfile.updateProfile(updateModel));
+                            }
+                          },
+                        ),
+                      ),
                       Text(
                         _userProfile.username,
                         style: const TextStyle(fontSize: 26),
@@ -65,28 +79,6 @@ class _ProfilePageState extends State<ProfilePage> {
                           fontSize: 16,
                           color: _userProfile.roleColor,
                         ),
-                      ),
-                      const SizedBox(height: 15),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            child: ProfileEditButton(
-                              context: context,
-                              userStartState: _userProfile,
-                              onProfileUpdated: (updateModel) {
-                                if (mounted) {
-                                  setState(() =>
-                                      _userProfile.updateProfile(updateModel));
-                                }
-                              },
-                            ),
-                          ),
-                          const SizedBox(width: 25),
-                          Expanded(
-                            child: ProfileDeleteButton(context: context),
-                          ),
-                        ],
                       ),
                       const SizedBox(height: 15),
                       DateField(

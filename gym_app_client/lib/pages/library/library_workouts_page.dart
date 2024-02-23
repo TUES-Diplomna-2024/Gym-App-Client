@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/models/workout/workout_preview_model.dart';
+import 'package:gym_app_client/db_api/services/user_service.dart';
 import 'package:gym_app_client/db_api/services/workout_service.dart';
-import 'package:gym_app_client/utils/components/common/informative_popup.dart';
+import 'package:gym_app_client/utils/components/dialogs/workout_create_dialog.dart';
 import 'package:gym_app_client/utils/components/previews/workout_preview.dart';
 
 class LibraryWorkoutsPage extends StatefulWidget {
@@ -12,30 +13,26 @@ class LibraryWorkoutsPage extends StatefulWidget {
 }
 
 class _LibraryWorkoutsPageState extends State<LibraryWorkoutsPage> {
+  final _userService = UserService();
   final _workoutService = WorkoutService();
   late final List<WorkoutPreviewModel> _userWorkouts;
   bool _isLoading = true;
 
   @override
   void initState() {
-    _getUserWorkouts();
+    _workoutService.getCurrUserWorkoutPreviews().then(
+      (serviceResult) {
+        if (serviceResult.isSuccessful) {
+          _userWorkouts = serviceResult.data!;
+          if (mounted) setState(() => _isLoading = false);
+        } else {
+          serviceResult.showPopUp(context);
+          if (serviceResult.shouldSignOutUser) _userService.signOut(context);
+        }
+      },
+    );
+
     super.initState();
-  }
-
-  Future<void> _getUserWorkouts() async {
-    final serviceResult = await _workoutService.getCurrUserWorkoutPreviews();
-
-    if (serviceResult.popUpInfo != null) {
-      final popup = InformativePopUp(info: serviceResult.popUpInfo!);
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).removeCurrentSnackBar();
-        ScaffoldMessenger.of(context).showSnackBar(popup);
-      }
-    } else {
-      _userWorkouts = serviceResult.data!;
-      if (mounted) setState(() => _isLoading = false);
-    }
   }
 
   Widget _getBody() {
@@ -55,20 +52,21 @@ class _LibraryWorkoutsPageState extends State<LibraryWorkoutsPage> {
     return Padding(
       padding: const EdgeInsets.only(left: 25, right: 25, top: 18),
       child: ListView.builder(
-          itemCount: _userWorkouts.length,
-          itemBuilder: (_, int index) {
-            return GestureDetector(
-              child: WorkoutPreview(workout: _userWorkouts[index]),
-              onTap: () {
-                if (mounted) {
-                  Navigator.of(context).pushNamed(
-                    "/workout",
-                    arguments: _userWorkouts[index].id,
-                  );
-                }
-              },
-            );
-          }),
+        itemCount: _userWorkouts.length,
+        itemBuilder: (_, int index) {
+          return GestureDetector(
+            child: WorkoutPreview(workout: _userWorkouts[index]),
+            onTap: () {
+              if (mounted) {
+                Navigator.of(context).pushNamed(
+                  "/workout",
+                  arguments: _userWorkouts[index].id,
+                );
+              }
+            },
+          );
+        },
+      ),
     );
   }
 
@@ -78,7 +76,12 @@ class _LibraryWorkoutsPageState extends State<LibraryWorkoutsPage> {
       body: _getBody(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          debugPrint("+ action button clicked!");
+          if (context.mounted) {
+            showDialog(
+              context: context,
+              builder: (_) => const WorkoutCreateDialog(),
+            );
+          }
         },
         child: const Icon(Icons.add),
       ),

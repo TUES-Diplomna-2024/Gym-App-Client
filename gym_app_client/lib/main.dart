@@ -1,7 +1,7 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:global_configuration/global_configuration.dart';
+import 'package:gym_app_client/db_api/services/token_service.dart';
 import 'package:gym_app_client/route_generator.dart';
 
 class CustomHttpOverrides extends HttpOverrides {
@@ -25,15 +25,27 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  Future<String> _getInitialRoute() async {
+    final isCurrUserLoggedIn = await TokenService().isCurrUserLoggedIn();
+    return isCurrUserLoggedIn ? "/" : "/welcome";
+  }
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      onGenerateRoute: RouteGenerator.generateRoute,
-      initialRoute: "/",
+    return FutureBuilder<String>(
+      future: _getInitialRoute(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
+        } else {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(primarySwatch: Colors.blue),
+            onGenerateRoute: RouteGenerator.generateRoute,
+            initialRoute: snapshot.data ?? "/welcome",
+          );
+        }
+      },
     );
   }
 }

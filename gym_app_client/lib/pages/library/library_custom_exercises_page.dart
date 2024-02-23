@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/models/exercise/exercise_preview_model.dart';
 import 'package:gym_app_client/db_api/services/user_service.dart';
-import 'package:gym_app_client/utils/components/common/informative_popup.dart';
 import 'package:gym_app_client/utils/components/previews/exercise_preview.dart';
 
 class LibraryCustomExercisesPage extends StatefulWidget {
@@ -20,25 +19,19 @@ class _LibraryCustomExercisesPageState
 
   @override
   void initState() {
-    _getUserCustomExercises();
+    _userService.getCurrUserCustomExercisePreviews().then(
+      (serviceResult) {
+        if (serviceResult.isSuccessful) {
+          _userCustomExercises = serviceResult.data!;
+          if (mounted) setState(() => _isLoading = false);
+        } else {
+          serviceResult.showPopUp(context);
+          if (serviceResult.shouldSignOutUser) _userService.signOut(context);
+        }
+      },
+    );
+
     super.initState();
-  }
-
-  Future<void> _getUserCustomExercises() async {
-    final serviceResult =
-        await _userService.getCurrUserCustomExercisePreviews();
-
-    if (serviceResult.popUpInfo != null) {
-      final popup = InformativePopUp(info: serviceResult.popUpInfo!);
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).removeCurrentSnackBar();
-        ScaffoldMessenger.of(context).showSnackBar(popup);
-      }
-    } else {
-      _userCustomExercises = serviceResult.data!;
-      if (mounted) setState(() => _isLoading = false);
-    }
   }
 
   Widget _getBody() {
@@ -56,20 +49,21 @@ class _LibraryCustomExercisesPageState
     return Padding(
       padding: const EdgeInsets.only(left: 25, right: 25, top: 18),
       child: ListView.builder(
-          itemCount: _userCustomExercises.length,
-          itemBuilder: (_, int index) {
-            return GestureDetector(
-              child: ExercisePreview(exercise: _userCustomExercises[index]),
-              onTap: () {
-                if (mounted) {
-                  Navigator.of(context).pushNamed(
-                    "/exercise",
-                    arguments: _userCustomExercises[index].id,
-                  );
-                }
-              },
-            );
-          }),
+        itemCount: _userCustomExercises.length,
+        itemBuilder: (_, int index) {
+          return GestureDetector(
+            child: ExercisePreview(exercise: _userCustomExercises[index]),
+            onTap: () {
+              if (mounted) {
+                Navigator.of(context).pushNamed(
+                  "/exercise",
+                  arguments: _userCustomExercises[index].id,
+                );
+              }
+            },
+          );
+        },
+      ),
     );
   }
 

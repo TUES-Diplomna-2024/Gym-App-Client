@@ -1,58 +1,30 @@
 import 'dart:io';
 import 'package:http/http.dart';
-import 'package:flutter/material.dart';
+import 'dart:async';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:gym_app_client/db_api/services/token_service.dart';
-import 'package:gym_app_client/utils/common/popup_info.dart';
-import 'package:gym_app_client/utils/common/refresh_error.dart';
+import 'package:gym_app_client/utils/common/http_methods.dart';
+import 'package:gym_app_client/utils/common/request_result.dart';
+import 'package:gym_app_client/utils/common/service_result.dart';
 
 class BaseService {
-  final TokenService tokenService = TokenService();
+  final tokenService = TokenService();
   final String _dbAPIBaseUrl = GlobalConfiguration().getValue("dbAPIBaseURL");
-  late final String _baseEndpoint;
+  late final Uri _refreshUrl;
+  final String baseEndpoint;
+  final connectionTimeout = const Duration(seconds: 3);
+  final String defaultErrorMessage = "Something went wrong! Try again later!";
 
   BaseService({
-    required String baseEndpoint,
+    required this.baseEndpoint,
   }) {
-    _baseEndpoint = baseEndpoint;
-  }
-
-  Future<RefreshError?> refreshAccessToken() async {
-    try {
-      final response = await get(
-        Uri.parse("$_dbAPIBaseUrl/users/refresh"),
-        headers: await getHeaders(hasAccessToken: false),
-      );
-
-      final statusCode = response.statusCode;
-
-      if (statusCode == HttpStatus.ok) {
-        await tokenService.saveAccessTokenInStorage(response.body);
-        return null;
-      } else if (statusCode == HttpStatus.unauthorized) {
-        await tokenService.removeTokensFromStorage();
-
-        return RefreshError(
-          popUpInfo: fail("You have to sign in your account again!"),
-          shouldSignOutUser: true,
-        );
-      }
-
-      throw Exception();
-    } on SocketException {
-      return RefreshError(
-          popUpInfo: fail(
-              "Network error! Please check your internet connection and try again!"));
-    } on Exception {
-      return RefreshError(
-          popUpInfo: fail("Something went wrong! Try again later!"));
-    }
+    _refreshUrl = Uri.parse("$_dbAPIBaseUrl/users/refresh");
   }
 
   Uri getUri({String? subEndpoint}) {
     final uri = subEndpoint != null
-        ? "$_dbAPIBaseUrl/$_baseEndpoint/$subEndpoint"
-        : "$_dbAPIBaseUrl/$_baseEndpoint";
+        ? "$_dbAPIBaseUrl/$baseEndpoint/$subEndpoint"
+        : "$_dbAPIBaseUrl/$baseEndpoint";
 
     return Uri.parse(Uri.encodeFull(uri));
   }
@@ -81,9 +53,99 @@ class BaseService {
     return headers;
   }
 
-  PopUpInfo success(String message) =>
-      PopUpInfo(message: message, color: Colors.green.shade300);
+  Future<RequestResult> sendRequest({
+    required HttpMethods method,
+    required Map<String, String> headers,
+    String? subEndpoint,
+    Uri? fullUrl,
+    Object? body,
+  }) async {
+    try {
+      final url = fullUrl ?? getUri(subEndpoint: subEndpoint);
+      late final Response response;
 
-  PopUpInfo fail(String message) =>
-      PopUpInfo(message: message, color: Colors.red.shade400);
+      switch (method) {
+        case HttpMethods.get:
+          response =
+              await get(url, headers: headers).timeout(connectionTimeout);
+          break;
+        case HttpMethods.post:
+          response = await post(url, headers: headers, body: body)
+              .timeout(connectionTimeout);
+          break;
+        case HttpMethods.put:
+          response = await put(url, headers: headers, body: body)
+              .timeout(connectionTimeout);
+          break;
+        case HttpMethods.delete:
+          response = await delete(url, headers: headers, body: body)
+              .timeout(connectionTimeout);
+          break;
+      }
+
+      return RequestResult.success(response: response);
+    } catch (e) {
+      var errorMessage = defaultErrorMessage;
+
+      if (e is SocketException || e is TimeoutException) {
+        errorMessage =
+            "Network error! Please check your internet connection and try again!";
+      }
+
+      return RequestResult.fail(errorMessage: errorMessage);
+    }
+  }
+
+  Future<ServiceResult?> baseAuthResponseHandle({
+    required RequestResult requestResult,
+    required Future<ServiceResult> Function() currMethod,
+    bool shouldUpdateRefreshToken = true,
+  }) async {
+    if (!requestResult.isSuccessful) {
+      return ServiceResult.fail(message: requestResult.errorMessage!);
+    }
+
+    final response = requestResult.response!;
+    final statusCode = response.statusCode;
+
+    if (statusCode == HttpStatus.unauthorized) {
+      final result = await refreshAccessToken();
+      if (!result.isSuccessful) return result;
+      return await currMethod();
+    }
+
+    if (shouldUpdateRefreshToken) {
+      await tokenService
+          .saveRefreshTokenInStorage(response.headers["x-refresh-token"]!);
+    }
+
+    return null;
+  }
+
+  Future<ServiceResult> refreshAccessToken() async {
+    final requestResult = await sendRequest(
+      method: HttpMethods.get,
+      fullUrl: _refreshUrl,
+      headers: await getHeaders(hasAccessToken: false),
+    );
+
+    if (!requestResult.isSuccessful) {
+      return ServiceResult.fail(message: requestResult.errorMessage!);
+    }
+
+    final response = requestResult.response!;
+    final statusCode = response.statusCode;
+
+    if (statusCode == HttpStatus.ok) {
+      await tokenService.saveAccessTokenInStorage(response.body);
+      return ServiceResult.success();
+    } else if (statusCode == HttpStatus.unauthorized) {
+      return ServiceResult.fail(
+        message: "You have to sign in your account again!",
+        shouldSignOutUser: true,
+      );
+    }
+
+    return ServiceResult.fail(message: defaultErrorMessage);
+  }
 }

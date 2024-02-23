@@ -1,292 +1,242 @@
 import 'dart:io';
 import 'dart:convert';
-import 'package:http/http.dart';
+import 'package:flutter/material.dart';
+import 'package:gym_app_client/utils/common/http_methods.dart';
 import 'package:gym_app_client/db_api/models/auth_model.dart';
 import 'package:gym_app_client/db_api/models/user/user_signup_model.dart';
 import 'package:gym_app_client/db_api/models/user/user_signin_model.dart';
 import 'package:gym_app_client/db_api/models/user/user_profile_model.dart';
 import 'package:gym_app_client/db_api/models/user/user_update_model.dart';
 import 'package:gym_app_client/db_api/models/exercise/exercise_preview_model.dart';
-import 'package:gym_app_client/utils/common/popup_info.dart';
 import 'package:gym_app_client/utils/common/service_result.dart';
 import 'package:gym_app_client/db_api/services/base_service.dart';
 
 class UserService extends BaseService {
   UserService() : super(baseEndpoint: "users");
 
-  Future<PopUpInfo> signUp(UserSignUpModel userSignUp) async {
-    try {
-      final response = await post(
-        getUri(subEndpoint: "signup"),
-        headers:
-            await getHeaders(hasAccessToken: false, hasRefreshToken: false),
-        body: userSignUp.toJson(),
-      );
+  Future<ServiceResult> signUp(UserSignUpModel userSignUp) async {
+    final requestResult = await sendRequest(
+      method: HttpMethods.post,
+      subEndpoint: "signup",
+      headers: await getHeaders(hasAccessToken: false, hasRefreshToken: false),
+      body: userSignUp.toJson(),
+    );
 
-      final statusCode = response.statusCode;
-
-      if (statusCode == HttpStatus.ok) {
-        final tokens = AuthModel.loadFromResponse(response);
-        tokenService.saveTokensInStorage(tokens);
-
-        return success("Your account has been successfully created!");
-      } else if (statusCode == HttpStatus.badRequest) {
-        return fail("Invalid user data!");
-      } else if (statusCode == HttpStatus.conflict) {
-        return fail("This email address is already in use!");
-      }
-
-      throw Exception();
-    } on SocketException {
-      return fail(
-          "Network error! Please check your internet connection and try again!");
-    } on Exception {
-      return fail("Something went wrong! Try again later!");
+    if (!requestResult.isSuccessful) {
+      return ServiceResult.fail(message: requestResult.errorMessage!);
     }
+
+    final response = requestResult.response!;
+    final statusCode = response.statusCode;
+
+    if (statusCode == HttpStatus.ok) {
+      final tokens = AuthModel.loadFromResponse(response);
+      await tokenService.saveTokensInStorage(tokens);
+
+      return ServiceResult.success(
+        message: "Your account has been successfully created!",
+      );
+    } else if (statusCode == HttpStatus.badRequest) {
+      return ServiceResult.fail(message: "Invalid user data!");
+    } else if (statusCode == HttpStatus.conflict) {
+      return ServiceResult.fail(
+        message: "This email address is already in use!",
+      );
+    }
+
+    return ServiceResult.fail(message: defaultErrorMessage);
   }
 
-  Future<PopUpInfo> signIn(UserSignInModel userSignIn) async {
-    try {
-      final response = await post(
-        getUri(subEndpoint: "signin"),
-        headers:
-            await getHeaders(hasAccessToken: false, hasRefreshToken: false),
-        body: userSignIn.toJson(),
-      );
+  Future<ServiceResult> signIn(UserSignInModel userSignIn) async {
+    final requestResult = await sendRequest(
+      method: HttpMethods.post,
+      subEndpoint: "signin",
+      headers: await getHeaders(hasAccessToken: false, hasRefreshToken: false),
+      body: userSignIn.toJson(),
+    );
 
-      final statusCode = response.statusCode;
-
-      if (statusCode == HttpStatus.ok) {
-        final tokens = AuthModel.loadFromResponse(response);
-        tokenService.saveTokensInStorage(tokens);
-
-        return success("Welcome back!");
-      } else if (statusCode == HttpStatus.badRequest) {
-        return fail("Invalid user data!");
-      } else if (statusCode == HttpStatus.unauthorized) {
-        return fail("Sign in or password is invalid!");
-      }
-
-      throw Exception();
-    } on SocketException {
-      return fail(
-          "Network error! Please check your internet connection and try again!");
-    } on Exception {
-      return fail("Something went wrong! Try again later!");
+    if (!requestResult.isSuccessful) {
+      return ServiceResult.fail(message: requestResult.errorMessage!);
     }
+
+    final response = requestResult.response!;
+    final statusCode = response.statusCode;
+
+    if (statusCode == HttpStatus.ok) {
+      final tokens = AuthModel.loadFromResponse(response);
+      await tokenService.saveTokensInStorage(tokens);
+
+      return ServiceResult.success(message: "Welcome back!");
+    } else if (statusCode == HttpStatus.badRequest) {
+      return ServiceResult.fail(message: "Invalid user data!");
+    } else if (statusCode == HttpStatus.unauthorized) {
+      return ServiceResult.fail(message: "Sign in or password is invalid!");
+    }
+
+    return ServiceResult.fail(message: defaultErrorMessage);
+  }
+
+  void signOut(BuildContext context) {
+    tokenService.removeTokensFromStorage().then(
+      (_) {
+        if (context.mounted) {
+          Navigator.of(context)
+              .pushNamedAndRemoveUntil("/welcome", (_) => false);
+        }
+      },
+    );
   }
 
   Future<ServiceResult> getCurrUser() async {
-    try {
-      final response = await get(
-        getUri(subEndpoint: "current"),
-        headers: await getHeaders(),
+    final requestResult = await sendRequest(
+      method: HttpMethods.get,
+      subEndpoint: "current",
+      headers: await getHeaders(),
+    );
+
+    final baseServiceResult = await baseAuthResponseHandle(
+      requestResult: requestResult,
+      currMethod: () => getCurrUser(),
+    );
+
+    if (baseServiceResult != null) return baseServiceResult;
+
+    final response = requestResult.response!;
+    final statusCode = response.statusCode;
+
+    if (statusCode == HttpStatus.ok) {
+      return ServiceResult.success(
+        data: UserProfileModel.loadFromResponse(response),
       );
-
-      final statusCode = response.statusCode;
-
-      if (statusCode == HttpStatus.unauthorized) {
-        var error = await refreshAccessToken();
-
-        if (error != null) {
-          return ServiceResult(
-              popUpInfo: error.popUpInfo,
-              shouldSignOutUser: error.shouldSignOutUser);
-        }
-
-        return await getCurrUser();
-      }
-
-      await tokenService
-          .saveRefreshTokenInStorage(response.headers["x-refresh-token"]!);
-
-      if (statusCode == HttpStatus.ok) {
-        return ServiceResult(data: UserProfileModel.loadFromResponse(response));
-      }
-
-      throw Exception();
-    } on SocketException {
-      return ServiceResult(
-          popUpInfo: fail(
-              "Network error! Please check your internet connection and try again!"));
-    } on Exception {
-      return ServiceResult(
-          popUpInfo: fail("Something went wrong! Try again later!"));
     }
+
+    return ServiceResult.fail(message: defaultErrorMessage);
   }
 
   Future<ServiceResult> getUserById(String userId) async {
-    try {
-      final response = await get(
-        getUri(subEndpoint: userId),
-        headers: await getHeaders(),
+    final requestResult = await sendRequest(
+      method: HttpMethods.get,
+      subEndpoint: userId,
+      headers: await getHeaders(),
+    );
+
+    final baseServiceResult = await baseAuthResponseHandle(
+      requestResult: requestResult,
+      currMethod: () => getUserById(userId),
+    );
+
+    if (baseServiceResult != null) return baseServiceResult;
+
+    final response = requestResult.response!;
+    final statusCode = response.statusCode;
+
+    if (statusCode == HttpStatus.ok) {
+      return ServiceResult.success(
+        data: UserProfileModel.loadFromResponse(response),
       );
-
-      final statusCode = response.statusCode;
-
-      if (statusCode == HttpStatus.unauthorized) {
-        var error = await refreshAccessToken();
-
-        if (error != null) {
-          return ServiceResult(
-              popUpInfo: error.popUpInfo,
-              shouldSignOutUser: error.shouldSignOutUser);
-        }
-
-        return await getUserById(userId);
-      }
-
-      await tokenService
-          .saveRefreshTokenInStorage(response.headers["x-refresh-token"]!);
-
-      if (statusCode == HttpStatus.ok) {
-        return ServiceResult(data: UserProfileModel.loadFromResponse(response));
-      } else if (statusCode == HttpStatus.notFound ||
-          statusCode == HttpStatus.badRequest) {
-        return ServiceResult(popUpInfo: fail("This user could not be found!"));
-      }
-
-      throw Exception();
-    } on SocketException {
-      return ServiceResult(
-          popUpInfo: fail(
-              "Network error! Please check your internet connection and try again!"));
-    } on Exception {
-      return ServiceResult(
-          popUpInfo: fail("Something went wrong! Try again later!"));
+    } else if (statusCode == HttpStatus.notFound ||
+        statusCode == HttpStatus.badRequest) {
+      return ServiceResult.fail(message: "This user could not be found!");
     }
+
+    return ServiceResult.fail(message: defaultErrorMessage);
   }
 
   Future<ServiceResult> getCurrUserCustomExercisePreviews() async {
-    try {
-      final response = await get(
-        getUri(subEndpoint: "current/custom-exercises"),
-        headers: await getHeaders(),
-      );
+    final requestResult = await sendRequest(
+      method: HttpMethods.get,
+      subEndpoint: "current/custom-exercises",
+      headers: await getHeaders(),
+    );
 
-      final statusCode = response.statusCode;
+    final baseServiceResult = await baseAuthResponseHandle(
+      requestResult: requestResult,
+      currMethod: () => getCurrUserCustomExercisePreviews(),
+    );
 
-      if (statusCode == HttpStatus.unauthorized) {
-        var error = await refreshAccessToken();
+    if (baseServiceResult != null) return baseServiceResult;
 
-        if (error != null) {
-          return ServiceResult(
-              popUpInfo: error.popUpInfo,
-              shouldSignOutUser: error.shouldSignOutUser);
-        }
+    final response = requestResult.response!;
+    final statusCode = response.statusCode;
 
-        return await getCurrUserCustomExercisePreviews();
-      }
+    if (statusCode == HttpStatus.ok) {
+      final exercisePreviews =
+          ExercisePreviewModel.getExercisePreviewsFromResponse(response);
 
-      await tokenService
-          .saveRefreshTokenInStorage(response.headers["x-refresh-token"]!);
-
-      if (statusCode == HttpStatus.ok) {
-        final exercisePreviews =
-            ExercisePreviewModel.getExercisePreviewsFromResponse(response);
-
-        return ServiceResult(data: exercisePreviews);
-      }
-
-      throw Exception();
-    } on SocketException {
-      return ServiceResult(
-          popUpInfo: fail(
-              "Network error! Please check your internet connection and try again!"));
-    } on Exception {
-      return ServiceResult(
-          popUpInfo: fail("Something went wrong! Try again later!"));
+      return ServiceResult.success(data: exercisePreviews);
     }
+
+    return ServiceResult.fail(message: defaultErrorMessage);
   }
 
   Future<ServiceResult> updateCurrUser(UserUpdateModel userUpdate) async {
-    try {
-      final response = await put(
-        getUri(subEndpoint: "current"),
-        headers: await getHeaders(),
-        body: userUpdate.toJson(),
-      );
+    final requestResult = await sendRequest(
+      method: HttpMethods.put,
+      subEndpoint: "current",
+      headers: await getHeaders(),
+      body: userUpdate.toJson(),
+    );
 
-      final statusCode = response.statusCode;
+    final baseServiceResult = await baseAuthResponseHandle(
+      requestResult: requestResult,
+      currMethod: () => updateCurrUser(userUpdate),
+    );
 
-      if (statusCode == HttpStatus.unauthorized) {
-        var error = await refreshAccessToken();
+    if (baseServiceResult != null) return baseServiceResult;
 
-        if (error != null) {
-          return ServiceResult(
-              popUpInfo: error.popUpInfo,
-              shouldSignOutUser: error.shouldSignOutUser);
-        }
+    final statusCode = requestResult.response!.statusCode;
 
-        return await updateCurrUser(userUpdate);
-      }
-
-      await tokenService
-          .saveRefreshTokenInStorage(response.headers["x-refresh-token"]!);
-
-      if (statusCode == HttpStatus.ok) {
-        return ServiceResult(popUpInfo: success("Successfully updated!"));
-      } else if (statusCode == HttpStatus.badRequest) {
-        return ServiceResult(popUpInfo: fail("Invalid user data!"));
-      }
-
-      throw Exception();
-    } on SocketException {
-      return ServiceResult(
-          popUpInfo: fail(
-              "Network error! Please check your internet connection and try again!"));
-    } on Exception {
-      return ServiceResult(
-          popUpInfo: fail("Something went wrong! Try again later!"));
+    if (statusCode == HttpStatus.ok) {
+      return ServiceResult.success(message: "Successfully updated!");
+    } else if (statusCode == HttpStatus.badRequest) {
+      return ServiceResult.fail(message: "Invalid user data!");
     }
+
+    return ServiceResult.fail(message: defaultErrorMessage);
   }
 
   Future<ServiceResult> deleteCurrUser(String password) async {
-    try {
-      final response = await delete(
-        getUri(subEndpoint: "current"),
-        headers: await getHeaders(),
-        body: jsonEncode({"password": password}),
-      );
+    final requestResult = await sendRequest(
+      method: HttpMethods.delete,
+      subEndpoint: "current",
+      headers: await getHeaders(),
+      body: jsonEncode({"password": password}),
+    );
 
-      final statusCode = response.statusCode;
-
-      if (statusCode == HttpStatus.unauthorized) {
-        if (response.body == "Incorrect password!") {
-          return ServiceResult(popUpInfo: fail("Incorrect password!"));
-        }
-
-        var error = await refreshAccessToken();
-
-        if (error != null) {
-          return ServiceResult(
-              popUpInfo: error.popUpInfo,
-              shouldSignOutUser: error.shouldSignOutUser);
-        }
-
-        return await deleteCurrUser(password);
-      }
-
-      if (statusCode == HttpStatus.ok) {
-        await tokenService.removeTokensFromStorage();
-        return ServiceResult(
-            popUpInfo: success("Your account is deleted successfully!"),
-            shouldSignOutUser: true);
-      } else if (statusCode == HttpStatus.badRequest) {
-        return ServiceResult(popUpInfo: fail("Invalid password format!"));
-      } else if (statusCode == HttpStatus.forbidden) {
-        return ServiceResult(
-            popUpInfo: fail("As a root admin you cannot delete your account!"));
-      }
-
-      throw Exception();
-    } on SocketException {
-      return ServiceResult(
-          popUpInfo: fail(
-              "Network error! Please check your internet connection and try again!"));
-    } on Exception {
-      return ServiceResult(
-          popUpInfo: fail("Something went wrong! Try again later!"));
+    if (!requestResult.isSuccessful) {
+      return ServiceResult.fail(message: requestResult.errorMessage!);
     }
+
+    final response = requestResult.response!;
+    final statusCode = response.statusCode;
+
+    if (statusCode == HttpStatus.unauthorized &&
+        response.body == "Incorrect password!") {
+      return ServiceResult.fail(message: response.body);
+    }
+
+    final baseServiceResult = await baseAuthResponseHandle(
+      requestResult: requestResult,
+      currMethod: () => deleteCurrUser(password),
+      shouldUpdateRefreshToken: false,
+    );
+
+    if (baseServiceResult != null) return baseServiceResult;
+
+    if (statusCode == HttpStatus.ok) {
+      return ServiceResult.success(
+        message: "Your account is deleted successfully!",
+        shouldSignOutUser: true,
+        popUpColor: Colors.amber.shade800,
+      );
+    } else if (statusCode == HttpStatus.badRequest) {
+      return ServiceResult.fail(message: "Invalid password format!");
+    } else if (statusCode == HttpStatus.forbidden) {
+      return ServiceResult.fail(
+        message: "As a root admin you cannot delete your account!",
+      );
+    }
+
+    return ServiceResult.fail(message: defaultErrorMessage);
   }
 }

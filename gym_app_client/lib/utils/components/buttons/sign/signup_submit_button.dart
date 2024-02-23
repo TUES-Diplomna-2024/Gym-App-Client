@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/services/user_service.dart';
 import 'package:gym_app_client/db_api/models/user/user_signup_model.dart';
-import 'package:gym_app_client/utils/components/common/informative_popup.dart';
 
 class SignUpSubmitButton extends StatelessWidget {
   final UserService _userService = UserService();
@@ -30,35 +29,38 @@ class SignUpSubmitButton extends StatelessWidget {
     required this.onFailedForm,
   });
 
+  void _handleSignUp(BuildContext context) {
+    if (formKey.currentState?.validate() ?? false) {
+      onSuccessfulForm();
+
+      UserSignUpModel userData = UserSignUpModel(
+        username: usernameController.text,
+        email: emailController.text,
+        password: passwordController.text,
+        birthDate: birthDateController.text,
+        gender: selectedGender,
+        height: selectedHeight,
+        weight: selectedWeight,
+      );
+
+      _userService.signUp(userData).then(
+        (serviceResult) {
+          serviceResult.showPopUp(context);
+
+          if (serviceResult.isSuccessful && context.mounted) {
+            Navigator.of(context).pushNamedAndRemoveUntil("/", (_) => false);
+          }
+        },
+      );
+    } else {
+      onFailedForm();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: () async {
-        if (formKey.currentState!.validate()) {
-          onSuccessfulForm();
-
-          UserSignUpModel userData = UserSignUpModel(
-            username: usernameController.text,
-            email: emailController.text,
-            password: passwordController.text,
-            birthDate: birthDateController.text,
-            gender: selectedGender,
-            height: selectedHeight,
-            weight: selectedWeight,
-          );
-
-          var result = await _userService.signUp(userData);
-
-          if (context.mounted) {
-            final popup = InformativePopUp(info: result);
-
-            ScaffoldMessenger.of(context).removeCurrentSnackBar();
-            ScaffoldMessenger.of(context).showSnackBar(popup);
-          }
-        } else {
-          onFailedForm();
-        }
-      },
+      onPressed: () => _handleSignUp(context),
       style: ElevatedButton.styleFrom(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(5),

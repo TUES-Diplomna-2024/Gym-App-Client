@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/models/workout/workout_preview_model.dart';
+import 'package:gym_app_client/db_api/services/user_service.dart';
 import 'package:gym_app_client/db_api/services/workout_service.dart';
-import 'package:gym_app_client/utils/components/buttons/exercise/exercise_add_in_workout_done_button.dart';
+import 'package:gym_app_client/utils/components/buttons/exercise/exercise_add_in_workouts_done_button.dart';
 import 'package:gym_app_client/utils/components/common/back_leading_app_bar.dart';
-import 'package:gym_app_client/utils/components/common/informative_popup.dart';
 import 'package:gym_app_client/utils/components/previews/selectable_workout_preview.dart';
 
 class ExerciseAddInWorkoutsPage extends StatefulWidget {
@@ -20,6 +20,7 @@ class ExerciseAddInWorkoutsPage extends StatefulWidget {
 }
 
 class _ExerciseAddInWorkoutsPageState extends State<ExerciseAddInWorkoutsPage> {
+  final _userService = UserService();
   final _workoutService = WorkoutService();
 
   late final List<WorkoutPreviewModel> _userWorkouts;
@@ -28,24 +29,19 @@ class _ExerciseAddInWorkoutsPageState extends State<ExerciseAddInWorkoutsPage> {
 
   @override
   void initState() {
-    _getUserWorkouts();
+    _workoutService.getCurrUserWorkoutPreviews().then(
+      (serviceResult) {
+        if (serviceResult.isSuccessful) {
+          _userWorkouts = serviceResult.data!;
+          if (mounted) setState(() => _isLoading = false);
+        } else {
+          serviceResult.showPopUp(context);
+          if (serviceResult.shouldSignOutUser) _userService.signOut(context);
+        }
+      },
+    );
+
     super.initState();
-  }
-
-  Future<void> _getUserWorkouts() async {
-    final serviceResult = await _workoutService.getCurrUserWorkoutPreviews();
-
-    if (serviceResult.popUpInfo != null) {
-      final popup = InformativePopUp(info: serviceResult.popUpInfo!);
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).removeCurrentSnackBar();
-        ScaffoldMessenger.of(context).showSnackBar(popup);
-      }
-    } else {
-      _userWorkouts = serviceResult.data!;
-      if (mounted) setState(() => _isLoading = false);
-    }
   }
 
   Widget _getBody() {
@@ -65,18 +61,19 @@ class _ExerciseAddInWorkoutsPageState extends State<ExerciseAddInWorkoutsPage> {
     return Padding(
       padding: const EdgeInsets.only(left: 25, right: 25, top: 18),
       child: ListView.builder(
-          itemCount: _userWorkouts.length,
-          itemBuilder: (_, int index) {
-            return SelectableWorkoutPreview(
-              workout: _userWorkouts[index],
-              onSelect: (id) {
-                if (mounted) setState(() => selectedWorkoutIds.add(id));
-              },
-              onUnselect: (id) {
-                if (mounted) setState(() => selectedWorkoutIds.remove(id));
-              },
-            );
-          }),
+        itemCount: _userWorkouts.length,
+        itemBuilder: (_, int index) {
+          return SelectableWorkoutPreview(
+            workout: _userWorkouts[index],
+            onSelect: (id) {
+              if (mounted) setState(() => selectedWorkoutIds.add(id));
+            },
+            onUnselect: (id) {
+              if (mounted) setState(() => selectedWorkoutIds.remove(id));
+            },
+          );
+        },
+      ),
     );
   }
 
@@ -86,7 +83,7 @@ class _ExerciseAddInWorkoutsPageState extends State<ExerciseAddInWorkoutsPage> {
       appBar: BackLeadingAppBar(title: "Add In Workouts", context: context),
       body: _getBody(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: ExerciseAddInWorkoutDoneButton(
+      floatingActionButton: ExerciseAddInWorkoutsDoneButton(
         exerciseId: widget.exerciseId,
         selectedWorkoutIds: selectedWorkoutIds,
       ),

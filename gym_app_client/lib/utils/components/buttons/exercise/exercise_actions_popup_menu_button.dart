@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/models/exercise/exercise_update_model.dart';
 import 'package:gym_app_client/db_api/models/exercise/exercise_view_model.dart';
-import 'package:gym_app_client/utils/components/dialogs/exercise/exercise_delete_dialog.dart';
+import 'package:gym_app_client/utils/components/dialogs/exercise_delete_dialog.dart';
 
 class ExerciseActionsPopupMenuButton extends PopupMenuButton {
   ExerciseActionsPopupMenuButton({
@@ -10,6 +10,9 @@ class ExerciseActionsPopupMenuButton extends PopupMenuButton {
     required ExerciseViewModel exerciseCurrState,
     required void Function(ExerciseUpdateModel) onExerciseUpdated,
   }) : super(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(5),
+          ),
           itemBuilder: (context) {
             return [
               PopupMenuItem(
