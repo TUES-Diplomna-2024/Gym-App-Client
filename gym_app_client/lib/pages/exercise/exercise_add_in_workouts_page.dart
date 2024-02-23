@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/models/workout/workout_preview_model.dart';
 import 'package:gym_app_client/db_api/services/user_service.dart';
 import 'package:gym_app_client/db_api/services/workout_service.dart';
-import 'package:gym_app_client/utils/components/buttons/exercise/exercise_add_in_workout_done_button.dart';
+import 'package:gym_app_client/utils/components/buttons/exercise/exercise_add_in_workouts_done_button.dart';
 import 'package:gym_app_client/utils/components/common/back_leading_app_bar.dart';
 import 'package:gym_app_client/utils/components/previews/selectable_workout_preview.dart';
 
@@ -83,7 +83,7 @@ class _ExerciseAddInWorkoutsPageState extends State<ExerciseAddInWorkoutsPage> {
       appBar: BackLeadingAppBar(title: "Add In Workouts", context: context),
       body: _getBody(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: ExerciseAddInWorkoutDoneButton(
+      floatingActionButton: ExerciseAddInWorkoutsDoneButton(
         exerciseId: widget.exerciseId,
         selectedWorkoutIds: selectedWorkoutIds,
       ),

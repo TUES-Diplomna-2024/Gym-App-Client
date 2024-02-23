@@ -4,10 +4,11 @@ import 'package:http/http.dart';
 
 class WorkoutViewModel {
   late final String id;
-  late final String name;
-  late final String? description;
-  late final int exerciseCount;
-  late final List<ExercisePreviewModel>? exercises;
+
+  late String name;
+  late String? description;
+  late int exerciseCount;
+  List<ExercisePreviewModel>? exercises;
 
   WorkoutViewModel.loadFromResponse(Response response) {
     Map<String, dynamic> body = json.decode(response.body);
@@ -21,5 +22,16 @@ class WorkoutViewModel {
       exercises =
           ExercisePreviewModel.getExercisePreviewsFromBody(body["exercises"]);
     }
+  }
+
+  void updateView(
+    String name,
+    String? description,
+    List<ExercisePreviewModel>? exercises,
+  ) {
+    this.name = name;
+    this.description = description;
+    exerciseCount = exercises?.length ?? 0;
+    this.exercises = exercises;
   }
 }

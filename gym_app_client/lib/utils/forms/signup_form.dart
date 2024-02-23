@@ -93,7 +93,7 @@ class _SignUpFormState extends State<SignUpForm> {
             onPressed: () {
               if (!mounted) return;
 
-              if (_accountInfoFormKey.currentState!.validate()) {
+              if (_accountInfoFormKey.currentState?.validate() ?? false) {
                 setState(() {
                   _currStep += 1;
                   _accountInfoCurrState = StepState.complete;

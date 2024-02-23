@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/models/workout/workout_view_model.dart';
 import 'package:gym_app_client/db_api/services/user_service.dart';
 import 'package:gym_app_client/db_api/services/workout_service.dart';
+import 'package:gym_app_client/utils/components/buttons/workout/workout_actions_popup_menu_button.dart';
 import 'package:gym_app_client/utils/components/common/back_leading_app_bar.dart';
 import 'package:gym_app_client/utils/components/fields/content/content_field.dart';
 import 'package:gym_app_client/utils/components/previews/exercise_preview.dart';
@@ -90,19 +91,28 @@ class _WorkoutViewPageState extends State<WorkoutViewPage> {
                   child: Column(
                     children: [
                       const SizedBox(height: 23),
-                      Text(
-                        _workoutView.name,
-                        style: const TextStyle(fontSize: 26),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              _workoutView.name,
+                              style: const TextStyle(fontSize: 26),
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          WorkoutActionsPopupMenuButton(
+                            workoutCurrState: _workoutView,
+                            onWorkoutUpdated: (name, description, exercises) {
+                              if (mounted) {
+                                setState(
+                                  () => _workoutView.updateView(
+                                      name, description, exercises),
+                                );
+                              }
+                            },
+                          ),
+                        ],
                       ),
-                      // const SizedBox(height: 10),
-                      // Row(
-                      //   children: [
-                      //     IconButton(
-                      //       onPressed: () => debugPrint("Add +"),
-                      //       icon: const Icon(Icons.add_box_rounded),
-                      //     ),
-                      //   ],
-                      // ),
                       const SizedBox(height: 15),
                       ContentField(
                         fieldIcon: Icons.description_outlined,

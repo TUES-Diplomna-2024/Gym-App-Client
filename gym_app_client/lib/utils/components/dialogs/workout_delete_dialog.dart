@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:gym_app_client/db_api/services/exercise_service.dart';
 import 'package:gym_app_client/db_api/services/user_service.dart';
+import 'package:gym_app_client/db_api/services/workout_service.dart';
 import 'package:gym_app_client/utils/components/dialogs/delete_item_dialog.dart';
 
-class ExerciseDeleteDialog extends DeleteItemDialog {
+class WorkoutDeleteDialog extends DeleteItemDialog {
   final _userService = UserService();
-  final _exerciseService = ExerciseService();
+  final _workoutService = WorkoutService();
 
-  final String exerciseId;
+  final String workoutId;
 
-  ExerciseDeleteDialog({
+  WorkoutDeleteDialog({
     super.key,
     required super.context,
-    required this.exerciseId,
-  }) : super(itemId: exerciseId, itemType: "exercise");
+    required this.workoutId,
+  }) : super(itemId: workoutId, itemType: "workout");
 
   @override
   void handleItemDeletion() {
-    _exerciseService.deleteExerciseById(exerciseId).then(
+    _workoutService.deleteWorkoutById(workoutId).then(
       (serviceResult) {
         serviceResult.showPopUp(context);
 

@@ -35,7 +35,7 @@ class ExerciseSaveChangesButton extends StatelessWidget {
   });
 
   void _handleExerciseUpdate(BuildContext context) {
-    if (formKey.currentState!.validate()) {
+    if (formKey.currentState?.validate() ?? false) {
       var exerciseUpdate = ExerciseUpdateModel(
         name: nameController.text,
         instructions: instructionsController.text,

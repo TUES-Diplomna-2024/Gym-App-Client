@@ -14,10 +14,11 @@ dependencies:
   global_configuration: ^2.0.0
   flutter_secure_storage:
   jwt_decoder:
-  provider: ^5.0.0
   intl:
 
   cupertino_icons: ^1.0.2
+
+  flutter_slidable: ^3.0.1
 
 dev_dependencies:
   flutter_test:

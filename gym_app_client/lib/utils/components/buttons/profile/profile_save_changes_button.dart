@@ -24,7 +24,7 @@ class ProfileSaveChangesButton extends StatelessWidget {
   });
 
   void _handleProfileUpdate(BuildContext context) {
-    if (formKey.currentState!.validate()) {
+    if (formKey.currentState?.validate() ?? false) {
       var userUpdate = UserUpdateModel(
         username: usernameController.text,
         birthDate: birthDateController.text,

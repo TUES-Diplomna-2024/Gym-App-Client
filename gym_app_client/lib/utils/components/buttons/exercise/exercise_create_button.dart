@@ -31,7 +31,7 @@ class ExerciseCreateButton extends StatelessWidget {
   });
 
   void _handleExerciseCreate(BuildContext context) {
-    if (formKey.currentState!.validate()) {
+    if (formKey.currentState?.validate() ?? false) {
       var exercise = ExerciseCreateModel(
         name: nameController.text,
         type: selectedType,

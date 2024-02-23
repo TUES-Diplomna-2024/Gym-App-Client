@@ -166,7 +166,7 @@ class ExerciseService extends BaseService {
     if (statusCode == HttpStatus.ok) {
       return ServiceResult.success(message: "Successfully updated!");
     } else if (statusCode == HttpStatus.badRequest) {
-      return ServiceResult.fail(message: "Invalid user data!");
+      return ServiceResult.fail(message: "Invalid exercise data!");
     } else if (statusCode == HttpStatus.notFound) {
       return ServiceResult.fail(message: "Exercise could not be found!");
     } else if (statusCode == HttpStatus.forbidden) {

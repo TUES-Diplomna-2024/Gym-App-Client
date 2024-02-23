@@ -45,3 +45,4 @@ app.*.map.json
 
 # Custom
 /assets/cfg/app_settings.json
+/lib/.vscode

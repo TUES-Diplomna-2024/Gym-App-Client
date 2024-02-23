@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/models/workout/workout_create_model.dart';
 import 'package:gym_app_client/db_api/services/user_service.dart';
 import 'package:gym_app_client/db_api/services/workout_service.dart';
-import 'package:gym_app_client/utils/common/service_result.dart';
 import 'package:gym_app_client/utils/forms/workout_create_form.dart';
 
 class WorkoutCreateDialog extends StatefulWidget {

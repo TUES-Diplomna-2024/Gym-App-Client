@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:gym_app_client/db_api/models/workout/workout_create_model.dart';
 import 'package:gym_app_client/db_api/models/workout/workout_preview_model.dart';
+import 'package:gym_app_client/db_api/models/workout/workout_update_model.dart';
 import 'package:gym_app_client/db_api/models/workout/workout_view_model.dart';
 import 'package:gym_app_client/utils/common/http_methods.dart';
 import 'package:gym_app_client/db_api/services/base_service.dart';
@@ -91,6 +92,68 @@ class WorkoutService extends BaseService {
       return ServiceResult.success(
         data: WorkoutPreviewModel.getWorkoutPreviewsFromResponse(response),
       );
+    }
+
+    return ServiceResult.fail(message: defaultErrorMessage);
+  }
+
+  Future<ServiceResult> updateWorkoutById(
+      String workoutId, WorkoutUpdateModel workoutUpdate) async {
+    final requestResult = await sendRequest(
+      method: HttpMethods.put,
+      subEndpoint: workoutId,
+      headers: await getHeaders(),
+      body: workoutUpdate.toJson(),
+    );
+
+    final baseServiceResult = await baseAuthResponseHandle(
+      requestResult: requestResult,
+      currMethod: () => updateWorkoutById(workoutId, workoutUpdate),
+    );
+
+    if (baseServiceResult != null) return baseServiceResult;
+
+    final response = requestResult.response!;
+    final statusCode = response.statusCode;
+
+    if (statusCode == HttpStatus.ok) {
+      return ServiceResult.success(message: "Successfully updated!");
+    } else if (statusCode == HttpStatus.badRequest) {
+      return ServiceResult.fail(message: "Invalid workout data!");
+    } else if (statusCode == HttpStatus.notFound) {
+      return ServiceResult.fail(message: "Workout could not be found!");
+    } else if (statusCode == HttpStatus.forbidden) {
+      return ServiceResult.fail(message: response.body);
+    }
+
+    return ServiceResult.fail(message: defaultErrorMessage);
+  }
+
+  Future<ServiceResult> deleteWorkoutById(String workoutId) async {
+    final requestResult = await sendRequest(
+      method: HttpMethods.delete,
+      subEndpoint: workoutId,
+      headers: await getHeaders(),
+    );
+
+    final baseServiceResult = await baseAuthResponseHandle(
+      requestResult: requestResult,
+      currMethod: () => deleteWorkoutById(workoutId),
+    );
+
+    if (baseServiceResult != null) return baseServiceResult;
+
+    final response = requestResult.response!;
+    final statusCode = response.statusCode;
+
+    if (statusCode == HttpStatus.ok) {
+      return ServiceResult.success(
+          message: "Workout was successfully deleted!");
+    } else if (statusCode == HttpStatus.notFound ||
+        statusCode == HttpStatus.badRequest) {
+      return ServiceResult.fail(message: "Workout could not be found!");
+    } else if (statusCode == HttpStatus.forbidden) {
+      return ServiceResult.fail(message: response.body);
     }
 
     return ServiceResult.fail(message: defaultErrorMessage);
