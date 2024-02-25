@@ -122,6 +122,16 @@ class BaseService {
     return null;
   }
 
+  ServiceResult getServiceResult(int statusCode, Map<int, String> statusMap) {
+    String? message = statusMap[statusCode];
+
+    if (statusCode >= 400 || message == null) {
+      return ServiceResult.fail(message: message ?? defaultErrorMessage);
+    } else {
+      return ServiceResult.success(message: message);
+    }
+  }
+
   Future<ServiceResult> refreshAccessToken() async {
     final requestResult = await sendRequest(
       method: HttpMethods.get,

@@ -32,6 +32,7 @@ class ContentField extends StatelessWidget {
           fieldValue.toString(),
           style: const TextStyle(fontSize: 16.0),
           overflow: valueOverflow,
+          textAlign: TextAlign.start,
         ),
       ),
     );
