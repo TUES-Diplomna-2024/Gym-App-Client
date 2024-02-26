@@ -3,7 +3,7 @@ import 'package:gym_app_client/db_api/models/workout/workout_preview_model.dart'
 import 'package:gym_app_client/db_api/services/user_service.dart';
 import 'package:gym_app_client/db_api/services/workout_service.dart';
 import 'package:gym_app_client/utils/components/dialogs/workout_create_dialog.dart';
-import 'package:gym_app_client/utils/components/previews/workout_preview.dart';
+import 'package:gym_app_client/utils/components/views/previews/workout_preview.dart';
 
 class LibraryWorkoutsPage extends StatefulWidget {
   const LibraryWorkoutsPage({super.key});

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/models/exercise/exercise_preview_model.dart';
 import 'package:gym_app_client/db_api/services/user_service.dart';
-import 'package:gym_app_client/utils/components/previews/exercise_preview.dart';
+import 'package:gym_app_client/utils/components/views/previews/exercise_preview.dart';
 
 class LibraryCustomExercisesPage extends StatefulWidget {
   const LibraryCustomExercisesPage({super.key});

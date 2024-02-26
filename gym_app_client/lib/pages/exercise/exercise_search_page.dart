@@ -3,7 +3,7 @@ import 'package:gym_app_client/db_api/models/exercise/exercise_preview_model.dar
 import 'package:gym_app_client/db_api/services/exercise_service.dart';
 import 'package:gym_app_client/db_api/services/user_service.dart';
 import 'package:gym_app_client/utils/components/common/custom_app_bar.dart';
-import 'package:gym_app_client/utils/components/previews/exercise_preview.dart';
+import 'package:gym_app_client/utils/components/views/previews/exercise_preview.dart';
 
 class ExerciseSearchPage extends StatefulWidget {
   const ExerciseSearchPage({super.key});

@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 
 abstract class DeleteItemDialog extends StatelessWidget {
   final BuildContext context;
-  final String itemId;
   final String itemType;
 
   const DeleteItemDialog({
     super.key,
     required this.context,
-    required this.itemId,
     required this.itemType,
   }) : assert(itemType.length > 1);
 

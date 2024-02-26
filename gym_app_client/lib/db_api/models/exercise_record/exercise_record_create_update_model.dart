@@ -2,9 +2,9 @@ import 'dart:convert';
 import 'dart:ffi';
 
 class ExerciseRecordCreateUpdateModel {
-  final UnsignedInt sets;
-  final UnsignedInt reps;
-  final UnsignedInt duration;
+  final int sets;
+  final int reps;
+  final int duration;
   final double? weight;
 
   ExerciseRecordCreateUpdateModel({

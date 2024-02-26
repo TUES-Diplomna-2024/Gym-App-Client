@@ -8,7 +8,7 @@ import 'package:gym_app_client/db_api/models/workout/workout_view_model.dart';
 import 'package:gym_app_client/pages/exercise/exercise_add_in_workouts_page.dart';
 import 'package:gym_app_client/pages/exercise/exercise_create_page.dart';
 import 'package:gym_app_client/pages/exercise/exercise_edit_page.dart';
-import 'package:gym_app_client/pages/exercise/exercise_view_page.dart';
+import 'package:gym_app_client/pages/exercise/view_page/exercise_view_page.dart';
 import 'package:gym_app_client/pages/profile/profile_edit_page.dart';
 import 'package:gym_app_client/pages/sign/signin_page.dart';
 import 'package:gym_app_client/pages/sign/signup_page.dart';
@@ -50,7 +50,8 @@ class RouteGenerator {
       case "/exercise":
         String exerciseId = args.toString();
         return MaterialPageRoute(
-            builder: (_) => ExerciseViewPage(exerciseId: exerciseId));
+          builder: (_) => ExerciseViewPage(exerciseId: exerciseId),
+        );
       case "/exercise-create":
         return MaterialPageRoute(builder: (_) => ExerciseCreatePage());
       case "/exercise-edit":

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/models/workout/workout_preview_model.dart';
-import 'package:gym_app_client/utils/components/previews/workout_preview.dart';
+import 'package:gym_app_client/utils/components/views/previews/workout_preview.dart';
 
 class SelectableWorkoutPreview extends StatefulWidget {
   final WorkoutPreviewModel workout;

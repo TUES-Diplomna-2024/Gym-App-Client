@@ -1,11 +1,11 @@
 import 'dart:convert';
-import 'dart:ffi';
+import 'package:fl_chart/fl_chart.dart';
 import 'package:http/http.dart';
 import 'package:gym_app_client/utils/common/statistic_data_point.dart';
 
-class ExerciseStatisticsModel {
-  late final UnsignedInt totalSets;
-  late final UnsignedInt totalReps;
+class ExerciseStatsModel {
+  late final int totalSets;
+  late final int totalReps;
   late final double avgRepsPerSet;
   late final double avgTrainingDuration;
   late final double avgVolume;
@@ -14,7 +14,7 @@ class ExerciseStatisticsModel {
   late final double maxWeight;
   late final List<StatisticDataPoint> dataPoints;
 
-  ExerciseStatisticsModel.loadFromResponse(Response response) {
+  ExerciseStatsModel.loadFromResponse(Response response) {
     Map<String, dynamic> body = json.decode(response.body);
 
     totalSets = body["totalSets"];
@@ -29,5 +29,12 @@ class ExerciseStatisticsModel {
     maxWeight = double.parse(body["maxWeight"].toStringAsFixed(1));
 
     dataPoints = StatisticDataPoint.getDataPointsFromBody(body["dataPoints"]);
+  }
+
+  List<FlSpot> getChartSpots() {
+    return dataPoints.map((dp) {
+      double x = dp.date.difference(DateTime.now()).inDays.toDouble();
+      return FlSpot(x, dp.value.toDouble());
+    }).toList();
   }
 }

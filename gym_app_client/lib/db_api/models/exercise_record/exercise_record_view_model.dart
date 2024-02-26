@@ -1,13 +1,12 @@
 import 'dart:convert';
-import 'dart:ffi';
 import 'package:http/http.dart';
 import 'package:intl/intl.dart';
 
 class ExerciseRecordViewModel {
   late final String id;
   late final String onCreated;
-  late final UnsignedInt sets;
-  late final UnsignedInt reps;
+  late final int sets;
+  late final int reps;
   late final Duration duration;
   late final double weight;
 

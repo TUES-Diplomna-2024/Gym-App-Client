@@ -4,7 +4,7 @@ import 'package:gym_app_client/db_api/services/user_service.dart';
 import 'package:gym_app_client/db_api/services/workout_service.dart';
 import 'package:gym_app_client/utils/components/buttons/exercise/exercise_add_in_workouts_done_button.dart';
 import 'package:gym_app_client/utils/components/common/back_leading_app_bar.dart';
-import 'package:gym_app_client/utils/components/previews/selectable_workout_preview.dart';
+import 'package:gym_app_client/utils/components/views/previews/selectable_workout_preview.dart';
 
 class ExerciseAddInWorkoutsPage extends StatefulWidget {
   final String exerciseId;

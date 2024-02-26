@@ -6,6 +6,7 @@ class BackLeadingAppBar extends CustomAppBar {
     super.key,
     required String title,
     required BuildContext context,
+    PreferredSizeWidget? bottom,
   }) : super(
           title: title,
           leading: IconButton(
@@ -14,5 +15,6 @@ class BackLeadingAppBar extends CustomAppBar {
             },
             icon: const Icon(Icons.arrow_back_ios_new_rounded),
           ),
+          bottom: bottom,
         );
 }

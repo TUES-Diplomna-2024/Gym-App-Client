@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'dart:convert';
-import 'package:gym_app_client/db_api/models/exercise/exercise_statistics_model.dart';
+import 'package:gym_app_client/db_api/models/exercise/exercise_stats_model.dart';
 import 'package:gym_app_client/db_api/services/base_service.dart';
 import 'package:gym_app_client/db_api/models/exercise/exercise_preview_model.dart';
 import 'package:gym_app_client/db_api/models/exercise/exercise_update_model.dart';
@@ -99,7 +99,7 @@ class ExerciseService extends BaseService {
       String exerciseId, String period, String measurement) async {
     final requestResult = await sendRequest(
       method: HttpMethods.get,
-      subEndpoint: "stats?period=$period&measurement=$measurement",
+      subEndpoint: "$exerciseId/stats?period=$period&measurement=$measurement",
       headers: await getHeaders(),
     );
 
@@ -115,8 +115,7 @@ class ExerciseService extends BaseService {
     final statusCode = response.statusCode;
 
     if (statusCode == HttpStatus.ok) {
-      final exerciseStatistics =
-          ExerciseStatisticsModel.loadFromResponse(response);
+      final exerciseStatistics = ExerciseStatsModel.loadFromResponse(response);
 
       return ServiceResult.success(data: exerciseStatistics);
     }

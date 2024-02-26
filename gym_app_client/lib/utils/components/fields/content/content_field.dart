@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class ContentField extends StatelessWidget {
   final IconData? fieldIcon;
-  final String fieldName;
+  final String? fieldName;
   final dynamic fieldValue;
   final EdgeInsets padding;
   final EdgeInsets decorationPadding;
@@ -15,7 +15,7 @@ class ContentField extends StatelessWidget {
     this.valueOverflow = TextOverflow.clip,
     this.decorationPadding = const EdgeInsets.all(15),
     this.isMultiline = false,
-    required this.fieldName,
+    this.fieldName,
     required this.fieldValue,
     required this.padding,
   });
@@ -42,22 +42,26 @@ class ContentField extends StatelessWidget {
     if (isMultiline) {
       return Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.only(bottom: 15),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                if (fieldIcon != null) ...{
-                  Icon(fieldIcon),
-                  const SizedBox(width: 20)
-                },
-                Expanded(
-                  child:
-                      Text(fieldName, style: const TextStyle(fontSize: 16.0)),
-                ),
-              ],
+          if (fieldName != null) ...{
+            Padding(
+              padding: const EdgeInsets.only(bottom: 15),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  if (fieldIcon != null) ...{
+                    Icon(fieldIcon),
+                    const SizedBox(width: 20)
+                  },
+                  Expanded(
+                    child: Text(
+                      fieldName!,
+                      style: const TextStyle(fontSize: 16.0),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
+          },
           _getFieldValueWidget(),
         ],
       );
@@ -65,14 +69,19 @@ class ContentField extends StatelessWidget {
       return Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          if (fieldIcon != null) ...{
-            Icon(fieldIcon),
-            const SizedBox(width: 20)
+          if (fieldName != null) ...{
+            if (fieldIcon != null) ...{
+              Icon(fieldIcon),
+              const SizedBox(width: 20)
+            },
+            Expanded(
+              child: Text(
+                fieldName!,
+                style: const TextStyle(fontSize: 16.0),
+              ),
+            ),
+            if (fieldIcon == null) const SizedBox(width: 30),
           },
-          Expanded(
-            child: Text(fieldName, style: const TextStyle(fontSize: 16.0)),
-          ),
-          if (fieldIcon == null) const SizedBox(width: 30),
           Expanded(
             child: _getFieldValueWidget(),
           ),
