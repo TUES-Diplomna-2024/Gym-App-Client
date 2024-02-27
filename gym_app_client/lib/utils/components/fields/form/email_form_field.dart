@@ -6,10 +6,9 @@ class EmailFormField extends PaddedTextFormField {
   EmailFormField({
     super.key,
     required TextEditingController emailController,
-    required EdgeInsets padding,
+    required super.padding,
   }) : super(
           controller: emailController,
-          padding: padding,
           decoration: const InputDecoration(
             label: Text("Email"),
             filled: true,

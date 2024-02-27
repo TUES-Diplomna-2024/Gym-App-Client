@@ -6,15 +6,13 @@ import 'package:gym_app_client/utils/constants/app_regexes.dart';
 class PasswordFormField extends PaddedTextFormField {
   PasswordFormField({
     super.key,
-    GlobalKey<FormFieldState<String>>? fieldKey,
+    super.fieldKey,
     required TextEditingController passwordController,
     required bool isPasswordVisible,
     required void Function() onPasswordVisibilityChanged,
-    required EdgeInsets padding,
+    required super.padding,
   }) : super(
-          fieldKey: fieldKey,
           controller: passwordController,
-          padding: padding,
           decoration: InputDecoration(
             label: const Text("Password"),
             filled: true,

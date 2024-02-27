@@ -8,12 +8,11 @@ class DateField extends ContentField {
     required IconData dateIcon,
     required String dateName,
     required String dateValue,
-    required EdgeInsets padding,
+    required super.padding,
   }) : super(
           fieldIcon: dateIcon,
           fieldName: dateName,
           fieldValue: _formatDate(dateValue),
-          padding: padding,
         );
 
   static String _formatDate(String dateString) {

@@ -7,9 +7,8 @@ class ExerciseTypeFormField extends PaddedDropdownButtonFormField<String> {
     super.key,
     String? defaultType,
     required void Function(String?) onTypeChanged,
-    required EdgeInsets padding,
+    required super.padding,
   }) : super(
-          padding: padding,
           decoration: const InputDecoration(
             label: Text("Type"),
             filled: true,

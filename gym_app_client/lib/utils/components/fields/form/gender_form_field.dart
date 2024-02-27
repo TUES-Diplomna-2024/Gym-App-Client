@@ -7,9 +7,8 @@ class GenderFormField extends PaddedDropdownButtonFormField<String> {
     super.key,
     String? defaultGender,
     required void Function(String?) onGenderChanged,
-    required EdgeInsets padding,
+    required super.padding,
   }) : super(
-          padding: padding,
           decoration: const InputDecoration(
             label: Text("Gender"),
             filled: true,

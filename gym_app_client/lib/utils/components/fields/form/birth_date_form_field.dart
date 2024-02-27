@@ -7,10 +7,9 @@ class BirthDateFormField extends PaddedTextFormField {
     super.key,
     required BuildContext context,
     required TextEditingController birthDateController,
-    required EdgeInsets padding,
+    required super.padding,
   }) : super(
           controller: birthDateController,
-          padding: padding,
           decoration: const InputDecoration(
             label: Text("Birth Date"),
             filled: true,

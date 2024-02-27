@@ -7,9 +7,8 @@ class ExerciseVisibilityFormField extends PaddedDropdownButtonFormField<bool> {
     super.key,
     required bool defaultVisibility,
     required void Function(bool?) onVisibilityChanged,
-    required EdgeInsets padding,
+    required super.padding,
   }) : super(
-          padding: padding,
           decoration: const InputDecoration(
             label: Text("Visibility"),
             filled: true,

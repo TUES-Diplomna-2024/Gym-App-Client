@@ -12,10 +12,9 @@ class UnsignedDoubleFormField extends PaddedTextFormField {
     double? minValue,
     double? maxValue,
     bool isOptional = false,
-    required EdgeInsets padding,
+    required super.padding,
   }) : super(
           controller: numberController,
-          padding: padding,
           decoration: InputDecoration(
             label: Text("$label${isOptional ? ' (Optional)' : ''}"),
             prefixIcon: Icon(prefixIcon),

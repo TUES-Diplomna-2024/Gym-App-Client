@@ -10,10 +10,9 @@ class UnsignedIntFormField extends PaddedTextFormField {
     required String hintText,
     required IconData prefixIcon,
     int? minValue,
-    required EdgeInsets padding,
+    required super.padding,
   }) : super(
           controller: numberController,
-          padding: padding,
           decoration: InputDecoration(
             label: Text(label),
             prefixIcon: Icon(prefixIcon),

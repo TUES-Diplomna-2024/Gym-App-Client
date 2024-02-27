@@ -10,10 +10,9 @@ class NameFormField extends PaddedTextFormField {
     required IconData prefixIcon,
     required int minLength,
     required int maxLength,
-    required EdgeInsets padding,
+    required super.padding,
   }) : super(
           controller: nameController,
-          padding: padding,
           decoration: InputDecoration(
             label: Text(label),
             prefixIcon: Icon(prefixIcon),
