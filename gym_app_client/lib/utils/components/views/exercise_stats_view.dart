@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/models/exercise/exercise_stats_model.dart';
 import 'package:gym_app_client/utils/components/fields/content/content_field.dart';
 import 'package:gym_app_client/utils/components/views/statistic_chart_view.dart';
+import 'package:gym_app_client/utils/common/helper_functions.dart';
 
 class ExerciseStatsView extends StatelessWidget {
   final ExerciseStatsModel stats;
@@ -15,13 +16,24 @@ class ExerciseStatsView extends StatelessWidget {
     required this.measurement,
   });
 
-  Row _getContentFieldRow(List<(String?, dynamic)> contentFieldsData) {
+  Row _getContentFieldRow(List<(String?, dynamic, String?)> contentFieldsData) {
     List<Widget> fieldsWithSpacer = [];
 
     for (int i = 0; i < contentFieldsData.length; i++) {
+      dynamic fieldValue = contentFieldsData[i].$2;
+      String? fieldType = contentFieldsData[i].$3;
+
+      if (fieldType != null) {
+        if (fieldType == "duration") {
+          fieldValue = durationToString(Duration(seconds: fieldValue.toInt()));
+        } else if (fieldType == "weight") {
+          fieldValue = getWeightString(fieldValue);
+        }
+      }
+
       final field = ContentField(
         fieldName: contentFieldsData[i].$1,
-        fieldValue: contentFieldsData[i].$2,
+        fieldValue: fieldValue,
         isFieldNameCentered: true,
         isMultiline: true,
         padding: const EdgeInsets.only(bottom: 15),
@@ -48,20 +60,20 @@ class ExerciseStatsView extends StatelessWidget {
         ),
         const SizedBox(height: 23),
         _getContentFieldRow([
-          ("Total Sets", stats.totalSets),
-          ("Total Reps", stats.totalReps),
+          ("Total Sets", stats.totalSets, null),
+          ("Total Reps", stats.totalReps, null),
         ]),
         _getContentFieldRow([
-          ("Avg Reps Per Set", stats.avgRepsPerSet),
-          ("Avg Duration", stats.avgTrainingDuration),
+          ("Avg Reps Per Set", stats.avgRepsPerSet, null),
+          ("Avg Duration", stats.avgTrainingDuration, "duration"),
         ]),
         _getContentFieldRow([
-          ("Avg Volume", stats.avgVolume),
-          ("Max Volume", stats.maxVolume),
+          ("Avg Volume", stats.avgVolume, null),
+          ("Max Volume", stats.maxVolume, null),
         ]),
         _getContentFieldRow([
-          ("Avg Weight", stats.avgWeight),
-          ("Max Weight", stats.maxWeight),
+          ("Avg Weight", stats.avgWeight, "weight"),
+          ("Max Weight", stats.maxWeight, "weight"),
         ]),
         const SizedBox(height: 8),
       ],

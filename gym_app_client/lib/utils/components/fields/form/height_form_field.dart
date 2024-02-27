@@ -1,5 +1,6 @@
 import 'package:gym_app_client/utils/components/fields/form/padded_adaptive_slider.dart';
 import 'package:gym_app_client/utils/constants/user_constants.dart';
+import 'package:gym_app_client/utils/common/helper_functions.dart';
 
 class HeightFormField extends PaddedAdaptiveSlider {
   HeightFormField({
@@ -11,7 +12,7 @@ class HeightFormField extends PaddedAdaptiveSlider {
           value: selectedHeight,
           min: UserConstants.minHeight,
           max: UserConstants.maxHeight,
-          displayText: "Height: ${selectedHeight.toStringAsFixed(1)} cm",
+          displayText: "Height: ${getHeightString(selectedHeight)}",
           onChanged: onHeightChanged,
         );
 }

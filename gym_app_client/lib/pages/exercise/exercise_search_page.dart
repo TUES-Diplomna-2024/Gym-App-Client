@@ -49,6 +49,7 @@ class _ExerciseSearchPageState extends State<ExerciseSearchPage> {
         child: Text(
           "No results!",
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+          textAlign: TextAlign.center,
         ),
       );
     }

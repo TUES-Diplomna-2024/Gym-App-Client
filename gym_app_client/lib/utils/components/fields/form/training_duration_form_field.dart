@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:duration_picker/duration_picker.dart';
 import 'package:gym_app_client/utils/components/fields/form/padded_text_form_field.dart';
+import 'package:gym_app_client/utils/common/helper_functions.dart';
 
 class TrainingDurationFormField extends StatefulWidget {
   final Duration initDuration;
@@ -27,7 +28,7 @@ class _TrainingDurationFormFieldState extends State<TrainingDurationFormField> {
   @override
   void initState() {
     _durationTextController =
-        TextEditingController(text: _formatDuration(widget.initDuration));
+        TextEditingController(text: durationToString(widget.initDuration));
 
     super.initState();
   }
@@ -39,15 +40,6 @@ class _TrainingDurationFormFieldState extends State<TrainingDurationFormField> {
     );
 
     return pickedDuration;
-  }
-
-  String _formatDuration(Duration duration) {
-    String twoDigits(int n) => n.toString().padLeft(2, "0");
-
-    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
-    String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
-
-    return "${duration.inHours}:$twoDigitMinutes:$twoDigitSeconds";
   }
 
   @override
@@ -83,7 +75,7 @@ class _TrainingDurationFormFieldState extends State<TrainingDurationFormField> {
 
         if (pickedDuration != null &&
             pickedDuration.compareTo(widget.minDuration) > 0) {
-          _durationTextController.text = _formatDuration(pickedDuration);
+          _durationTextController.text = durationToString(pickedDuration);
           widget.onDurationChanged(pickedDuration);
         }
       },

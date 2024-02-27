@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/models/exercise_record/exercise_record_view_model.dart';
+import 'package:gym_app_client/utils/common/helper_functions.dart';
 import 'package:gym_app_client/utils/components/fields/content/preview_field.dart';
 
 class ExerciseRecordView extends StatelessWidget {
@@ -10,17 +11,10 @@ class ExerciseRecordView extends StatelessWidget {
     required this.record,
   });
 
-  String _formatDuration(Duration duration) {
-    String twoDigits(int n) => n.toString().padLeft(2, "0");
-    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
-    String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
-    return '${duration.inHours}:$twoDigitMinutes:$twoDigitSeconds';
-  }
-
   String _getRecordDataString() {
     String setStr = "${record.sets} set${record.sets > 1 ? 's' : ''}";
     String repStr = "${record.reps} rep${record.reps > 1 ? 's' : ''}";
-    String weightStr = "${record.weight} kg";
+    String weightStr = getWeightString(record.weight);
     return "$setStr x $repStr x $weightStr";
   }
 
@@ -58,11 +52,8 @@ class ExerciseRecordView extends StatelessWidget {
                       const Icon(Icons.timer_outlined),
                       const SizedBox(width: 10),
                       Text(
-                        _formatDuration(record.duration),
-                        style: const TextStyle(
-                          fontSize: 16,
-                          // fontWeight: FontWeight.w500,
-                        ),
+                        durationToString(record.duration),
+                        style: const TextStyle(fontSize: 16),
                       ),
                     ],
                   ),

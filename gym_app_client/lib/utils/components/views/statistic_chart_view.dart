@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:gym_app_client/utils/common/helper_functions.dart';
 import 'package:gym_app_client/utils/common/statistic_data_point.dart';
 import 'package:gym_app_client/utils/constants/statistic_constants.dart';
 
@@ -46,11 +47,7 @@ class StatisticChartView extends StatelessWidget {
           (num? value) {
             if (measurement.toLowerCase() == "duration") {
               final Duration duration = Duration(seconds: value?.toInt() ?? 0);
-              final String minutes =
-                  (duration.inMinutes % 60).toString().padLeft(2, '0');
-              final String seconds =
-                  (duration.inSeconds % 60).toString().padLeft(2, '0');
-              return '${duration.inHours}:$minutes:$seconds';
+              return durationToString(duration);
             }
 
             return value.toString();
@@ -68,14 +65,8 @@ class StatisticChartView extends StatelessWidget {
       );
     }
 
-    String getNormalizedMeasurement() {
-      return measurement.isNotEmpty
-          ? "${measurement[0].toUpperCase()}${measurement.substring(1)}"
-          : "";
-    }
-
     String normalizedTimePeriod = getNormalizedTimePeriod();
-    String normalizedMeasurement = getNormalizedMeasurement();
+    String normalizedMeasurement = capitalizeFirstLetter(measurement);
 
     if (normalizedTimePeriod.isEmpty || normalizedMeasurement.isEmpty) {
       return "";

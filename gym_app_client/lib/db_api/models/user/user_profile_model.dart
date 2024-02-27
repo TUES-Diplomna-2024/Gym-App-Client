@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:gym_app_client/db_api/models/user/user_update_model.dart';
 import 'dart:convert';
 import 'package:http/http.dart';
+import 'package:flutter/material.dart';
+import 'package:gym_app_client/db_api/models/user/user_update_model.dart';
+import 'package:gym_app_client/utils/common/helper_functions.dart';
 
 class UserProfileModel {
   late final String id;
@@ -24,12 +25,12 @@ class UserProfileModel {
     email = body["email"];
 
     roleName = body["roleName"];
-    roleColor = _getColor(body["roleColor"]);
+    roleColor = hexToColor(body["roleColor"]);
 
-    gender = _normalizeData(body["gender"]);
+    gender = capitalizeFirstLetter(body["gender"]);
 
-    height = double.parse(body["height"].toStringAsFixed(1));
-    weight = double.parse(body["weight"].toStringAsFixed(1));
+    height = normalizeDouble(body["height"]);
+    weight = normalizeDouble(body["weight"]);
 
     birthDate = body["birthDate"];
     onCreated = body["onCreated"];
@@ -39,16 +40,7 @@ class UserProfileModel {
     username = updateModel.username;
     birthDate = updateModel.birthDate;
     gender = updateModel.gender;
-    height = double.parse(updateModel.height.toStringAsFixed(1));
-    weight = double.parse(updateModel.weight.toStringAsFixed(1));
+    height = normalizeDouble(updateModel.height);
+    weight = normalizeDouble(updateModel.weight);
   }
-
-  Color _getColor(String hexColor) {
-    if (hexColor.startsWith('#')) hexColor = hexColor.substring(1);
-    if (hexColor.length == 6) hexColor = "FF$hexColor";
-    return Color(int.parse(hexColor, radix: 16));
-  }
-
-  String _normalizeData(String data) =>
-      "${data[0].toUpperCase()}${data.substring(1)}";
 }

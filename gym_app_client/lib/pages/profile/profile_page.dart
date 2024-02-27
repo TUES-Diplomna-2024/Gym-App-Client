@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/models/user/user_profile_model.dart';
 import 'package:gym_app_client/db_api/services/token_service.dart';
 import 'package:gym_app_client/db_api/services/user_service.dart';
+import 'package:gym_app_client/utils/common/helper_functions.dart';
 import 'package:gym_app_client/utils/components/buttons/profile/profile_actions_popup_menu_button.dart';
 import 'package:gym_app_client/utils/components/common/custom_app_bar.dart';
 import 'package:gym_app_client/utils/components/fields/content/content_field.dart';
@@ -108,13 +109,13 @@ class _ProfilePageState extends State<ProfilePage> {
                       ContentField(
                         fieldIcon: Icons.height_outlined,
                         fieldName: "Height",
-                        fieldValue: "${_userProfile.height} cm",
+                        fieldValue: getHeightString(_userProfile.height),
                         padding: const EdgeInsets.only(bottom: 15),
                       ),
                       ContentField(
                         fieldIcon: Icons.scale_outlined,
                         fieldName: "Weight",
-                        fieldValue: "${_userProfile.height} kg",
+                        fieldValue: getWeightString(_userProfile.weight),
                         padding: const EdgeInsets.only(bottom: 15),
                       ),
                     ],

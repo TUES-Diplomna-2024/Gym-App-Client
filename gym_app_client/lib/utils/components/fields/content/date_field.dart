@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/utils/components/fields/content/content_field.dart';
-import 'package:intl/intl.dart';
+import 'package:gym_app_client/utils/common/helper_functions.dart';
 
 class DateField extends ContentField {
   DateField({
@@ -12,12 +12,6 @@ class DateField extends ContentField {
   }) : super(
           fieldIcon: dateIcon,
           fieldName: dateName,
-          fieldValue: _formatDate(dateValue),
+          fieldValue: normalizeDateString(dateValue),
         );
-
-  static String _formatDate(String dateString) {
-    DateTime dateTime = DateTime.parse(dateString);
-    String formattedDate = DateFormat('MMM d, yyyy').format(dateTime);
-    return formattedDate;
-  }
 }

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:gym_app_client/utils/common/helper_functions.dart';
 
 class UserSignUpModel {
   final String username;
@@ -25,7 +26,7 @@ class UserSignUpModel {
         "password": password,
         "birthDate": birthDate,
         "gender": gender,
-        "height": double.parse(height.toStringAsFixed(1)),
-        "weight": double.parse(weight.toStringAsFixed(1)),
+        "height": normalizeDouble(height),
+        "weight": normalizeDouble(weight),
       });
 }

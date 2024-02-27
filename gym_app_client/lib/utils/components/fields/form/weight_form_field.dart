@@ -1,5 +1,6 @@
 import 'package:gym_app_client/utils/components/fields/form/padded_adaptive_slider.dart';
 import 'package:gym_app_client/utils/constants/user_constants.dart';
+import 'package:gym_app_client/utils/common/helper_functions.dart';
 
 class WeightFormField extends PaddedAdaptiveSlider {
   WeightFormField({
@@ -11,7 +12,7 @@ class WeightFormField extends PaddedAdaptiveSlider {
           value: selectedWeight,
           min: UserConstants.minWeight,
           max: UserConstants.maxWeight,
-          displayText: "Weight: ${selectedWeight.toStringAsFixed(1)} kg",
+          displayText: "Weight: ${getWeightString(selectedWeight)}",
           onChanged: onWeightChanged,
         );
 }

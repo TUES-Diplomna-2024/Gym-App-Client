@@ -42,6 +42,7 @@ class _LibraryCustomExercisesPageState
         child: Text(
           "You don't have any custom exercises!",
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+          textAlign: TextAlign.center,
         ),
       );
     }

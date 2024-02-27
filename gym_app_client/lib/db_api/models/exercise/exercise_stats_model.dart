@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart';
 import 'package:gym_app_client/utils/common/statistic_data_point.dart';
+import 'package:gym_app_client/utils/common/helper_functions.dart';
 
 class ExerciseStatsModel {
   late final int totalSets;
@@ -19,13 +20,12 @@ class ExerciseStatsModel {
     totalSets = body["totalSets"];
     totalReps = body["totalReps"];
 
-    avgRepsPerSet = double.parse(body["avgRepsPerSet"].toStringAsFixed(1));
-    avgTrainingDuration =
-        double.parse(body["avgTrainingDuration"].toStringAsFixed(1));
-    avgVolume = double.parse(body["avgVolume"].toStringAsFixed(1));
-    avgWeight = double.parse(body["avgWeight"].toStringAsFixed(1));
-    maxVolume = double.parse(body["maxVolume"].toStringAsFixed(1));
-    maxWeight = double.parse(body["maxWeight"].toStringAsFixed(1));
+    avgRepsPerSet = normalizeDouble(body["avgRepsPerSet"]);
+    avgTrainingDuration = normalizeDouble(body["avgTrainingDuration"]);
+    avgVolume = normalizeDouble(body["avgVolume"]);
+    avgWeight = normalizeDouble(body["avgWeight"]);
+    maxVolume = normalizeDouble(body["maxVolume"]);
+    maxWeight = normalizeDouble(body["maxWeight"]);
 
     dataPoints = StatisticDataPoint.getDataPointsFromBody(body["dataPoints"]);
   }

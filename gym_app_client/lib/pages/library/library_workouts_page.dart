@@ -45,6 +45,7 @@ class _LibraryWorkoutsPageState extends State<LibraryWorkoutsPage> {
         child: Text(
           "You don't have any workouts!",
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+          textAlign: TextAlign.center,
         ),
       );
     }

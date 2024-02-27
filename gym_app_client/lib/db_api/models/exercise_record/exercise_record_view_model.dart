@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart';
-import 'package:intl/intl.dart';
+import 'package:gym_app_client/utils/common/helper_functions.dart';
 
 class ExerciseRecordViewModel {
   late final String id;
@@ -12,11 +12,11 @@ class ExerciseRecordViewModel {
 
   ExerciseRecordViewModel.loadFromMap(Map<String, dynamic> data) {
     id = data["id"];
-    onCreated = _formatDate(data["onCreated"]);
+    onCreated = normalizeDateString(data["onCreated"]);
     sets = data["sets"];
     reps = data["reps"];
     duration = Duration(seconds: data["duration"]);
-    weight = double.parse(data["weight"].toStringAsFixed(1));
+    weight = normalizeDouble(data["weight"]);
   }
 
   static List<ExerciseRecordViewModel> getRecordViewsFromResponse(
@@ -26,11 +26,5 @@ class ExerciseRecordViewModel {
     return List<ExerciseRecordViewModel>.from(
       body.map((r) => ExerciseRecordViewModel.loadFromMap(r)),
     );
-  }
-
-  String _formatDate(String dateString) {
-    DateTime dateTime = DateTime.parse(dateString);
-    String formattedDate = DateFormat('MMM d, yyyy').format(dateTime);
-    return formattedDate;
   }
 }

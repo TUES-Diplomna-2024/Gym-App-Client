@@ -29,7 +29,7 @@ class _ExerciseRecordsPageState extends State<ExerciseRecordsPage> {
   List<ExerciseRecordViewModel>? _records;
 
   void _getRecords() {
-    if (mounted) {
+    if (mounted && _selectedPeriod.isNotEmpty) {
       _exerciseRecordService
           .getCurrUserExerciseRecordsViews(widget.exerciseId, _selectedPeriod)
           .then(
@@ -53,8 +53,9 @@ class _ExerciseRecordsPageState extends State<ExerciseRecordsPage> {
     if (_records!.isEmpty) {
       return const Center(
         child: Text(
-          "No records!",
+          "No records found!",
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+          textAlign: TextAlign.center,
         ),
       );
     }

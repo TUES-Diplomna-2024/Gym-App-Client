@@ -37,7 +37,7 @@ class PasswordFormField extends PaddedTextFormField {
                 value.length > UserConstants.maxPasswordLength) {
               return "Password must be between ${UserConstants.minPasswordLength} and ${UserConstants.maxPasswordLength} characters";
             } else if (!AppRegexes.isValidPassword(value)) {
-              return "Password must include at least one lowercase letter, \none uppercase letter, one digit, and one special character.";
+              return "Password must include at least one lowercase letter, \none uppercase letter, one digit, and one special character";
             }
 
             return null;

@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:gym_app_client/db_api/services/token_service.dart';
@@ -16,10 +17,19 @@ class CustomHttpOverrides extends HttpOverrides {
 void main() async {
   HttpOverrides.global = CustomHttpOverrides();
 
-  WidgetsFlutterBinding.ensureInitialized();
-  await GlobalConfiguration().loadFromAsset("app_settings");
+  runZonedGuarded(() async {
+    WidgetsFlutterBinding.ensureInitialized();
 
-  runApp(const MyApp());
+    FlutterError.onError = (FlutterErrorDetails errorDetails) {
+      debugPrint("An exception occurred: ${errorDetails.exception.toString()}");
+    };
+
+    await GlobalConfiguration().loadFromAsset("app_settings");
+
+    runApp(const MyApp());
+  }, (error, stackTrace) {
+    debugPrint("An error occurred ${error.toString()}");
+  });
 }
 
 class MyApp extends StatelessWidget {

@@ -12,7 +12,7 @@ class BaseService {
   final String _dbAPIBaseUrl = GlobalConfiguration().getValue("dbAPIBaseURL");
   late final Uri _refreshUrl;
   final String baseEndpoint;
-  final connectionTimeout = const Duration(seconds: 3);
+  final connectionTimeout = const Duration(seconds: 4);
   final String defaultErrorMessage = "Something went wrong! Try again later!";
 
   BaseService({
