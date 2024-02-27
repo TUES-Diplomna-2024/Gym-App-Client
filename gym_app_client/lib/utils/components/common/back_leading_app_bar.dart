@@ -4,10 +4,10 @@ import 'package:gym_app_client/utils/components/common/custom_app_bar.dart';
 class BackLeadingAppBar extends CustomAppBar {
   BackLeadingAppBar({
     super.key,
-    required String title,
+    required super.title,
     required BuildContext context,
+    super.bottom,
   }) : super(
-          title: title,
           leading: IconButton(
             onPressed: () {
               if (context.mounted) Navigator.of(context).pop();

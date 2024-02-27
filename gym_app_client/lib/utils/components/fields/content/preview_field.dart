@@ -4,13 +4,10 @@ import 'package:gym_app_client/utils/components/fields/content/content_field.dar
 class PreviewField extends ContentField {
   const PreviewField({
     super.key,
-    required String fieldName,
-    required dynamic fieldValue,
-    required EdgeInsets padding,
+    super.fieldName,
+    required super.fieldValue,
+    required super.padding,
   }) : super(
-          fieldName: fieldName,
-          fieldValue: fieldValue,
-          padding: padding,
           valueOverflow: TextOverflow.ellipsis,
           decorationPadding: const EdgeInsets.all(8),
         );

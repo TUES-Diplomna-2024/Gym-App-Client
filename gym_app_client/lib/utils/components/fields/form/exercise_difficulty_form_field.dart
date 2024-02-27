@@ -8,9 +8,8 @@ class ExerciseDifficultyFormField
     super.key,
     String? defaultDifficulty,
     required void Function(String?) onDifficultyChanged,
-    required EdgeInsets padding,
+    required super.padding,
   }) : super(
-          padding: padding,
           decoration: const InputDecoration(
             label: Text("Difficulty"),
             filled: true,

@@ -6,15 +6,13 @@ import 'package:gym_app_client/utils/constants/app_regexes.dart';
 class PasswordFormField extends PaddedTextFormField {
   PasswordFormField({
     super.key,
-    GlobalKey<FormFieldState<String>>? fieldKey,
+    super.fieldKey,
     required TextEditingController passwordController,
     required bool isPasswordVisible,
     required void Function() onPasswordVisibilityChanged,
-    required EdgeInsets padding,
+    required super.padding,
   }) : super(
-          fieldKey: fieldKey,
           controller: passwordController,
-          padding: padding,
           decoration: InputDecoration(
             label: const Text("Password"),
             filled: true,
@@ -39,7 +37,7 @@ class PasswordFormField extends PaddedTextFormField {
                 value.length > UserConstants.maxPasswordLength) {
               return "Password must be between ${UserConstants.minPasswordLength} and ${UserConstants.maxPasswordLength} characters";
             } else if (!AppRegexes.isValidPassword(value)) {
-              return "Password must include at least one lowercase letter, \none uppercase letter, one digit, and one special character.";
+              return "Password must include at least one lowercase letter, \none uppercase letter, one digit, and one special character";
             }
 
             return null;

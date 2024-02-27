@@ -4,7 +4,7 @@ import 'package:gym_app_client/db_api/models/exercise/exercise_preview_model.dar
 import 'package:gym_app_client/db_api/models/workout/workout_view_model.dart';
 import 'package:gym_app_client/utils/components/fields/form/multiline_text_form_field.dart';
 import 'package:gym_app_client/utils/components/fields/form/name_form_field.dart';
-import 'package:gym_app_client/utils/components/previews/exercise_preview.dart';
+import 'package:gym_app_client/utils/components/views/previews/exercise_preview.dart';
 import 'package:gym_app_client/utils/components/buttons/workout/workout_save_changes_button.dart';
 import 'package:gym_app_client/utils/constants/workout_constants.dart';
 

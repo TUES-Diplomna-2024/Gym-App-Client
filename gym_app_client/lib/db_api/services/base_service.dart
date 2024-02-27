@@ -12,7 +12,7 @@ class BaseService {
   final String _dbAPIBaseUrl = GlobalConfiguration().getValue("dbAPIBaseURL");
   late final Uri _refreshUrl;
   final String baseEndpoint;
-  final connectionTimeout = const Duration(seconds: 3);
+  final connectionTimeout = const Duration(seconds: 4);
   final String defaultErrorMessage = "Something went wrong! Try again later!";
 
   BaseService({
@@ -120,6 +120,16 @@ class BaseService {
     }
 
     return null;
+  }
+
+  ServiceResult getServiceResult(int statusCode, Map<int, String> statusMap) {
+    String? message = statusMap[statusCode];
+
+    if (statusCode >= 400 || message == null) {
+      return ServiceResult.fail(message: message ?? defaultErrorMessage);
+    } else {
+      return ServiceResult.success(message: message);
+    }
   }
 
   Future<ServiceResult> refreshAccessToken() async {

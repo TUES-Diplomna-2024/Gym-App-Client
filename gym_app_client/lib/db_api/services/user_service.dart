@@ -2,13 +2,13 @@ import 'dart:io';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/utils/common/http_methods.dart';
+import 'package:gym_app_client/utils/common/service_result.dart';
 import 'package:gym_app_client/db_api/models/auth_model.dart';
 import 'package:gym_app_client/db_api/models/user/user_signup_model.dart';
 import 'package:gym_app_client/db_api/models/user/user_signin_model.dart';
 import 'package:gym_app_client/db_api/models/user/user_profile_model.dart';
 import 'package:gym_app_client/db_api/models/user/user_update_model.dart';
 import 'package:gym_app_client/db_api/models/exercise/exercise_preview_model.dart';
-import 'package:gym_app_client/utils/common/service_result.dart';
 import 'package:gym_app_client/db_api/services/base_service.dart';
 
 class UserService extends BaseService {
@@ -32,19 +32,13 @@ class UserService extends BaseService {
     if (statusCode == HttpStatus.ok) {
       final tokens = AuthModel.loadFromResponse(response);
       await tokenService.saveTokensInStorage(tokens);
-
-      return ServiceResult.success(
-        message: "Your account has been successfully created!",
-      );
-    } else if (statusCode == HttpStatus.badRequest) {
-      return ServiceResult.fail(message: "Invalid user data!");
-    } else if (statusCode == HttpStatus.conflict) {
-      return ServiceResult.fail(
-        message: "This email address is already in use!",
-      );
     }
 
-    return ServiceResult.fail(message: defaultErrorMessage);
+    return getServiceResult(statusCode, {
+      HttpStatus.ok: "Your account has been successfully created!",
+      HttpStatus.badRequest: "Invalid user data!",
+      HttpStatus.conflict: "This email address is already in use!",
+    });
   }
 
   Future<ServiceResult> signIn(UserSignInModel userSignIn) async {
@@ -65,15 +59,13 @@ class UserService extends BaseService {
     if (statusCode == HttpStatus.ok) {
       final tokens = AuthModel.loadFromResponse(response);
       await tokenService.saveTokensInStorage(tokens);
-
-      return ServiceResult.success(message: "Welcome back!");
-    } else if (statusCode == HttpStatus.badRequest) {
-      return ServiceResult.fail(message: "Invalid user data!");
-    } else if (statusCode == HttpStatus.unauthorized) {
-      return ServiceResult.fail(message: "Sign in or password is invalid!");
     }
 
-    return ServiceResult.fail(message: defaultErrorMessage);
+    return getServiceResult(statusCode, {
+      HttpStatus.ok: "Welcome back!",
+      HttpStatus.badRequest: "Invalid user data!",
+      HttpStatus.unauthorized: "Sign in or password is invalid!",
+    });
   }
 
   void signOut(BuildContext context) {
@@ -134,12 +126,12 @@ class UserService extends BaseService {
       return ServiceResult.success(
         data: UserProfileModel.loadFromResponse(response),
       );
-    } else if (statusCode == HttpStatus.notFound ||
-        statusCode == HttpStatus.badRequest) {
-      return ServiceResult.fail(message: "This user could not be found!");
     }
 
-    return ServiceResult.fail(message: defaultErrorMessage);
+    return getServiceResult(statusCode, {
+      HttpStatus.badRequest: "This user could not be found!",
+      HttpStatus.notFound: "This user could not be found!",
+    });
   }
 
   Future<ServiceResult> getCurrUserCustomExercisePreviews() async {
@@ -186,13 +178,10 @@ class UserService extends BaseService {
 
     final statusCode = requestResult.response!.statusCode;
 
-    if (statusCode == HttpStatus.ok) {
-      return ServiceResult.success(message: "Successfully updated!");
-    } else if (statusCode == HttpStatus.badRequest) {
-      return ServiceResult.fail(message: "Invalid user data!");
-    }
-
-    return ServiceResult.fail(message: defaultErrorMessage);
+    return getServiceResult(statusCode, {
+      HttpStatus.ok: "Successfully updated!",
+      HttpStatus.badRequest: "Invalid user data!",
+    });
   }
 
   Future<ServiceResult> deleteCurrUser(String password) async {
@@ -229,14 +218,11 @@ class UserService extends BaseService {
         shouldSignOutUser: true,
         popUpColor: Colors.amber.shade800,
       );
-    } else if (statusCode == HttpStatus.badRequest) {
-      return ServiceResult.fail(message: "Invalid password format!");
-    } else if (statusCode == HttpStatus.forbidden) {
-      return ServiceResult.fail(
-        message: "As a root admin you cannot delete your account!",
-      );
     }
 
-    return ServiceResult.fail(message: defaultErrorMessage);
+    return getServiceResult(statusCode, {
+      HttpStatus.badRequest: "Invalid password format!",
+      HttpStatus.forbidden: "As a root admin you cannot delete your account!",
+    });
   }
 }

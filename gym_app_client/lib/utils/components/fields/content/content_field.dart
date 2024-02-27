@@ -2,21 +2,23 @@ import 'package:flutter/material.dart';
 
 class ContentField extends StatelessWidget {
   final IconData? fieldIcon;
-  final String fieldName;
+  final String? fieldName;
   final dynamic fieldValue;
   final EdgeInsets padding;
   final EdgeInsets decorationPadding;
   final TextOverflow valueOverflow;
   final bool isMultiline;
+  final bool isFieldNameCentered;
 
   const ContentField({
     super.key,
     this.fieldIcon,
+    this.fieldName,
+    required this.fieldValue,
+    this.isMultiline = false,
+    this.isFieldNameCentered = false,
     this.valueOverflow = TextOverflow.clip,
     this.decorationPadding = const EdgeInsets.all(15),
-    this.isMultiline = false,
-    required this.fieldName,
-    required this.fieldValue,
     required this.padding,
   });
 
@@ -32,7 +34,18 @@ class ContentField extends StatelessWidget {
           fieldValue.toString(),
           style: const TextStyle(fontSize: 16.0),
           overflow: valueOverflow,
+          textAlign: TextAlign.start,
         ),
+      ),
+    );
+  }
+
+  Widget _getFieldNameWidget() {
+    return Expanded(
+      child: Text(
+        fieldName!,
+        style: const TextStyle(fontSize: 16.0),
+        textAlign: isFieldNameCentered ? TextAlign.center : null,
       ),
     );
   }
@@ -41,22 +54,21 @@ class ContentField extends StatelessWidget {
     if (isMultiline) {
       return Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.only(bottom: 15),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                if (fieldIcon != null) ...{
-                  Icon(fieldIcon),
-                  const SizedBox(width: 20)
-                },
-                Expanded(
-                  child:
-                      Text(fieldName, style: const TextStyle(fontSize: 16.0)),
-                ),
-              ],
+          if (fieldName != null) ...{
+            Padding(
+              padding: const EdgeInsets.only(bottom: 15),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  if (fieldIcon != null) ...{
+                    Icon(fieldIcon),
+                    const SizedBox(width: 20)
+                  },
+                  _getFieldNameWidget(),
+                ],
+              ),
             ),
-          ),
+          },
           _getFieldValueWidget(),
         ],
       );
@@ -64,14 +76,14 @@ class ContentField extends StatelessWidget {
       return Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          if (fieldIcon != null) ...{
-            Icon(fieldIcon),
-            const SizedBox(width: 20)
+          if (fieldName != null) ...{
+            if (fieldIcon != null) ...{
+              Icon(fieldIcon),
+              const SizedBox(width: 20)
+            },
+            _getFieldNameWidget(),
+            if (fieldIcon == null) const SizedBox(width: 30),
           },
-          Expanded(
-            child: Text(fieldName, style: const TextStyle(fontSize: 16.0)),
-          ),
-          if (fieldIcon == null) const SizedBox(width: 30),
           Expanded(
             child: _getFieldValueWidget(),
           ),

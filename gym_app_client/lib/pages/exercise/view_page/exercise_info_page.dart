@@ -4,23 +4,22 @@ import 'package:gym_app_client/db_api/services/exercise_service.dart';
 import 'package:gym_app_client/db_api/services/token_service.dart';
 import 'package:gym_app_client/db_api/services/user_service.dart';
 import 'package:gym_app_client/utils/components/buttons/exercise/exercise_actions_popup_menu_button.dart';
-import 'package:gym_app_client/utils/components/common/back_leading_app_bar.dart';
 import 'package:gym_app_client/utils/components/fields/content/content_field.dart';
 import 'package:gym_app_client/utils/constants/role_constants.dart';
 
-class ExerciseViewPage extends StatefulWidget {
+class ExerciseInfoPage extends StatefulWidget {
   final String exerciseId;
 
-  const ExerciseViewPage({
+  const ExerciseInfoPage({
     super.key,
     required this.exerciseId,
   });
 
   @override
-  State<ExerciseViewPage> createState() => _ExerciseViewPageState();
+  State<ExerciseInfoPage> createState() => _ExerciseInfoPageState();
 }
 
-class _ExerciseViewPageState extends State<ExerciseViewPage> {
+class _ExerciseInfoPageState extends State<ExerciseInfoPage> {
   final _userService = UserService();
   final _exerciseService = ExerciseService();
   final _tokenService = TokenService();
@@ -59,7 +58,6 @@ class _ExerciseViewPageState extends State<ExerciseViewPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: BackLeadingAppBar(title: "Exercise", context: context),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(

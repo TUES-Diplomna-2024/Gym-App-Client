@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/models/exercise/exercise_preview_model.dart';
 import 'package:gym_app_client/db_api/models/workout/workout_view_model.dart';
-import 'package:gym_app_client/utils/components/dialogs/exercise_delete_dialog.dart';
 import 'package:gym_app_client/utils/components/dialogs/workout_delete_dialog.dart';
 
 class WorkoutActionsPopupMenuButton extends PopupMenuButton {

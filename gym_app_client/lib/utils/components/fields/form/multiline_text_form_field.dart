@@ -11,9 +11,8 @@ class MultilineTextFormField extends PaddedTextFormField {
     int? minLength,
     int? maxLength,
     bool isOptional = false,
-    required EdgeInsets padding,
+    required super.padding,
   }) : super(
-          padding: padding,
           controller: controller,
           maxLines: null,
           decoration: InputDecoration(

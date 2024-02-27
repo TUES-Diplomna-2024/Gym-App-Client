@@ -13,7 +13,7 @@ class ExerciseDeleteDialog extends DeleteItemDialog {
     super.key,
     required super.context,
     required this.exerciseId,
-  }) : super(itemId: exerciseId, itemType: "exercise");
+  }) : super(itemType: "exercise");
 
   @override
   void handleItemDeletion() {

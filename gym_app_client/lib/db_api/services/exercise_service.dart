@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:convert';
+import 'package:gym_app_client/db_api/models/exercise/exercise_stats_model.dart';
 import 'package:gym_app_client/db_api/services/base_service.dart';
 import 'package:gym_app_client/db_api/models/exercise/exercise_preview_model.dart';
 import 'package:gym_app_client/db_api/models/exercise/exercise_update_model.dart';
@@ -27,21 +28,14 @@ class ExerciseService extends BaseService {
 
     if (baseServiceResult != null) return baseServiceResult;
 
-    final statusCode = requestResult.response!.statusCode;
+    final response = requestResult.response!;
+    final statusCode = response.statusCode;
 
-    if (statusCode == HttpStatus.ok) {
-      return ServiceResult.success(
-        message: "Exercise has been successfully created!",
-      );
-    } else if (statusCode == HttpStatus.badRequest) {
-      return ServiceResult.fail(message: "Invalid exercise data!");
-    } else if (statusCode == HttpStatus.forbidden) {
-      return ServiceResult.fail(
-        message: "Only admin users can create public exercises!",
-      );
-    }
-
-    return ServiceResult.fail(message: defaultErrorMessage);
+    return getServiceResult(statusCode, {
+      HttpStatus.ok: "Exercise has been successfully created!",
+      HttpStatus.badRequest: "Invalid exercise data!",
+      HttpStatus.forbidden: response.body,
+    });
   }
 
   Future<ServiceResult> getExerciseById(String exerciseId) async {
@@ -65,17 +59,13 @@ class ExerciseService extends BaseService {
       return ServiceResult.success(
         data: ExerciseViewModel.loadFromResponse(response),
       );
-    } else if (statusCode == HttpStatus.notFound ||
-        statusCode == HttpStatus.badRequest) {
-      return ServiceResult.fail(message: "Exercise could not be found!");
-    } else if (statusCode == HttpStatus.forbidden) {
-      return ServiceResult.fail(
-        message:
-            "You cannot access custom exercises that are owned by another user!",
-      );
     }
 
-    return ServiceResult.fail(message: defaultErrorMessage);
+    return getServiceResult(statusCode, {
+      HttpStatus.notFound: "Exercise could not be found!",
+      HttpStatus.badRequest: "Exercise could not be found!",
+      HttpStatus.forbidden: response.body,
+    });
   }
 
   Future<ServiceResult> getExerciseSearchResults(String exerciseName) async {
@@ -105,6 +95,40 @@ class ExerciseService extends BaseService {
     return ServiceResult.fail(message: defaultErrorMessage);
   }
 
+  Future<ServiceResult> getCurrUserExerciseStatistics(
+      String exerciseId, String period, String measurement) async {
+    final requestResult = await sendRequest(
+      method: HttpMethods.get,
+      subEndpoint: "$exerciseId/stats?period=$period&measurement=$measurement",
+      headers: await getHeaders(),
+    );
+
+    final baseServiceResult = await baseAuthResponseHandle(
+      requestResult: requestResult,
+      currMethod: () =>
+          getCurrUserExerciseStatistics(exerciseId, period, measurement),
+    );
+
+    if (baseServiceResult != null) return baseServiceResult;
+
+    final response = requestResult.response!;
+    final statusCode = response.statusCode;
+
+    if (statusCode == HttpStatus.ok) {
+      final exerciseStatistics = ExerciseStatsModel.loadFromResponse(response);
+
+      return ServiceResult.success(data: exerciseStatistics);
+    }
+
+    return getServiceResult(statusCode, {
+      HttpStatus.noContent: "No statistics found for the selected time period!",
+      HttpStatus.badRequest:
+          "The provided time period or measurement is invalid!",
+      HttpStatus.notFound: "Exercise could not be found!",
+      HttpStatus.forbidden: response.body,
+    });
+  }
+
   Future<ServiceResult> addExerciseInWorkouts(
       String exerciseId, List<String> workoutIds) async {
     final requestResult = await sendRequest(
@@ -124,24 +148,14 @@ class ExerciseService extends BaseService {
     final response = requestResult.response!;
     final statusCode = response.statusCode;
 
-    if (statusCode == HttpStatus.ok) {
-      String message = response.body.isEmpty
-          ? "Exercise has been successfully added in ${workoutIds.length} workout${workoutIds.length > 1 ? 's' : ''}!"
-          : "Exercise was not added in all workouts!";
-
-      return ServiceResult.success(message: message);
-    } else if (statusCode == HttpStatus.notFound ||
-        statusCode == HttpStatus.badRequest) {
-      return ServiceResult.fail(message: "Exercise could not be found!");
-    } else if (statusCode == HttpStatus.forbidden) {
-      return ServiceResult.fail(message: response.body);
-    } else if (statusCode == HttpStatus.badRequest) {
-      return ServiceResult.fail(
-        message: "Exercise was not added in any workout!",
-      );
-    }
-
-    return ServiceResult.fail(message: defaultErrorMessage);
+    return getServiceResult(statusCode, {
+      HttpStatus.ok: response.body.isEmpty
+          ? "Exercise has been successfully added in ${workoutIds.length} workout/s!"
+          : "Exercise was not added in all workouts!",
+      HttpStatus.notFound: "Exercise could not be found!",
+      HttpStatus.badRequest: "Exercise was not added in any workout!",
+      HttpStatus.forbidden: response.body,
+    });
   }
 
   Future<ServiceResult> updateExerciseById(
@@ -163,17 +177,12 @@ class ExerciseService extends BaseService {
     final response = requestResult.response!;
     final statusCode = response.statusCode;
 
-    if (statusCode == HttpStatus.ok) {
-      return ServiceResult.success(message: "Successfully updated!");
-    } else if (statusCode == HttpStatus.badRequest) {
-      return ServiceResult.fail(message: "Invalid exercise data!");
-    } else if (statusCode == HttpStatus.notFound) {
-      return ServiceResult.fail(message: "Exercise could not be found!");
-    } else if (statusCode == HttpStatus.forbidden) {
-      return ServiceResult.fail(message: response.body);
-    }
-
-    return ServiceResult.fail(message: defaultErrorMessage);
+    return getServiceResult(statusCode, {
+      HttpStatus.ok: "Successfully updated!",
+      HttpStatus.badRequest: "Invalid exercise data!",
+      HttpStatus.notFound: "Exercise could not be found!",
+      HttpStatus.forbidden: response.body,
+    });
   }
 
   Future<ServiceResult> deleteExerciseById(String exerciseId) async {
@@ -193,16 +202,11 @@ class ExerciseService extends BaseService {
     final response = requestResult.response!;
     final statusCode = response.statusCode;
 
-    if (statusCode == HttpStatus.ok) {
-      return ServiceResult.success(
-          message: "Exercise was successfully deleted!");
-    } else if (statusCode == HttpStatus.notFound ||
-        statusCode == HttpStatus.badRequest) {
-      return ServiceResult.fail(message: "Exercise could not be found!");
-    } else if (statusCode == HttpStatus.forbidden) {
-      return ServiceResult.fail(message: response.body);
-    }
-
-    return ServiceResult.fail(message: defaultErrorMessage);
+    return getServiceResult(statusCode, {
+      HttpStatus.ok: "Exercise was successfully deleted!",
+      HttpStatus.notFound: "Exercise could not be found!",
+      HttpStatus.badRequest: "Exercise could not be found!",
+      HttpStatus.forbidden: response.body,
+    });
   }
 }

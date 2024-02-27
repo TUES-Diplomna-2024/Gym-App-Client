@@ -1,27 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:gym_app_client/utils/common/helper_functions.dart';
 
 abstract class DeleteItemDialog extends StatelessWidget {
   final BuildContext context;
-  final String itemId;
   final String itemType;
 
   const DeleteItemDialog({
     super.key,
     required this.context,
-    required this.itemId,
     required this.itemType,
   }) : assert(itemType.length > 1);
 
   void handleItemDeletion();
 
-  String _getItemTypeAsTitle() =>
-      "${itemType[0].toUpperCase()}${itemType.substring(1)}";
-
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Center(
-        child: Text("Delete ${_getItemTypeAsTitle()}"),
+        child: Text("Delete ${capitalizeFirstLetter(itemType)}"),
       ),
       content: Padding(
         padding: const EdgeInsets.only(left: 10, right: 10),

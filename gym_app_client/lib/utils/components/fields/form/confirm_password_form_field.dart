@@ -7,9 +7,8 @@ class ConfirmPasswordFormField extends PaddedTextFormField {
     required TextEditingController passwordController,
     required bool isConfirmPasswordVisible,
     required void Function() onConfirmPasswordVisibilityChanged,
-    required EdgeInsets padding,
+    required super.padding,
   }) : super(
-          padding: padding,
           decoration: InputDecoration(
             label: const Text("Confirm Password"),
             filled: true,

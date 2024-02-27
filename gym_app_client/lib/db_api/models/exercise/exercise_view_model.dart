@@ -1,6 +1,7 @@
 import 'dart:convert';
-import 'package:gym_app_client/db_api/models/exercise/exercise_update_model.dart';
 import 'package:http/http.dart';
+import 'package:gym_app_client/db_api/models/exercise/exercise_update_model.dart';
+import 'package:gym_app_client/utils/common/helper_functions.dart';
 
 class ExerciseViewModel {
   late final String id;
@@ -20,8 +21,8 @@ class ExerciseViewModel {
 
     id = body["id"];
     name = body["name"];
-    type = _normalizeData(body["type"]);
-    difficulty = _normalizeData(body["difficulty"]);
+    type = capitalizeFirstLetter(body["type"]);
+    difficulty = capitalizeFirstLetter(body["difficulty"]);
     muscleGroups = body["muscleGroups"];
     instructions = body["instructions"];
     equipment = body["equipment"];
@@ -29,9 +30,6 @@ class ExerciseViewModel {
     ownerId = body["ownerId"];
     ownerUsername = body["ownerUsername"];
   }
-
-  String _normalizeData(String data) =>
-      "${data[0].toUpperCase()}${data.substring(1)}";
 
   void updateView(ExerciseUpdateModel updateModel) {
     name = updateModel.name;
