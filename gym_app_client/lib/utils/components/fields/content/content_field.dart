@@ -8,15 +8,17 @@ class ContentField extends StatelessWidget {
   final EdgeInsets decorationPadding;
   final TextOverflow valueOverflow;
   final bool isMultiline;
+  final bool isFieldNameCentered;
 
   const ContentField({
     super.key,
     this.fieldIcon,
-    this.valueOverflow = TextOverflow.clip,
-    this.decorationPadding = const EdgeInsets.all(15),
-    this.isMultiline = false,
     this.fieldName,
     required this.fieldValue,
+    this.isMultiline = false,
+    this.isFieldNameCentered = false,
+    this.valueOverflow = TextOverflow.clip,
+    this.decorationPadding = const EdgeInsets.all(15),
     required this.padding,
   });
 
@@ -38,6 +40,16 @@ class ContentField extends StatelessWidget {
     );
   }
 
+  Widget _getFieldNameWidget() {
+    return Expanded(
+      child: Text(
+        fieldName!,
+        style: const TextStyle(fontSize: 16.0),
+        textAlign: isFieldNameCentered ? TextAlign.center : null,
+      ),
+    );
+  }
+
   Widget _getContainerChild() {
     if (isMultiline) {
       return Column(
@@ -52,12 +64,7 @@ class ContentField extends StatelessWidget {
                     Icon(fieldIcon),
                     const SizedBox(width: 20)
                   },
-                  Expanded(
-                    child: Text(
-                      fieldName!,
-                      style: const TextStyle(fontSize: 16.0),
-                    ),
-                  ),
+                  _getFieldNameWidget(),
                 ],
               ),
             ),
@@ -74,12 +81,7 @@ class ContentField extends StatelessWidget {
               Icon(fieldIcon),
               const SizedBox(width: 20)
             },
-            Expanded(
-              child: Text(
-                fieldName!,
-                style: const TextStyle(fontSize: 16.0),
-              ),
-            ),
+            _getFieldNameWidget(),
             if (fieldIcon == null) const SizedBox(width: 30),
           },
           Expanded(

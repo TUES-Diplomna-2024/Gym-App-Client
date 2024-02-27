@@ -12,7 +12,7 @@ class StatisticMeasurementFormField
           decoration: const InputDecoration(
             label: Text("Measurement"),
             filled: true,
-            prefixIcon: Icon(Icons.calendar_month_outlined),
+            prefixIcon: Icon(Icons.show_chart),
             enabledBorder: OutlineInputBorder(borderSide: BorderSide.none),
             focusedBorder:
                 OutlineInputBorder(borderSide: BorderSide(color: Colors.blue)),

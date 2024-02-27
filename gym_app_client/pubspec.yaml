@@ -10,7 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  http: ^1.1.0
+  http: ^1.2.1
   global_configuration: ^2.0.0
   flutter_secure_storage:
   jwt_decoder:
@@ -20,13 +20,13 @@ dependencies:
 
   flutter_slidable: ^3.0.1
   duration_picker: ^1.0.0
-  fl_chart: ^0.65.0
+  charts_flutter: ^0.12.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   
-  flutter_lints: ^2.0.0
+  flutter_lints: ^3.0.1
 
 flutter:
   uses-material-design: true

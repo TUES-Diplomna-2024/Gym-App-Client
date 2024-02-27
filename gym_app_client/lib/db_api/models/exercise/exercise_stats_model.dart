@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:http/http.dart';
 import 'package:gym_app_client/utils/common/statistic_data_point.dart';
 
@@ -29,12 +28,5 @@ class ExerciseStatsModel {
     maxWeight = double.parse(body["maxWeight"].toStringAsFixed(1));
 
     dataPoints = StatisticDataPoint.getDataPointsFromBody(body["dataPoints"]);
-  }
-
-  List<FlSpot> getChartSpots() {
-    return dataPoints.map((dp) {
-      double x = dp.date.difference(DateTime.now()).inDays.toDouble();
-      return FlSpot(x, dp.value.toDouble());
-    }).toList();
   }
 }

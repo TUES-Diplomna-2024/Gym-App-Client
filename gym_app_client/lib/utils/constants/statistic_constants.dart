@@ -12,8 +12,8 @@ class StatisticConstants {
   static const List<String> measurements = [
     "Sets",
     "Reps",
+    "Weight",
     "Volume",
     "Duration",
-    "Weight",
   ];
 }

@@ -66,44 +66,50 @@ class _ExerciseStatsPageState extends State<ExerciseStatsPage> {
       );
     }
 
-    return ExerciseStatsView(stats: _stats!);
+    return ExerciseStatsView(
+      stats: _stats!,
+      timePeriod: _selectedPeriod,
+      measurement: _selectedMeasurement,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.only(left: 25, right: 25, top: 23),
-        child: Column(
-          children: [
-            TimePeriodFormField(
-              onTimePeriodChanged: (String? value) {
-                if (mounted) {
-                  setState(() {
-                    _selectedPeriod = value!;
-                    _isLoading = false;
-                  });
-                }
-                _getStats();
-              },
+      body: SingleChildScrollView(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.only(left: 25, right: 25, top: 23),
+            child: Column(
+              children: [
+                TimePeriodFormField(
+                  onTimePeriodChanged: (String? value) {
+                    if (mounted) {
+                      setState(() {
+                        _selectedPeriod = value!;
+                        _isLoading = false;
+                      });
+                    }
+                    _getStats();
+                  },
+                ),
+                const SizedBox(height: 23),
+                StatisticMeasurementFormField(
+                  onMeasurementChanged: (String? value) {
+                    if (mounted) {
+                      setState(() {
+                        _selectedMeasurement = value!;
+                        _isLoading = false;
+                      });
+                    }
+                    _getStats();
+                  },
+                ),
+                const SizedBox(height: 23),
+                _getStatsBody(),
+              ],
             ),
-            const SizedBox(height: 23),
-            StatisticMeasurementFormField(
-              onMeasurementChanged: (String? value) {
-                if (mounted) {
-                  setState(() {
-                    _selectedMeasurement = value!;
-                    _isLoading = false;
-                  });
-                }
-                _getStats();
-              },
-            ),
-            const SizedBox(height: 23),
-            Expanded(
-              child: _getStatsBody(),
-            ),
-          ],
+          ),
         ),
       ),
     );
