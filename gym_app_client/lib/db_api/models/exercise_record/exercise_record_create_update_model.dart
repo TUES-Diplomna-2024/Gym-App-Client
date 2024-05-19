@@ -3,14 +3,14 @@ import 'dart:convert';
 class ExerciseRecordCreateUpdateModel {
   final int sets;
   final int reps;
-  final int duration;
   final double? weight;
+  final int duration;
 
   ExerciseRecordCreateUpdateModel({
     required this.sets,
     required this.reps,
-    required this.duration,
     this.weight,
+    required this.duration,
   });
 
   String toJson() => jsonEncode({

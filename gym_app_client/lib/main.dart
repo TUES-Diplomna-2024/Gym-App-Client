@@ -28,7 +28,7 @@ void main() async {
 
     runApp(const MyApp());
   }, (error, stackTrace) {
-    debugPrint("An error occurred ${error.toString()}");
+    debugPrint("An error occurred: ${error.toString()}");
   });
 }
 

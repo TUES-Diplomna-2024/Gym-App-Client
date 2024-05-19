@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/services/token_service.dart';
+import 'package:gym_app_client/utils/common/enums/exercise_difficulty.dart';
+import 'package:gym_app_client/utils/common/enums/exercise_type.dart';
+import 'package:gym_app_client/utils/common/enums/exercise_visibility.dart';
 import 'package:gym_app_client/utils/components/buttons/exercise/exercise_create_button.dart';
 import 'package:gym_app_client/utils/components/fields/form/exercise_difficulty_form_field.dart';
 import 'package:gym_app_client/utils/components/fields/form/exercise_type_form_field.dart';
@@ -41,9 +44,9 @@ class _ExerciseCreateFormState extends State<ExerciseCreateForm> {
   final _equipmentController = TextEditingController();
   final _instructionsController = TextEditingController();
 
-  bool _selectedVisibility = ExerciseConstants.privateVisibility;
-  String _selectedDifficulty = "";
-  String _selectedType = "";
+  ExerciseVisibility _selectedVisibility = ExerciseVisibility.private;
+  ExerciseDifficulty? _selectedDifficulty;
+  ExerciseType? _selectedType;
 
   @override
   void initState() {
@@ -80,24 +83,27 @@ class _ExerciseCreateFormState extends State<ExerciseCreateForm> {
               maxLength: ExerciseConstants.maxNameLength,
               padding: widget.betweenFieldsPadding,
             ),
-            if (_isCurrUserAdmin)
+            if (_isCurrUserAdmin) ...{
               ExerciseVisibilityFormField(
                 defaultVisibility: _selectedVisibility,
-                onVisibilityChanged: (bool? visibility) {
+                onVisibilityChanged: (ExerciseVisibility? visibility) {
                   if (mounted) {
                     setState(() => _selectedVisibility = visibility!);
                   }
                 },
                 padding: widget.betweenFieldsPadding,
               ),
+            },
             ExerciseDifficultyFormField(
-              onDifficultyChanged: (String? difficulty) {
-                if (mounted) setState(() => _selectedDifficulty = difficulty!);
+              onDifficultyChanged: (ExerciseDifficulty? difficulty) {
+                if (mounted) {
+                  setState(() => _selectedDifficulty = difficulty!);
+                }
               },
               padding: widget.betweenFieldsPadding,
             ),
             ExerciseTypeFormField(
-              onTypeChanged: (String? type) {
+              onTypeChanged: (ExerciseType? type) {
                 if (mounted) setState(() => _selectedType = type!);
               },
               padding: widget.betweenFieldsPadding,

@@ -97,7 +97,8 @@ class _ProfilePageState extends State<ProfilePage> {
                       ContentField(
                         fieldIcon: Icons.accessibility_new_outlined,
                         fieldName: "Gender",
-                        fieldValue: _userProfile.gender,
+                        fieldValue:
+                            capitalizeFirstLetter(_userProfile.gender.name),
                         padding: const EdgeInsets.only(bottom: 15),
                       ),
                       DateField(

@@ -6,13 +6,11 @@ import 'package:gym_app_client/db_api/services/user_service.dart';
 import 'package:gym_app_client/utils/forms/exercise_record_create_update_form.dart';
 
 class ExerciseRecordEditDialog extends StatefulWidget {
-  final String exerciseId;
   final ExerciseRecordViewModel recordInitState;
   final void Function() updatePage;
 
   const ExerciseRecordEditDialog({
     super.key,
-    required this.exerciseId,
     required this.recordInitState,
     required this.updatePage,
   });
@@ -64,8 +62,7 @@ class _ExerciseRecordEditDialogState extends State<ExerciseRecordEditDialog> {
       );
 
       _exerciseRecordService
-          .updateExerciseRecordById(
-              widget.exerciseId, widget.recordInitState.id, record)
+          .updateExerciseRecordById(widget.recordInitState.id, record)
           .then(
         (serviceResult) {
           serviceResult.showPopUp(context);

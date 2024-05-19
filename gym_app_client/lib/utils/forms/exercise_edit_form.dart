@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/models/exercise/exercise_update_model.dart';
 import 'package:gym_app_client/db_api/models/exercise/exercise_view_model.dart';
+import 'package:gym_app_client/utils/common/enums/exercise_difficulty.dart';
+import 'package:gym_app_client/utils/common/enums/exercise_type.dart';
 import 'package:gym_app_client/utils/components/buttons/exercise/exercise_save_changes_button.dart';
 import 'package:gym_app_client/utils/components/fields/form/exercise_difficulty_form_field.dart';
 import 'package:gym_app_client/utils/components/fields/form/exercise_type_form_field.dart';
@@ -41,8 +43,8 @@ class _ExerciseEditFormState extends State<ExerciseEditForm> {
   late final TextEditingController _equipmentController;
   late final TextEditingController _instructionsController;
 
-  late String _selectedDifficulty;
-  late String _selectedType;
+  late ExerciseDifficulty _selectedDifficulty;
+  late ExerciseType _selectedType;
 
   @override
   void initState() {
@@ -92,14 +94,14 @@ class _ExerciseEditFormState extends State<ExerciseEditForm> {
             ),
             ExerciseDifficultyFormField(
               defaultDifficulty: _selectedDifficulty,
-              onDifficultyChanged: (String? difficulty) {
+              onDifficultyChanged: (ExerciseDifficulty? difficulty) {
                 if (mounted) setState(() => _selectedDifficulty = difficulty!);
               },
               padding: widget.betweenFieldsPadding,
             ),
             ExerciseTypeFormField(
               defaultType: _selectedType,
-              onTypeChanged: (String? type) {
+              onTypeChanged: (ExerciseType? type) {
                 if (mounted) setState(() => _selectedType = type!);
               },
               padding: widget.betweenFieldsPadding,

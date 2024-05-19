@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/models/exercise/exercise_create_model.dart';
 import 'package:gym_app_client/db_api/services/exercise_service.dart';
 import 'package:gym_app_client/db_api/services/user_service.dart';
+import 'package:gym_app_client/utils/common/enums/exercise_difficulty.dart';
+import 'package:gym_app_client/utils/common/enums/exercise_type.dart';
+import 'package:gym_app_client/utils/common/enums/exercise_visibility.dart';
 
 class ExerciseCreateButton extends StatelessWidget {
   final _userService = UserService();
@@ -14,9 +17,9 @@ class ExerciseCreateButton extends StatelessWidget {
   final TextEditingController equipmentController;
   final TextEditingController instructionsController;
 
-  final bool selectedVisibility;
-  final String selectedDifficulty;
-  final String selectedType;
+  final ExerciseVisibility selectedVisibility;
+  final ExerciseDifficulty? selectedDifficulty;
+  final ExerciseType? selectedType;
 
   ExerciseCreateButton({
     super.key,
@@ -34,13 +37,13 @@ class ExerciseCreateButton extends StatelessWidget {
     if (formKey.currentState?.validate() ?? false) {
       var exercise = ExerciseCreateModel(
         name: nameController.text,
-        type: selectedType,
-        difficulty: selectedDifficulty,
-        muscleGroups: muscleGroupController.text,
         instructions: instructionsController.text,
+        muscleGroups: muscleGroupController.text,
+        type: selectedType!,
+        difficulty: selectedDifficulty!,
         equipment:
             equipmentController.text.isEmpty ? null : equipmentController.text,
-        isPrivate: selectedVisibility,
+        visibility: selectedVisibility,
       );
 
       _exerciseService.createNewExercise(exercise).then(

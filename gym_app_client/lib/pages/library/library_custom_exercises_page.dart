@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/models/exercise/exercise_preview_model.dart';
+import 'package:gym_app_client/db_api/services/exercise_service.dart';
 import 'package:gym_app_client/db_api/services/user_service.dart';
 import 'package:gym_app_client/utils/components/views/previews/exercise_preview.dart';
 
@@ -14,12 +15,13 @@ class LibraryCustomExercisesPage extends StatefulWidget {
 class _LibraryCustomExercisesPageState
     extends State<LibraryCustomExercisesPage> {
   final _userService = UserService();
+  final _exerciseService = ExerciseService();
   late final List<ExercisePreviewModel> _userCustomExercises;
   bool _isLoading = true;
 
   @override
   void initState() {
-    _userService.getCurrUserCustomExercisePreviews().then(
+    _exerciseService.getCurrUserCustomExercisePreviews().then(
       (serviceResult) {
         if (serviceResult.isSuccessful) {
           _userCustomExercises = serviceResult.data!;

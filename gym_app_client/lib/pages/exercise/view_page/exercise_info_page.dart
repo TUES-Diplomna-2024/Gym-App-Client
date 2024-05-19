@@ -3,6 +3,8 @@ import 'package:gym_app_client/db_api/models/exercise/exercise_view_model.dart';
 import 'package:gym_app_client/db_api/services/exercise_service.dart';
 import 'package:gym_app_client/db_api/services/token_service.dart';
 import 'package:gym_app_client/db_api/services/user_service.dart';
+import 'package:gym_app_client/utils/common/enums/exercise_visibility.dart';
+import 'package:gym_app_client/utils/common/helper_functions.dart';
 import 'package:gym_app_client/utils/components/buttons/exercise/exercise_actions_popup_menu_button.dart';
 import 'package:gym_app_client/utils/components/fields/content/content_field.dart';
 import 'package:gym_app_client/utils/constants/role_constants.dart';
@@ -37,7 +39,7 @@ class _ExerciseInfoPageState extends State<ExerciseInfoPage> {
 
           final currUserRole = await _tokenService.getCurrUserRole();
 
-          if (_exerciseView.isPrivate == false &&
+          if (_exerciseView.visibility == ExerciseVisibility.public &&
               !RoleConstants.adminRoles.contains(currUserRole)) {
             _areEditAndDeleteAllowed = false;
           } else {
@@ -87,9 +89,10 @@ class _ExerciseInfoPageState extends State<ExerciseInfoPage> {
                             },
                           ),
                           Icon(
-                            _exerciseView.isPrivate
-                                ? Icons.lock_outlined
-                                : Icons.public_outlined,
+                            _exerciseView.visibility ==
+                                    ExerciseVisibility.public
+                                ? Icons.public_outlined
+                                : Icons.lock_outlined,
                           ),
                         ],
                       ),
@@ -97,13 +100,17 @@ class _ExerciseInfoPageState extends State<ExerciseInfoPage> {
                       ContentField(
                         fieldIcon: Icons.bolt_outlined,
                         fieldName: "Difficulty",
-                        fieldValue: _exerciseView.difficulty,
+                        fieldValue: capitalizeFirstLetter(
+                          _exerciseView.difficulty.name,
+                        ),
                         padding: const EdgeInsets.only(bottom: 15),
                       ),
                       ContentField(
                         fieldIcon: Icons.sports_gymnastics_outlined,
                         fieldName: "Type",
-                        fieldValue: _exerciseView.type,
+                        fieldValue: capitalizeFirstLetter(
+                          _exerciseView.type.name,
+                        ),
                         padding: const EdgeInsets.only(bottom: 15),
                       ),
                       ContentField(

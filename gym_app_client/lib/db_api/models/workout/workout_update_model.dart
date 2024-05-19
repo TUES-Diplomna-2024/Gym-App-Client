@@ -7,13 +7,13 @@ class WorkoutUpdateModel {
 
   WorkoutUpdateModel({
     required this.name,
-    required this.description,
-    required this.exercisesIds,
+    this.description,
+    this.exercisesIds,
   });
 
   String toJson() => jsonEncode({
         "name": name,
         "description": description,
-        "exercises": exercisesIds,
+        "exercisesIds": exercisesIds,
       });
 }

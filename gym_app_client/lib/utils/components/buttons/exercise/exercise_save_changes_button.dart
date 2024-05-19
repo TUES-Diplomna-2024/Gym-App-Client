@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/models/exercise/exercise_update_model.dart';
 import 'package:gym_app_client/db_api/services/exercise_service.dart';
 import 'package:gym_app_client/db_api/services/user_service.dart';
+import 'package:gym_app_client/utils/common/enums/exercise_difficulty.dart';
+import 'package:gym_app_client/utils/common/enums/exercise_type.dart';
 
 class ExerciseSaveChangesButton extends StatelessWidget {
   final _userService = UserService();
@@ -16,8 +18,8 @@ class ExerciseSaveChangesButton extends StatelessWidget {
   final TextEditingController equipmentController;
   final TextEditingController instructionsController;
 
-  final String selectedDifficulty;
-  final String selectedType;
+  final ExerciseDifficulty selectedDifficulty;
+  final ExerciseType selectedType;
 
   final void Function(ExerciseUpdateModel) onExerciseUpdated;
 

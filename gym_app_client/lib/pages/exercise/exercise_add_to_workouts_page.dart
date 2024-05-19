@@ -2,24 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/models/workout/workout_preview_model.dart';
 import 'package:gym_app_client/db_api/services/user_service.dart';
 import 'package:gym_app_client/db_api/services/workout_service.dart';
-import 'package:gym_app_client/utils/components/buttons/exercise/exercise_add_in_workouts_done_button.dart';
+import 'package:gym_app_client/utils/components/buttons/exercise/exercise_add_to_workouts_done_button.dart';
 import 'package:gym_app_client/utils/components/common/back_leading_app_bar.dart';
 import 'package:gym_app_client/utils/components/views/previews/selectable_workout_preview.dart';
 
-class ExerciseAddInWorkoutsPage extends StatefulWidget {
+class ExerciseAddToWorkoutsPage extends StatefulWidget {
   final String exerciseId;
 
-  const ExerciseAddInWorkoutsPage({
+  const ExerciseAddToWorkoutsPage({
     super.key,
     required this.exerciseId,
   });
 
   @override
-  State<ExerciseAddInWorkoutsPage> createState() =>
-      _ExerciseAddInWorkoutsPageState();
+  State<ExerciseAddToWorkoutsPage> createState() =>
+      _ExerciseAddToWorkoutsPageState();
 }
 
-class _ExerciseAddInWorkoutsPageState extends State<ExerciseAddInWorkoutsPage> {
+class _ExerciseAddToWorkoutsPageState extends State<ExerciseAddToWorkoutsPage> {
   final _userService = UserService();
   final _workoutService = WorkoutService();
 
@@ -84,7 +84,7 @@ class _ExerciseAddInWorkoutsPageState extends State<ExerciseAddInWorkoutsPage> {
       appBar: BackLeadingAppBar(title: "Add In Workouts", context: context),
       body: _getBody(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: ExerciseAddInWorkoutsDoneButton(
+      floatingActionButton: ExerciseAddToWorkoutsDoneButton(
         exerciseId: widget.exerciseId,
         selectedWorkoutIds: selectedWorkoutIds,
       ),

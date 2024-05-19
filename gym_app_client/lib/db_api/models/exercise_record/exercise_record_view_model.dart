@@ -7,8 +7,8 @@ class ExerciseRecordViewModel {
   late final String onCreated;
   late final int sets;
   late final int reps;
-  late final Duration duration;
   late final double weight;
+  late final Duration duration;
 
   ExerciseRecordViewModel.loadFromMap(Map<String, dynamic> data) {
     id = data["id"];

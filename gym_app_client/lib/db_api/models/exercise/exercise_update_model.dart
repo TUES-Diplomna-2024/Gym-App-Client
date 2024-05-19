@@ -1,12 +1,14 @@
-import 'dart:convert';
+import 'package:gym_app_client/utils/common/enums/exercise_difficulty.dart';
+import 'package:gym_app_client/utils/common/enums/exercise_type.dart';
 
 class ExerciseUpdateModel {
-  late final String name;
-  late final String instructions;
-  late final String muscleGroups;
-  late final String type;
-  late final String difficulty;
-  late final String? equipment;
+  final String name;
+  final String instructions;
+  final String muscleGroups;
+  final ExerciseType type;
+  final ExerciseDifficulty difficulty;
+  final String? equipment;
+  // TODO: Add image handling
 
   ExerciseUpdateModel({
     required this.name,
@@ -17,12 +19,19 @@ class ExerciseUpdateModel {
     this.equipment,
   });
 
-  String toJson() => jsonEncode({
-        "name": name,
-        "instructions": instructions,
-        "muscleGroups": muscleGroups,
-        "type": type,
-        "difficulty": difficulty,
-        "equipment": equipment,
-      });
+  Map<String, String> toMap() {
+    var map = <String, String>{
+      "name": name,
+      "instructions": instructions,
+      "muscleGroups": muscleGroups,
+      "type": type.name,
+      "difficulty": difficulty.name
+    };
+
+    if (equipment != null && equipment!.isNotEmpty) {
+      map["equipment"] = equipment!;
+    }
+
+    return map;
+  }
 }

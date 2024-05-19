@@ -1,34 +1,34 @@
 import 'dart:convert';
+import 'package:gym_app_client/utils/common/enums/exercise_difficulty.dart';
+import 'package:gym_app_client/utils/common/enums/exercise_type.dart';
+import 'package:gym_app_client/utils/common/enums/exercise_visibility.dart';
 import 'package:http/http.dart';
 import 'package:gym_app_client/db_api/models/exercise/exercise_update_model.dart';
-import 'package:gym_app_client/utils/common/helper_functions.dart';
 
 class ExerciseViewModel {
   late final String id;
-  late final bool isPrivate;
-  late final String? ownerId;
-  late final String? ownerUsername;
-
+  late final ExerciseVisibility visibility;
   late String name;
-  late String type;
-  late String difficulty;
-  late String muscleGroups;
   late String instructions;
-  late String? equipment;
+  late String muscleGroups;
+  String? equipment;
+  late ExerciseType type;
+  late ExerciseDifficulty difficulty;
+  // TODO: Add image handling
 
   ExerciseViewModel.loadFromResponse(Response response) {
     Map<String, dynamic> body = json.decode(response.body);
 
     id = body["id"];
+    visibility = ExerciseVisibility.values[body["visibility"]];
+
     name = body["name"];
-    type = capitalizeFirstLetter(body["type"]);
-    difficulty = capitalizeFirstLetter(body["difficulty"]);
-    muscleGroups = body["muscleGroups"];
     instructions = body["instructions"];
+    muscleGroups = body["muscleGroups"];
     equipment = body["equipment"];
-    isPrivate = body["isPrivate"];
-    ownerId = body["ownerId"];
-    ownerUsername = body["ownerUsername"];
+
+    type = ExerciseType.values[body["type"]];
+    difficulty = ExerciseDifficulty.values[body["difficulty"]];
   }
 
   void updateView(ExerciseUpdateModel updateModel) {

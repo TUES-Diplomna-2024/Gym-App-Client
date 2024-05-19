@@ -3,28 +3,27 @@ import 'package:http/http.dart';
 import 'dart:async';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:gym_app_client/db_api/services/token_service.dart';
-import 'package:gym_app_client/utils/common/http_methods.dart';
+import 'package:gym_app_client/utils/common/enums/http_methods.dart';
 import 'package:gym_app_client/utils/common/request_result.dart';
 import 'package:gym_app_client/utils/common/service_result.dart';
 
-class BaseService {
+class BaseHttpService {
   final tokenService = TokenService();
-  final String _dbAPIBaseUrl = GlobalConfiguration().getValue("dbAPIBaseURL");
+  final String dbAPIBaseUrl = GlobalConfiguration().getValue("dbAPIBaseURL");
   late final Uri _refreshUrl;
   final String baseEndpoint;
   final connectionTimeout = const Duration(seconds: 4);
-  final String defaultErrorMessage = "Something went wrong! Try again later!";
 
-  BaseService({
+  BaseHttpService({
     required this.baseEndpoint,
   }) {
-    _refreshUrl = Uri.parse("$_dbAPIBaseUrl/users/refresh");
+    _refreshUrl = Uri.parse("$dbAPIBaseUrl/users/refresh");
   }
 
   Uri getUri({String? subEndpoint}) {
     final uri = subEndpoint != null
-        ? "$_dbAPIBaseUrl/$baseEndpoint/$subEndpoint"
-        : "$_dbAPIBaseUrl/$baseEndpoint";
+        ? "$dbAPIBaseUrl/$baseEndpoint/$subEndpoint"
+        : "$dbAPIBaseUrl/$baseEndpoint";
 
     return Uri.parse(Uri.encodeFull(uri));
   }
@@ -85,11 +84,11 @@ class BaseService {
 
       return RequestResult.success(response: response);
     } catch (e) {
-      var errorMessage = defaultErrorMessage;
+      var errorMessage = "Something went wrong! Try again later!";
 
       if (e is SocketException || e is TimeoutException) {
         errorMessage =
-            "Network error! Please check your internet connection and try again!";
+            "Unable to connect with the server! Check your internet connection and try again!";
       }
 
       return RequestResult.fail(errorMessage: errorMessage);
@@ -122,14 +121,15 @@ class BaseService {
     return null;
   }
 
-  ServiceResult getServiceResult(int statusCode, Map<int, String> statusMap) {
-    String? message = statusMap[statusCode];
-
-    if (statusCode >= 400 || message == null) {
-      return ServiceResult.fail(message: message ?? defaultErrorMessage);
-    } else {
+  ServiceResult getServiceResult(int statusCode, String message,
+      {String badRequestMessage = "Invalid data provided!"}) {
+    if (statusCode == HttpStatus.ok || statusCode == HttpStatus.noContent) {
       return ServiceResult.success(message: message);
+    } else if (statusCode == HttpStatus.badRequest) {
+      return ServiceResult.fail(message: badRequestMessage);
     }
+
+    return ServiceResult.fail(message: message);
   }
 
   Future<ServiceResult> refreshAccessToken() async {
@@ -156,6 +156,6 @@ class BaseService {
       );
     }
 
-    return ServiceResult.fail(message: defaultErrorMessage);
+    return ServiceResult.fail(message: response.body);
   }
 }

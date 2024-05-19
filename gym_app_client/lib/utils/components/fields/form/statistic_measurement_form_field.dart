@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:gym_app_client/utils/common/enums/statistic_measurement.dart';
+import 'package:gym_app_client/utils/common/helper_functions.dart';
 import 'package:gym_app_client/utils/components/fields/form/padded_dropdown_button_form_field.dart';
-import 'package:gym_app_client/utils/constants/statistic_constants.dart';
 
 class StatisticMeasurementFormField
-    extends PaddedDropdownButtonFormField<String> {
+    extends PaddedDropdownButtonFormField<StatisticMeasurement> {
   StatisticMeasurementFormField({
     super.key,
-    required void Function(String?) onMeasurementChanged,
+    required void Function(StatisticMeasurement?) onMeasurementChanged,
   }) : super(
           padding: const EdgeInsets.all(0),
           decoration: const InputDecoration(
@@ -18,10 +19,10 @@ class StatisticMeasurementFormField
                 OutlineInputBorder(borderSide: BorderSide(color: Colors.blue)),
           ),
           onChanged: onMeasurementChanged,
-          items: StatisticConstants.measurements
-              .map((String m) => DropdownMenuItem(
-                    value: m.toLowerCase(),
-                    child: Text(m),
+          items: StatisticMeasurement.values
+              .map((measurement) => DropdownMenuItem(
+                    value: measurement,
+                    child: Text(capitalizeFirstLetter(measurement.name)),
                   ))
               .toList(),
           validator: null,

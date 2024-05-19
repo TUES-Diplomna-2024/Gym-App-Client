@@ -17,6 +17,7 @@ class WorkoutPreviewModel {
     List<dynamic> body = json.decode(response.body);
 
     return List<WorkoutPreviewModel>.from(
-        body.map((e) => WorkoutPreviewModel.loadFromMap(e)));
+      body.map((e) => WorkoutPreviewModel.loadFromMap(e)),
+    );
   }
 }

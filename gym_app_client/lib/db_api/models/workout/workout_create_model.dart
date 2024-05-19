@@ -6,7 +6,7 @@ class WorkoutCreateModel {
 
   WorkoutCreateModel({
     required this.name,
-    required this.description,
+    this.description,
   });
 
   String toJson() => jsonEncode({
