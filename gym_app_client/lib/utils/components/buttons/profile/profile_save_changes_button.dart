@@ -11,7 +11,7 @@ class ProfileSaveChangesButton extends StatelessWidget {
   final Gender gender;
   final double height;
   final double weight;
-  final void Function(UserUpdateModel) onProfileUpdated;
+  final void Function() onUpdate;
 
   ProfileSaveChangesButton({
     super.key,
@@ -21,7 +21,7 @@ class ProfileSaveChangesButton extends StatelessWidget {
     required this.gender,
     required this.height,
     required this.weight,
-    required this.onProfileUpdated,
+    required this.onUpdate,
   });
 
   void _handleProfileUpdate(BuildContext context) {
@@ -39,7 +39,7 @@ class ProfileSaveChangesButton extends StatelessWidget {
           serviceResult.showPopUp(context);
 
           if (serviceResult.isSuccessful) {
-            onProfileUpdated(userUpdate);
+            onUpdate();
             if (context.mounted) Navigator.of(context).pop();
           } else if (serviceResult.shouldSignOutUser) {
             _userService.signOut(context);

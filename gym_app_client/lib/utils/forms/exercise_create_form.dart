@@ -15,10 +15,12 @@ import 'package:gym_app_client/utils/constants/role_constants.dart';
 class ExerciseCreateForm extends StatefulWidget {
   late final EdgeInsets formPadding;
   late final EdgeInsets betweenFieldsPadding;
+  final void Function() onUpdate;
 
   ExerciseCreateForm({
     super.key,
     required EdgeInsets padding,
+    required this.onUpdate,
   }) {
     formPadding = EdgeInsets.only(
       top: padding.top,
@@ -141,6 +143,7 @@ class _ExerciseCreateFormState extends State<ExerciseCreateForm> {
               selectedVisibility: _selectedVisibility,
               selectedDifficulty: _selectedDifficulty,
               selectedType: _selectedType,
+              onUpdate: widget.onUpdate,
             ),
           ],
         ),

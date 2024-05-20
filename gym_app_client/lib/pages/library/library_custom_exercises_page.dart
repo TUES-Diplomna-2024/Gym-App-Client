@@ -16,11 +16,16 @@ class _LibraryCustomExercisesPageState
     extends State<LibraryCustomExercisesPage> {
   final _userService = UserService();
   final _exerciseService = ExerciseService();
-  late final List<ExercisePreviewModel> _userCustomExercises;
+  late List<ExercisePreviewModel> _userCustomExercises;
   bool _isLoading = true;
 
   @override
   void initState() {
+    super.initState();
+    _loadPage();
+  }
+
+  void _loadPage() {
     _exerciseService.getCurrUserCustomExercisePreviews().then(
       (serviceResult) {
         if (serviceResult.isSuccessful) {
@@ -32,8 +37,6 @@ class _LibraryCustomExercisesPageState
         }
       },
     );
-
-    super.initState();
   }
 
   Widget _getBody() {
@@ -60,7 +63,7 @@ class _LibraryCustomExercisesPageState
               if (mounted) {
                 Navigator.of(context).pushNamed(
                   "/exercise",
-                  arguments: _userCustomExercises[index].id,
+                  arguments: [_userCustomExercises[index].id, _loadPage],
                 );
               }
             },
@@ -76,7 +79,12 @@ class _LibraryCustomExercisesPageState
       body: _getBody(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          if (mounted) Navigator.of(context).pushNamed("/exercise-create");
+          if (mounted) {
+            Navigator.of(context).pushNamed(
+              "/exercise-create",
+              arguments: _loadPage,
+            );
+          }
         },
         child: const Icon(Icons.add),
       ),

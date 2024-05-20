@@ -11,10 +11,12 @@ import 'package:gym_app_client/utils/constants/role_constants.dart';
 
 class ExerciseInfoPage extends StatefulWidget {
   final String exerciseId;
+  final void Function() onUpdate;
 
   const ExerciseInfoPage({
     super.key,
     required this.exerciseId,
+    required this.onUpdate,
   });
 
   @override
@@ -27,11 +29,16 @@ class _ExerciseInfoPageState extends State<ExerciseInfoPage> {
   final _tokenService = TokenService();
 
   late ExerciseViewModel _exerciseView;
-  late final bool _areEditAndDeleteAllowed;
+  late bool _isModifiable;
   bool _isLoading = true;
 
   @override
   void initState() {
+    super.initState();
+    _loadPage();
+  }
+
+  void _loadPage() {
     _exerciseService.getExerciseById(widget.exerciseId).then(
       (serviceResult) async {
         if (serviceResult.isSuccessful) {
@@ -41,9 +48,9 @@ class _ExerciseInfoPageState extends State<ExerciseInfoPage> {
 
           if (_exerciseView.visibility == ExerciseVisibility.public &&
               !RoleConstants.adminRoles.contains(currUserRole)) {
-            _areEditAndDeleteAllowed = false;
+            _isModifiable = false;
           } else {
-            _areEditAndDeleteAllowed = true;
+            _isModifiable = true;
           }
 
           if (mounted) setState(() => _isLoading = false);
@@ -53,8 +60,6 @@ class _ExerciseInfoPageState extends State<ExerciseInfoPage> {
         }
       },
     );
-
-    super.initState();
   }
 
   @override
@@ -79,13 +84,11 @@ class _ExerciseInfoPageState extends State<ExerciseInfoPage> {
                           ),
                           const SizedBox(width: 16),
                           ExerciseActionsPopupMenuButton(
-                            areEditAndDeleteAllowed: _areEditAndDeleteAllowed,
+                            isModifiable: _isModifiable,
                             exerciseCurrState: _exerciseView,
-                            onExerciseUpdated: (updateModel) {
-                              if (mounted) {
-                                setState(() =>
-                                    _exerciseView.updateView(updateModel));
-                              }
+                            onUpdate: ({bool shouldReloadPage = true}) {
+                              widget.onUpdate();
+                              if (shouldReloadPage) _loadPage();
                             },
                           ),
                           Icon(

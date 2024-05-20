@@ -21,7 +21,7 @@ class ExerciseSaveChangesButton extends StatelessWidget {
   final ExerciseDifficulty selectedDifficulty;
   final ExerciseType selectedType;
 
-  final void Function(ExerciseUpdateModel) onExerciseUpdated;
+  final void Function() onUpdate;
 
   ExerciseSaveChangesButton({
     super.key,
@@ -33,7 +33,7 @@ class ExerciseSaveChangesButton extends StatelessWidget {
     required this.instructionsController,
     required this.selectedDifficulty,
     required this.selectedType,
-    required this.onExerciseUpdated,
+    required this.onUpdate,
   });
 
   void _handleExerciseUpdate(BuildContext context) {
@@ -53,7 +53,7 @@ class ExerciseSaveChangesButton extends StatelessWidget {
           serviceResult.showPopUp(context);
 
           if (serviceResult.isSuccessful) {
-            onExerciseUpdated(exerciseUpdate);
+            onUpdate();
             if (context.mounted) Navigator.of(context).pop();
           } else if (serviceResult.shouldSignOutUser) {
             _userService.signOut(context);

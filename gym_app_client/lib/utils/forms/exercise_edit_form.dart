@@ -12,14 +12,14 @@ import 'package:gym_app_client/utils/constants/exercise_constants.dart';
 
 class ExerciseEditForm extends StatefulWidget {
   final ExerciseViewModel exerciseInitState;
-  final void Function(ExerciseUpdateModel) onExerciseUpdated;
+  final void Function() onUpdate;
   late final EdgeInsets formPadding;
   late final EdgeInsets betweenFieldsPadding;
 
   ExerciseEditForm({
     super.key,
     required this.exerciseInitState,
-    required this.onExerciseUpdated,
+    required this.onUpdate,
     required EdgeInsets padding,
   }) {
     formPadding = EdgeInsets.only(
@@ -139,7 +139,7 @@ class _ExerciseEditFormState extends State<ExerciseEditForm> {
               instructionsController: _instructionsController,
               selectedDifficulty: _selectedDifficulty,
               selectedType: _selectedType,
-              onExerciseUpdated: widget.onExerciseUpdated,
+              onUpdate: widget.onUpdate,
             ),
           ],
         ),

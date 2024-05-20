@@ -6,10 +6,12 @@ import 'package:gym_app_client/utils/components/common/back_leading_app_bar.dart
 
 class ExerciseViewPage extends StatefulWidget {
   final String exerciseId;
+  final void Function() onUpdate;
 
   const ExerciseViewPage({
     super.key,
     required this.exerciseId,
+    required this.onUpdate,
   });
 
   @override
@@ -59,7 +61,8 @@ class _ExerciseViewPageState extends State<ExerciseViewPage>
       body: TabBarView(
         controller: _tabController,
         children: [
-          ExerciseInfoPage(exerciseId: widget.exerciseId),
+          ExerciseInfoPage(
+              exerciseId: widget.exerciseId, onUpdate: widget.onUpdate),
           ExerciseStatsPage(exerciseId: widget.exerciseId),
           ExerciseRecordsPage(exerciseId: widget.exerciseId),
         ],

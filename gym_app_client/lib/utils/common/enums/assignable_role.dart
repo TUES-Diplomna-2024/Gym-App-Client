@@ -1,0 +1,4 @@
+enum AssignableRole {
+  normie,
+  admin,
+}

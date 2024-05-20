@@ -1,33 +1,30 @@
 import 'package:flutter/material.dart';
-import 'package:gym_app_client/db_api/models/exercise/exercise_preview_model.dart';
-import 'package:gym_app_client/db_api/services/exercise_service.dart';
+import 'package:gym_app_client/db_api/models/user/user_preview_model.dart';
 import 'package:gym_app_client/db_api/services/user_service.dart';
-import 'package:gym_app_client/utils/components/common/custom_app_bar.dart';
-import 'package:gym_app_client/utils/components/views/previews/exercise_preview.dart';
+import 'package:gym_app_client/utils/components/views/previews/user_preview.dart';
 
-class ExerciseSearchPage extends StatefulWidget {
-  const ExerciseSearchPage({super.key});
+class AdminPanelUsersPage extends StatefulWidget {
+  const AdminPanelUsersPage({super.key});
 
   @override
-  State<ExerciseSearchPage> createState() => _ExerciseSearchPageState();
+  State<AdminPanelUsersPage> createState() => _AdminPanelUsersPageState();
 }
 
-class _ExerciseSearchPageState extends State<ExerciseSearchPage> {
+class _AdminPanelUsersPageState extends State<AdminPanelUsersPage> {
   final _userService = UserService();
-  final _exerciseService = ExerciseService();
   final _searchController = TextEditingController();
 
-  List<ExercisePreviewModel>? _searchResults;
+  List<UserPreviewModel>? _searchResults;
 
-  void _getExerciseSearchResults() {
-    final search = _searchController.text.trim();
+  void _getUserSearchResults() {
+    final query = _searchController.text.trim();
 
-    if (search.isEmpty) {
+    if (query.isEmpty) {
       if (mounted) setState(() => _searchController.text = "");
       return;
     }
 
-    _exerciseService.getExerciseSearchResults(search).then(
+    _userService.getUserSearchResults(query).then(
       (serviceResult) {
         if (serviceResult.isSuccessful) {
           if (mounted) setState(() => _searchResults = serviceResult.data!);
@@ -60,12 +57,12 @@ class _ExerciseSearchPageState extends State<ExerciseSearchPage> {
         itemCount: _searchResults!.length,
         itemBuilder: (_, int index) {
           return GestureDetector(
-            child: ExercisePreview(exercise: _searchResults![index]),
+            child: UserPreview(user: _searchResults![index]),
             onTap: () {
               if (mounted) {
                 Navigator.of(context).pushNamed(
-                  "/exercise",
-                  arguments: [_searchResults![index].id, _getExerciseSearchResults],
+                  "/profile",
+                  arguments: [_searchResults![index].id, _getUserSearchResults],
                 );
               }
             },
@@ -78,14 +75,13 @@ class _ExerciseSearchPageState extends State<ExerciseSearchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: "Search"),
       body: Padding(
         padding: const EdgeInsets.only(left: 25, right: 25, top: 23),
         child: Column(
           children: [
             SearchBar(
               controller: _searchController,
-              onChanged: (_) => _getExerciseSearchResults(),
+              onChanged: (_) => _getUserSearchResults(),
               leading: const Icon(Icons.search),
               trailing: [
                 IconButton(
@@ -103,11 +99,5 @@ class _ExerciseSearchPageState extends State<ExerciseSearchPage> {
         ),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
   }
 }

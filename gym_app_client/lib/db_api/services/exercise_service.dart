@@ -1,9 +1,11 @@
 import 'dart:io';
+import 'package:flutter/services.dart';
 import 'package:gym_app_client/db_api/services/base_http_service.dart';
 import 'package:gym_app_client/db_api/models/exercise/exercise_preview_model.dart';
 import 'package:gym_app_client/db_api/models/exercise/exercise_update_model.dart';
 import 'package:gym_app_client/db_api/models/exercise/exercise_view_model.dart';
 import 'package:gym_app_client/db_api/models/exercise/exercise_create_model.dart';
+import 'package:gym_app_client/utils/common/enums/exercise_visibility.dart';
 import 'package:gym_app_client/utils/common/service_result.dart';
 import 'package:gym_app_client/utils/common/enums/http_methods.dart';
 
@@ -90,6 +92,33 @@ class ExerciseService extends BaseHttpService {
     return getServiceResult(statusCode, response.body);
   }
 
+  Future<ServiceResult> updateExerciseVisibilityById(
+      String exerciseId, ExerciseVisibility visibility) async {
+    final requestResult = await sendRequest(
+      method: HttpMethods.put,
+      subEndpoint: "$exerciseId/visibility",
+      headers: await getHeaders(includeContentType: false),
+      body: {"visibility": visibility.name},
+    );
+
+    final baseServiceResult = await baseAuthResponseHandle(
+      requestResult: requestResult,
+      currMethod: () => updateExerciseVisibilityById(exerciseId, visibility),
+    );
+
+    if (baseServiceResult != null) return baseServiceResult;
+
+    final response = requestResult.response!;
+    final statusCode = response.statusCode;
+
+    if (statusCode == HttpStatus.noContent) {
+      return getServiceResult(
+          statusCode, "Visibility has been successfully updated!");
+    }
+
+    return getServiceResult(statusCode, response.body);
+  }
+
   Future<ServiceResult> deleteExerciseById(String exerciseId) async {
     final requestResult = await sendRequest(
       method: HttpMethods.delete,
@@ -136,6 +165,35 @@ class ExerciseService extends BaseHttpService {
         ExercisePreviewModel.getExercisePreviewsFromResponse(response);
 
     return ServiceResult.success(data: exercisePreviews);
+  }
+
+  Future<ServiceResult> getExerciseSearchResultsAdvanced(
+      String exerciseName, ExerciseVisibility visibility) async {
+    final requestResult = await sendRequest(
+      method: HttpMethods.get,
+      subEndpoint:
+          "advanced-search?name=$exerciseName&visibility=${visibility.name}",
+      headers: await getHeaders(),
+    );
+
+    final baseServiceResult = await baseAuthResponseHandle(
+      requestResult: requestResult,
+      currMethod: () => getExerciseSearchResults(exerciseName),
+    );
+
+    if (baseServiceResult != null) return baseServiceResult;
+
+    final response = requestResult.response!;
+    final statusCode = response.statusCode;
+
+    if (statusCode == HttpStatus.ok) {
+      final exercisePreviews =
+          ExercisePreviewModel.getExercisePreviewsFromResponse(response);
+
+      return ServiceResult.success(data: exercisePreviews);
+    }
+
+    return getServiceResult(statusCode, response.body);
   }
 
   Future<ServiceResult> getCurrUserCustomExercisePreviews() async {

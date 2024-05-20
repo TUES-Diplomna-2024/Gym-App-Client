@@ -1,6 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:gym_app_client/db_api/models/user/user_preview_model.dart';
+import 'package:gym_app_client/db_api/models/user/user_profile_extended_model.dart';
 import 'package:gym_app_client/db_api/services/base_http_service.dart';
+import 'package:gym_app_client/utils/common/enums/assignable_role.dart';
 import 'package:gym_app_client/utils/common/enums/http_methods.dart';
 import 'package:gym_app_client/utils/common/service_result.dart';
 import 'package:gym_app_client/db_api/models/auth_model.dart';
@@ -148,6 +151,33 @@ class UserService extends BaseHttpService {
     return getServiceResult(statusCode, response.body);
   }
 
+  Future<ServiceResult> getUserSearchResults(String query) async {
+    final requestResult = await sendRequest(
+      method: HttpMethods.get,
+      subEndpoint: "search?query=$query",
+      headers: await getHeaders(),
+    );
+
+    final baseServiceResult = await baseAuthResponseHandle(
+      requestResult: requestResult,
+      currMethod: () => getUserSearchResults(query),
+    );
+
+    if (baseServiceResult != null) return baseServiceResult;
+
+    final response = requestResult.response!;
+    final statusCode = response.statusCode;
+
+    if (statusCode == HttpStatus.ok) {
+      final userPreviews =
+          UserPreviewModel.getUserPreviewsFromResponse(response);
+
+      return ServiceResult.success(data: userPreviews);
+    }
+
+    return getServiceResult(statusCode, response.body);
+  }
+
   Future<ServiceResult> getUserById(String userId) async {
     final requestResult = await sendRequest(
       method: HttpMethods.get,
@@ -167,11 +197,64 @@ class UserService extends BaseHttpService {
 
     if (statusCode == HttpStatus.ok) {
       return ServiceResult.success(
-        data: UserProfileModel.loadFromResponse(response),
+        data: UserProfileExtendedModel.loadFromResponse(response),
       );
     }
 
     return getServiceResult(statusCode, response.body,
         badRequestMessage: "The specified user could not be found!");
+  }
+
+  Future<ServiceResult> deleteUserById(String userId) async {
+    final requestResult = await sendRequest(
+      method: HttpMethods.delete,
+      subEndpoint: userId,
+      headers: await getHeaders(),
+    );
+
+    final baseServiceResult = await baseAuthResponseHandle(
+      requestResult: requestResult,
+      currMethod: () => deleteUserById(userId),
+    );
+
+    if (baseServiceResult != null) return baseServiceResult;
+
+    final response = requestResult.response!;
+    final statusCode = response.statusCode;
+
+    if (statusCode == HttpStatus.noContent) {
+      return getServiceResult(
+          statusCode, "Account has been successfully deleted!");
+    }
+
+    return getServiceResult(statusCode, response.body,
+        badRequestMessage: "The specified user could not be found!");
+  }
+
+  Future<ServiceResult> assignUserRole(
+      String userId, AssignableRole role) async {
+    final requestResult = await sendRequest(
+      method: HttpMethods.put,
+      subEndpoint: "$userId/role",
+      headers: await getHeaders(includeContentType: false),
+      body: {"role": role.name},
+    );
+
+    final baseServiceResult = await baseAuthResponseHandle(
+      requestResult: requestResult,
+      currMethod: () => assignUserRole(userId, role),
+    );
+
+    if (baseServiceResult != null) return baseServiceResult;
+
+    final response = requestResult.response!;
+    final statusCode = response.statusCode;
+
+    if (statusCode == HttpStatus.noContent) {
+      return getServiceResult(
+          statusCode, "Role has been successfully assigned!");
+    }
+
+    return getServiceResult(statusCode, response.body);
   }
 }

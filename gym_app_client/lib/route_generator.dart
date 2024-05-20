@@ -11,6 +11,7 @@ import 'package:gym_app_client/pages/exercise/exercise_create_page.dart';
 import 'package:gym_app_client/pages/exercise/exercise_edit_page.dart';
 import 'package:gym_app_client/pages/exercise/view_page/exercise_view_page.dart';
 import 'package:gym_app_client/pages/profile/profile_edit_page.dart';
+import 'package:gym_app_client/pages/profile/profile_page.dart';
 import 'package:gym_app_client/pages/sign/signin_page.dart';
 import 'package:gym_app_client/pages/sign/signup_page.dart';
 import 'package:gym_app_client/pages/root_page.dart';
@@ -32,54 +33,74 @@ class RouteGenerator {
         return MaterialPageRoute(builder: (_) => SignInPage());
       case "/signup":
         return MaterialPageRoute(builder: (_) => const SignUpPage());
+      case "/profile":
+        List<dynamic> pageArgs = args as List;
+        final String userId = pageArgs[0];
+        final onUpdate = pageArgs[1] as void Function();
+
+        return MaterialPageRoute(
+            builder: (_) => ProfilePage(
+                  userId: userId,
+                  onUpdate: onUpdate,
+                ));
       case "/profile-edit":
         List<dynamic> pageArgs = args as List;
         final userInitState = pageArgs[0] as UserProfileModel;
-        final onProfileUpdated = pageArgs[1] as void Function(UserUpdateModel);
+        final onUpdate = pageArgs[1] as void Function();
 
         return MaterialPageRoute(
           builder: (_) => ProfileEditPage(
             userInitState: userInitState,
-            onProfileUpdated: onProfileUpdated,
+            onUpdate: onUpdate,
           ),
         );
       case "/exercise":
-        String exerciseId = args.toString();
+        List<dynamic> pageArgs = args as List;
+        String exerciseId = pageArgs[0];
+        final onUpdate = pageArgs[1] as void Function();
+
         return MaterialPageRoute(
-          builder: (_) => ExerciseViewPage(exerciseId: exerciseId),
+          builder: (_) =>
+              ExerciseViewPage(exerciseId: exerciseId, onUpdate: onUpdate),
         );
       case "/exercise-create":
-        return MaterialPageRoute(builder: (_) => ExerciseCreatePage());
+        final onUpdate = args as void Function();
+
+        return MaterialPageRoute(
+            builder: (_) => ExerciseCreatePage(onUpdate: onUpdate));
       case "/exercise-edit":
         List<dynamic> pageArgs = args as List;
         final exerciseInitState = pageArgs[0] as ExerciseViewModel;
-        final onExerciseUpdated =
-            pageArgs[1] as void Function(ExerciseUpdateModel);
+        final onUpdated = pageArgs[1] as void Function();
 
         return MaterialPageRoute(
           builder: (_) => ExerciseEditPage(
             exerciseInitState: exerciseInitState,
-            onExerciseUpdated: onExerciseUpdated,
+            onUpdate: onUpdated,
           ),
         );
       case "/exercise-add-in-workouts":
         String exerciseId = args.toString();
+
         return MaterialPageRoute(
             builder: (_) => ExerciseAddToWorkoutsPage(exerciseId: exerciseId));
       case "/workout":
-        String workoutId = args.toString();
+        List<dynamic> pageArgs = args as List;
+        final String workoutId = pageArgs[0];
+        final onUpdate = pageArgs[1] as void Function();
+
         return MaterialPageRoute(
-            builder: (_) => WorkoutViewPage(workoutId: workoutId));
+            builder: (_) =>
+                WorkoutViewPage(workoutId: workoutId, onUpdate: onUpdate));
       case "/workout-edit":
         List<dynamic> pageArgs = args as List;
         final workoutInitState = pageArgs[0] as WorkoutViewModel;
-        final onWorkoutUpdated = pageArgs[1] as Function(
-            String, String?, List<ExercisePreviewModel>?);
+        final onUpdate = pageArgs[1] as void Function();
 
         return MaterialPageRoute(
           builder: (_) => WorkoutEditPage(
             workoutInitState: workoutInitState,
-            onWorkoutUpdated: onWorkoutUpdated,
+            onUpdate: onUpdate,
           ),
         );
       default:

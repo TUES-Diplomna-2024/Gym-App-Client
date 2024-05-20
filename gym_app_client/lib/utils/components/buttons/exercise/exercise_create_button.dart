@@ -21,6 +21,8 @@ class ExerciseCreateButton extends StatelessWidget {
   final ExerciseDifficulty? selectedDifficulty;
   final ExerciseType? selectedType;
 
+  final void Function() onUpdate;
+
   ExerciseCreateButton({
     super.key,
     required this.formKey,
@@ -31,6 +33,7 @@ class ExerciseCreateButton extends StatelessWidget {
     required this.selectedVisibility,
     required this.selectedDifficulty,
     required this.selectedType,
+    required this.onUpdate,
   });
 
   void _handleExerciseCreate(BuildContext context) {
@@ -51,6 +54,7 @@ class ExerciseCreateButton extends StatelessWidget {
           serviceResult.showPopUp(context);
 
           if (serviceResult.isSuccessful && context.mounted) {
+            onUpdate();
             Navigator.of(context).pop();
           } else if (serviceResult.shouldSignOutUser) {
             _userService.signOut(context);

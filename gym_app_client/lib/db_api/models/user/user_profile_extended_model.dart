@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'package:gym_app_client/db_api/models/user/user_profile_base.dart';
+import 'package:gym_app_client/utils/common/enums/assignable_role.dart';
 import 'package:gym_app_client/utils/common/enums/gender.dart';
 import 'package:http/http.dart';
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/utils/common/helper_functions.dart';
 
-class UserProfileModel implements UserProfileBase {
+class UserProfileExtendedModel implements UserProfileBase {
   @override
   late final String id;
   @override
@@ -27,20 +28,24 @@ class UserProfileModel implements UserProfileBase {
   @override
   late final double weight;
 
-  UserProfileModel.loadFromResponse(Response response) {
+  late final AssignableRole? assignableRole;
+
+  UserProfileExtendedModel.loadFromResponse(Response response) {
     Map<String, dynamic> body = json.decode(response.body);
 
     id = body["id"];
     username = body["username"];
     email = body["email"];
-
     roleName = body["roleName"];
     roleColor = hexToColor(body["roleColor"]);
-
     gender = Gender.values[body["gender"]];
     height = normalizeDouble(body["height"]);
     weight = normalizeDouble(body["weight"]);
     birthDate = body["birthDate"];
     onCreated = body["onCreated"];
+
+    assignableRole = body["assignableRole"] != null
+        ? AssignableRole.values[body["assignableRole"]]
+        : null;
   }
 }

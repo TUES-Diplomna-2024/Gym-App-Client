@@ -5,7 +5,12 @@ import 'package:gym_app_client/db_api/services/workout_service.dart';
 import 'package:gym_app_client/utils/forms/workout_create_form.dart';
 
 class WorkoutCreateDialog extends StatefulWidget {
-  const WorkoutCreateDialog({super.key});
+  final void Function() onUpdate;
+
+  const WorkoutCreateDialog({
+    super.key,
+    required this.onUpdate,
+  });
 
   @override
   State<WorkoutCreateDialog> createState() => _WorkoutCreateDialogState();
@@ -33,6 +38,7 @@ class _WorkoutCreateDialogState extends State<WorkoutCreateDialog> {
           serviceResult.showPopUp(context);
 
           if (serviceResult.isSuccessful && context.mounted) {
+            widget.onUpdate();
             Navigator.of(context).pop();
           } else if (serviceResult.shouldSignOutUser) {
             _userService.signOut(context);

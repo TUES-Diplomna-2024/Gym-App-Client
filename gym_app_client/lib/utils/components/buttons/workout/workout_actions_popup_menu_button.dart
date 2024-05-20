@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gym_app_client/db_api/models/exercise/exercise_preview_model.dart';
 import 'package:gym_app_client/db_api/models/workout/workout_view_model.dart';
 import 'package:gym_app_client/utils/components/dialogs/workout_delete_dialog.dart';
 
@@ -7,8 +6,7 @@ class WorkoutActionsPopupMenuButton extends PopupMenuButton {
   WorkoutActionsPopupMenuButton({
     super.key,
     required WorkoutViewModel workoutCurrState,
-    required void Function(String, String?, List<ExercisePreviewModel>?)
-        onWorkoutUpdated,
+    required void Function({bool shouldReloadPage}) onUpdate,
   }) : super(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(5),
@@ -20,7 +18,7 @@ class WorkoutActionsPopupMenuButton extends PopupMenuButton {
                   if (context.mounted) {
                     Navigator.of(context).pushNamed(
                       "/workout-edit",
-                      arguments: [workoutCurrState, onWorkoutUpdated],
+                      arguments: [workoutCurrState, onUpdate],
                     );
                   }
                 },
@@ -40,6 +38,7 @@ class WorkoutActionsPopupMenuButton extends PopupMenuButton {
                       builder: (_) => WorkoutDeleteDialog(
                         context: context,
                         workoutId: workoutCurrState.id,
+                        onUpdate: () => onUpdate(shouldReloadPage: false),
                       ),
                     );
                   }
