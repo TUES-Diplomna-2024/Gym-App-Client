@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/pages/admin_panel/admin_panel_exercises_page.dart';
 import 'package:gym_app_client/pages/admin_panel/admin_panel_users_page.dart';
-import 'package:gym_app_client/utils/components/common/back_leading_app_bar.dart';
 import 'package:gym_app_client/utils/components/common/custom_app_bar.dart';
 
 class AdminPanelViewPage extends StatefulWidget {

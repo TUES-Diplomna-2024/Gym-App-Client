@@ -94,6 +94,7 @@ class _ProfileDeleteDialogState extends State<ProfileDeleteDialog> {
           },
         ],
       ),
+      actionsAlignment: MainAxisAlignment.spaceAround,
       actions: [
         TextButton(
           onPressed: () {

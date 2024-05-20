@@ -1,4 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:gym_app_client/utils/components/dialogs/pick_images_dialog.dart';
+import 'package:gym_app_client/utils/components/views/previews/image_preview.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:gym_app_client/db_api/services/token_service.dart';
 import 'package:gym_app_client/utils/common/enums/exercise_difficulty.dart';
 import 'package:gym_app_client/utils/common/enums/exercise_type.dart';
@@ -50,6 +55,8 @@ class _ExerciseCreateFormState extends State<ExerciseCreateForm> {
   ExerciseDifficulty? _selectedDifficulty;
   ExerciseType? _selectedType;
 
+  List<XFile>? _selectedImageFiles;
+
   @override
   void initState() {
     _setCurrentUserAdmin();
@@ -64,6 +71,29 @@ class _ExerciseCreateFormState extends State<ExerciseCreateForm> {
         _isCurrUserAdmin = RoleConstants.adminRoles.contains(currUserRole);
       });
     }
+  }
+
+  Widget _previewImages() {
+    return Semantics(
+      child: SizedBox(
+        height: 300,
+        child: ListView.builder(
+          key: UniqueKey(),
+          scrollDirection: Axis.horizontal,
+          itemBuilder: (BuildContext context, int index) {
+            return ImagePreview(
+              image: Image.file(File(_selectedImageFiles![index].path)),
+              onRemove: () {
+                if (context.mounted) {
+                  setState(() => _selectedImageFiles!.removeAt(index));
+                }
+              },
+            );
+          },
+          itemCount: _selectedImageFiles!.length,
+        ),
+      ),
+    );
   }
 
   @override
@@ -134,16 +164,49 @@ class _ExerciseCreateFormState extends State<ExerciseCreateForm> {
               maxLength: ExerciseConstants.maxInstructionsLength,
               padding: widget.betweenFieldsPadding,
             ),
-            ExerciseCreateButton(
-              formKey: _formKey,
-              nameController: _nameController,
-              muscleGroupController: _muscleGroupController,
-              equipmentController: _equipmentController,
-              instructionsController: _instructionsController,
-              selectedVisibility: _selectedVisibility,
-              selectedDifficulty: _selectedDifficulty,
-              selectedType: _selectedType,
-              onUpdate: widget.onUpdate,
+            if (_selectedImageFiles != null &&
+                _selectedImageFiles!.isNotEmpty) ...{_previewImages()},
+            Padding(
+              padding: widget.betweenFieldsPadding,
+              child: FloatingActionButton(
+                onPressed: () {
+                  if (mounted) {
+                    showDialog(
+                      context: context,
+                      builder: (_) => PickImagesDialog(
+                        onSelect: (List<XFile> pickedFileList) {
+                          setState(() {
+                            if (_selectedImageFiles == null ||
+                                _selectedImageFiles!.isEmpty) {
+                              _selectedImageFiles = pickedFileList;
+                            } else {
+                              _selectedImageFiles!.addAll(pickedFileList);
+                            }
+                          });
+                        },
+                      ),
+                    );
+                  }
+                },
+                heroTag: 'multipleMedia',
+                tooltip: 'Pick Multiple Media From Gallery',
+                child: const Icon(Icons.photo_library),
+              ),
+            ),
+            Padding(
+              padding: widget.betweenFieldsPadding,
+              child: ExerciseCreateButton(
+                formKey: _formKey,
+                nameController: _nameController,
+                muscleGroupController: _muscleGroupController,
+                equipmentController: _equipmentController,
+                instructionsController: _instructionsController,
+                selectedVisibility: _selectedVisibility,
+                selectedDifficulty: _selectedDifficulty,
+                selectedType: _selectedType,
+                selectedImageFiles: _selectedImageFiles,
+                onUpdate: widget.onUpdate,
+              ),
             ),
           ],
         ),

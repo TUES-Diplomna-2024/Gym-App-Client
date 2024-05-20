@@ -67,6 +67,7 @@ class _WorkoutCreateDialogState extends State<WorkoutCreateDialog> {
           ],
         ),
       ),
+      actionsAlignment: MainAxisAlignment.spaceAround,
       actions: [
         TextButton(
           onPressed: () {

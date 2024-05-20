@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:gym_app_client/utils/common/enums/exercise_difficulty.dart';
 import 'package:gym_app_client/utils/common/enums/exercise_type.dart';
 import 'package:gym_app_client/utils/common/enums/exercise_visibility.dart';
@@ -10,7 +12,7 @@ class ExerciseCreateModel {
   final ExerciseDifficulty difficulty;
   final String? equipment;
   final ExerciseVisibility visibility;
-  // TODO: Add image handling
+  final List<File>? images;
 
   ExerciseCreateModel({
     required this.name,
@@ -18,18 +20,20 @@ class ExerciseCreateModel {
     required this.muscleGroups,
     required this.type,
     required this.difficulty,
-    this.equipment,
     required this.visibility,
+    this.equipment,
+    this.images,
   });
 
-  Map<String, String> toMap() {
-    var map = <String, String>{
+  Map<String, dynamic> toMap() {
+    var map = <String, dynamic>{
       "name": name,
       "instructions": instructions,
       "muscleGroups": muscleGroups,
       "type": type.name,
       "difficulty": difficulty.name,
       "visibility": visibility.name,
+      "images": images,
     };
 
     if (equipment != null && equipment!.isNotEmpty) {

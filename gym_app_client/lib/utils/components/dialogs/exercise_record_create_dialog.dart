@@ -84,6 +84,7 @@ class _ExerciseRecordCreateDialogState
           ],
         ),
       ),
+      actionsAlignment: MainAxisAlignment.spaceAround,
       actions: [
         TextButton(
           onPressed: () {

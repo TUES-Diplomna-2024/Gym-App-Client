@@ -6,7 +6,9 @@ import 'package:gym_app_client/db_api/services/user_service.dart';
 import 'package:gym_app_client/utils/common/enums/exercise_visibility.dart';
 import 'package:gym_app_client/utils/common/helper_functions.dart';
 import 'package:gym_app_client/utils/components/buttons/exercise/exercise_actions_popup_menu_button.dart';
+import 'package:gym_app_client/utils/components/views/exercise_image_view.dart';
 import 'package:gym_app_client/utils/components/fields/content/content_field.dart';
+import 'package:gym_app_client/utils/components/views/previews/image_preview.dart';
 import 'package:gym_app_client/utils/constants/role_constants.dart';
 
 class ExerciseInfoPage extends StatefulWidget {
@@ -59,6 +61,35 @@ class _ExerciseInfoPageState extends State<ExerciseInfoPage> {
           if (serviceResult.shouldSignOutUser) _userService.signOut(context);
         }
       },
+    );
+  }
+
+  Widget _previewImages() {
+    return Semantics(
+      child: SizedBox(
+        height: 300,
+        child: ListView.builder(
+          key: UniqueKey(),
+          scrollDirection: Axis.horizontal,
+          itemBuilder: (BuildContext context, int index) {
+            return ImagePreview(
+              image: _exerciseView.images![index].image,
+              onClicked: () {
+                if (mounted) {
+                  showDialog(
+                    context: context,
+                    barrierColor: Colors.transparent,
+                    builder: (_) => ExerciseImageView(
+                      image: _exerciseView.images![index].image,
+                    ),
+                  );
+                }
+              },
+            );
+          },
+          itemCount: _exerciseView.images!.length,
+        ),
+      ),
     );
   }
 
@@ -137,6 +168,7 @@ class _ExerciseInfoPageState extends State<ExerciseInfoPage> {
                         padding: const EdgeInsets.only(bottom: 15),
                         isMultiline: true,
                       ),
+                      if (_exerciseView.images != null) _previewImages(),
                     ],
                   ),
                 ),

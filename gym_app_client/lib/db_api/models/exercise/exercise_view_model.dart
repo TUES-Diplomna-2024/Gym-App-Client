@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:gym_app_client/db_api/models/exercise_image/exercise_image_view_model.dart';
 import 'package:gym_app_client/utils/common/enums/exercise_difficulty.dart';
 import 'package:gym_app_client/utils/common/enums/exercise_type.dart';
 import 'package:gym_app_client/utils/common/enums/exercise_visibility.dart';
@@ -14,7 +15,7 @@ class ExerciseViewModel {
   late final ExerciseType type;
   late final ExerciseDifficulty difficulty;
   late final bool isCustom;
-  // TODO: Add image handling
+  late final List<ExerciseImageViewModel>? images;
 
   ExerciseViewModel.loadFromResponse(Response response) {
     Map<String, dynamic> body = json.decode(response.body);
@@ -30,5 +31,12 @@ class ExerciseViewModel {
     type = ExerciseType.values[body["type"]];
     difficulty = ExerciseDifficulty.values[body["difficulty"]];
     isCustom = body["isCustom"];
+
+    if (body["images"] != null) {
+      images =
+          ExerciseImageViewModel.getExercisePreviewsFromBody(body["images"]);
+    } else {
+      images = null;
+    }
   }
 }

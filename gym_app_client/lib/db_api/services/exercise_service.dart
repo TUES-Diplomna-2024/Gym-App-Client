@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:flutter/services.dart';
 import 'package:gym_app_client/db_api/services/base_http_service.dart';
 import 'package:gym_app_client/db_api/models/exercise/exercise_preview_model.dart';
 import 'package:gym_app_client/db_api/models/exercise/exercise_update_model.dart';

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/models/exercise/exercise_create_model.dart';
 import 'package:gym_app_client/db_api/services/exercise_service.dart';
@@ -5,6 +7,7 @@ import 'package:gym_app_client/db_api/services/user_service.dart';
 import 'package:gym_app_client/utils/common/enums/exercise_difficulty.dart';
 import 'package:gym_app_client/utils/common/enums/exercise_type.dart';
 import 'package:gym_app_client/utils/common/enums/exercise_visibility.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ExerciseCreateButton extends StatelessWidget {
   final _userService = UserService();
@@ -20,6 +23,7 @@ class ExerciseCreateButton extends StatelessWidget {
   final ExerciseVisibility selectedVisibility;
   final ExerciseDifficulty? selectedDifficulty;
   final ExerciseType? selectedType;
+  final List<XFile>? selectedImageFiles;
 
   final void Function() onUpdate;
 
@@ -33,6 +37,7 @@ class ExerciseCreateButton extends StatelessWidget {
     required this.selectedVisibility,
     required this.selectedDifficulty,
     required this.selectedType,
+    required this.selectedImageFiles,
     required this.onUpdate,
   });
 
@@ -47,6 +52,7 @@ class ExerciseCreateButton extends StatelessWidget {
         equipment:
             equipmentController.text.isEmpty ? null : equipmentController.text,
         visibility: selectedVisibility,
+        images: selectedImageFiles?.map((file) => File(file.path)).toList(),
       );
 
       _exerciseService.createNewExercise(exercise).then(

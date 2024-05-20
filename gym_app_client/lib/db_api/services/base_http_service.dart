@@ -52,6 +52,62 @@ class BaseHttpService {
     return headers;
   }
 
+  Map<String, String> _extractNormalFields(Map<String, dynamic> original) {
+    final normalFields = <String, String>{};
+    final keysToRemove = <String>[];
+
+    original.forEach((key, value) {
+      if (value is String) {
+        normalFields[key] = value;
+        keysToRemove.add(key);
+      }
+    });
+
+    keysToRemove.forEach(original.remove);
+    return normalFields;
+  }
+
+  Future<void> _addAllFieldsToFormDataRequest(
+      MultipartRequest request, Map<String, dynamic> body) async {
+    Map<String, String> normalFields = _extractNormalFields(body);
+
+    request.fields.addAll(normalFields);
+
+    List<MultipartFile> files = [];
+
+    for (var entry in body.entries) {
+      String key = entry.key;
+      var value = entry.value;
+
+      if (value is List<String>) {
+        for (int i = 0; i < value.length; i++) {
+          request.fields['$key[$i]'] = value[i];
+        }
+      } else if (value is List<File>?) {
+        for (int i = 0; i < (value?.length ?? -1); i++) {
+          final multipartFile =
+              await MultipartFile.fromPath(key, value![i].path);
+
+          files.add(multipartFile);
+        }
+      }
+    }
+
+    request.files.addAll(files);
+  }
+
+  Future<Response> _sendFormDataRequest(String method, Uri url,
+      Map<String, String> headers, Map<String, dynamic> body) async {
+    final request = MultipartRequest(method, url);
+    request.headers.addAll(headers);
+
+    await _addAllFieldsToFormDataRequest(request, body);
+
+    StreamedResponse streamedResponse = await request.send();
+
+    return await Response.fromStream(streamedResponse);
+  }
+
   Future<RequestResult> sendRequest({
     required HttpMethods method,
     required Map<String, String> headers,
@@ -69,16 +125,31 @@ class BaseHttpService {
               await get(url, headers: headers).timeout(connectionTimeout);
           break;
         case HttpMethods.post:
-          response = await post(url, headers: headers, body: body)
-              .timeout(connectionTimeout);
+          if (body is Map<String, dynamic>) {
+            response = await _sendFormDataRequest("POST", url, headers, body);
+          } else {
+            response = await post(url, headers: headers, body: body)
+                .timeout(connectionTimeout);
+          }
+
           break;
         case HttpMethods.put:
-          response = await put(url, headers: headers, body: body)
-              .timeout(connectionTimeout);
+          if (body is Map<String, dynamic>) {
+            response = await _sendFormDataRequest("PUT", url, headers, body);
+          } else {
+            response = await put(url, headers: headers, body: body)
+                .timeout(connectionTimeout);
+          }
+
           break;
         case HttpMethods.delete:
-          response = await delete(url, headers: headers, body: body)
-              .timeout(connectionTimeout);
+          if (body is Map<String, dynamic>) {
+            response = await _sendFormDataRequest("DELETE", url, headers, body);
+          } else {
+            response = await delete(url, headers: headers, body: body)
+                .timeout(connectionTimeout);
+          }
+
           break;
       }
 
@@ -91,7 +162,7 @@ class BaseHttpService {
             "Unable to connect with the server! Check your internet connection and try again!";
       }
 
-      return RequestResult.fail(errorMessage: errorMessage);
+      return RequestResult.fail(errorMessage: e.toString());
     }
   }
 

@@ -102,6 +102,7 @@ class _ExerciseRecordEditDialogState extends State<ExerciseRecordEditDialog> {
           ],
         ),
       ),
+      actionsAlignment: MainAxisAlignment.spaceAround,
       actions: [
         TextButton(
           onPressed: () {

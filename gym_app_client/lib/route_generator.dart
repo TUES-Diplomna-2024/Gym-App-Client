@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:gym_app_client/db_api/models/exercise/exercise_preview_model.dart';
-import 'package:gym_app_client/db_api/models/exercise/exercise_update_model.dart';
 import 'package:gym_app_client/db_api/models/exercise/exercise_view_model.dart';
 import 'package:gym_app_client/db_api/models/user/user_profile_model.dart';
-import 'package:gym_app_client/db_api/models/user/user_update_model.dart';
 import 'package:gym_app_client/db_api/models/workout/workout_view_model.dart';
 import 'package:gym_app_client/pages/exercise/exercise_add_to_workouts_page.dart';
 import 'package:gym_app_client/pages/exercise/exercise_create_page.dart';

@@ -26,6 +26,7 @@ abstract class DeleteItemDialog extends StatelessWidget {
           style: TextStyle(color: Colors.red.shade500),
         ),
       ),
+      actionsAlignment: MainAxisAlignment.spaceAround,
       actions: [
         TextButton(
           onPressed: () {
