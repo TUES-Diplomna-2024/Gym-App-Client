@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/services/user_service.dart';
 import 'package:gym_app_client/db_api/models/user/user_signup_model.dart';
+import 'package:gym_app_client/utils/common/enums/gender.dart';
 
 class SignUpSubmitButton extends StatelessWidget {
   final UserService _userService = UserService();
@@ -9,7 +10,7 @@ class SignUpSubmitButton extends StatelessWidget {
   final TextEditingController emailController;
   final TextEditingController passwordController;
   final TextEditingController birthDateController;
-  final String selectedGender;
+  final Gender? selectedGender;
   final double selectedHeight;
   final double selectedWeight;
   final void Function() onSuccessfulForm;
@@ -38,7 +39,7 @@ class SignUpSubmitButton extends StatelessWidget {
         email: emailController.text,
         password: passwordController.text,
         birthDate: birthDateController.text,
-        gender: selectedGender,
+        gender: selectedGender!,
         height: selectedHeight,
         weight: selectedWeight,
       );

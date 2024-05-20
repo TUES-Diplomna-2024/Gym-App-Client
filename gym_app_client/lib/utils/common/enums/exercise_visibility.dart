@@ -1,0 +1,4 @@
+enum ExerciseVisibility {
+  public,
+  private,
+}

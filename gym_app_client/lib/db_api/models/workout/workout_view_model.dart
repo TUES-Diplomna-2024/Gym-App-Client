@@ -6,9 +6,9 @@ class WorkoutViewModel {
   late final String id;
 
   late String name;
-  late String? description;
-  late int exerciseCount;
+  String? description;
   List<ExercisePreviewModel>? exercises;
+  late int exerciseCount;
 
   WorkoutViewModel.loadFromResponse(Response response) {
     Map<String, dynamic> body = json.decode(response.body);
@@ -16,11 +16,13 @@ class WorkoutViewModel {
     id = body["id"];
     name = body["name"];
     description = body["description"];
-    exerciseCount = body["exerciseCount"];
 
     if (body["exercises"] != null) {
       exercises =
           ExercisePreviewModel.getExercisePreviewsFromBody(body["exercises"]);
+      exerciseCount = exercises!.length;
+    } else {
+      exerciseCount = 0;
     }
   }
 
@@ -31,7 +33,7 @@ class WorkoutViewModel {
   ) {
     this.name = name;
     this.description = description;
-    exerciseCount = exercises?.length ?? 0;
     this.exercises = exercises;
+    exerciseCount = exercises?.length ?? 0;
   }
 }

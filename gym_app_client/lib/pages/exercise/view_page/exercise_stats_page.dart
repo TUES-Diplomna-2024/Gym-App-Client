@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/models/exercise/exercise_stats_model.dart';
-import 'package:gym_app_client/db_api/services/exercise_service.dart';
+import 'package:gym_app_client/db_api/services/exercise_record_service.dart';
 import 'package:gym_app_client/db_api/services/user_service.dart';
+import 'package:gym_app_client/utils/common/enums/statistic_measurement.dart';
+import 'package:gym_app_client/utils/common/enums/statistic_period.dart';
 import 'package:gym_app_client/utils/components/fields/form/statistic_measurement_form_field.dart';
 import 'package:gym_app_client/utils/components/fields/form/time_period_form_field.dart';
 import 'package:gym_app_client/utils/components/views/exercise_stats_view.dart';
@@ -20,21 +22,19 @@ class ExerciseStatsPage extends StatefulWidget {
 
 class _ExerciseStatsPageState extends State<ExerciseStatsPage> {
   final _userService = UserService();
-  final _exerciseService = ExerciseService();
+  final _exerciseRecordService = ExerciseRecordService();
 
-  String _selectedPeriod = "";
-  String _selectedMeasurement = "";
+  StatisticPeriod? _selectedPeriod;
+  StatisticMeasurement? _selectedMeasurement;
 
   ExerciseStatsModel? _stats;
   bool _isLoading = false;
 
   void _getStats() {
-    if (mounted &&
-        _selectedPeriod.isNotEmpty &&
-        _selectedMeasurement.isNotEmpty) {
-      _exerciseService
+    if (mounted && _selectedPeriod != null && _selectedMeasurement != null) {
+      _exerciseRecordService
           .getCurrUserExerciseStatistics(
-              widget.exerciseId, _selectedPeriod, _selectedMeasurement)
+              widget.exerciseId, _selectedPeriod!, _selectedMeasurement!)
           .then(
         (serviceResult) {
           if (serviceResult.isSuccessful && mounted) {
@@ -52,14 +52,14 @@ class _ExerciseStatsPageState extends State<ExerciseStatsPage> {
   }
 
   Widget _getStatsBody() {
-    if (_selectedPeriod.isEmpty || _selectedMeasurement.isEmpty) {
+    if (_selectedPeriod == null || _selectedMeasurement == null) {
       return const SizedBox();
     } else if (_isLoading == false) {
       return const Center(child: CircularProgressIndicator());
     } else if (_stats == null) {
       return const Center(
         child: Text(
-          "No statistic is available since there are no records for the selected period!",
+          "No statistics available for the selected time period!",
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
           textAlign: TextAlign.center,
         ),
@@ -68,8 +68,8 @@ class _ExerciseStatsPageState extends State<ExerciseStatsPage> {
 
     return ExerciseStatsView(
       stats: _stats!,
-      timePeriod: _selectedPeriod,
-      measurement: _selectedMeasurement,
+      timePeriod: _selectedPeriod!,
+      measurement: _selectedMeasurement!,
     );
   }
 
@@ -83,7 +83,7 @@ class _ExerciseStatsPageState extends State<ExerciseStatsPage> {
             child: Column(
               children: [
                 TimePeriodFormField(
-                  onTimePeriodChanged: (String? value) {
+                  onTimePeriodChanged: (StatisticPeriod? value) {
                     if (mounted) {
                       setState(() {
                         _selectedPeriod = value!;
@@ -95,7 +95,7 @@ class _ExerciseStatsPageState extends State<ExerciseStatsPage> {
                 ),
                 const SizedBox(height: 23),
                 StatisticMeasurementFormField(
-                  onMeasurementChanged: (String? value) {
+                  onMeasurementChanged: (StatisticMeasurement? value) {
                     if (mounted) {
                       setState(() {
                         _selectedMeasurement = value!;

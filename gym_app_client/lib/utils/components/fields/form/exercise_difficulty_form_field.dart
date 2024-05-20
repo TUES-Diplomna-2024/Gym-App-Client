@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:gym_app_client/utils/common/enums/exercise_difficulty.dart';
+import 'package:gym_app_client/utils/common/helper_functions.dart';
 import 'package:gym_app_client/utils/components/fields/form/padded_dropdown_button_form_field.dart';
-import 'package:gym_app_client/utils/constants/exercise_constants.dart';
 
 class ExerciseDifficultyFormField
-    extends PaddedDropdownButtonFormField<String> {
+    extends PaddedDropdownButtonFormField<ExerciseDifficulty> {
   ExerciseDifficultyFormField({
     super.key,
-    String? defaultDifficulty,
-    required void Function(String?) onDifficultyChanged,
+    ExerciseDifficulty? defaultDifficulty,
+    required void Function(ExerciseDifficulty?) onDifficultyChanged,
     required super.padding,
   }) : super(
           decoration: const InputDecoration(
@@ -19,15 +20,15 @@ class ExerciseDifficultyFormField
                 OutlineInputBorder(borderSide: BorderSide(color: Colors.blue)),
           ),
           onChanged: onDifficultyChanged,
-          items: ExerciseConstants.difficulties
-              .map((String difficulty) => DropdownMenuItem(
+          items: ExerciseDifficulty.values
+              .map((difficulty) => DropdownMenuItem(
                     value: difficulty,
-                    child: Text(difficulty),
+                    child: Text(capitalizeFirstLetter(difficulty.name)),
                   ))
               .toList(),
           defaultItem: defaultDifficulty,
-          validator: (String? value) {
-            if (value == null || value.isEmpty) {
+          validator: (ExerciseDifficulty? value) {
+            if (value == null) {
               return "Please select exercise difficulty";
             }
 

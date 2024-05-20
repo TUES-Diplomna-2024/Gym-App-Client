@@ -1,7 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/models/exercise/exercise_update_model.dart';
 import 'package:gym_app_client/db_api/services/exercise_service.dart';
 import 'package:gym_app_client/db_api/services/user_service.dart';
+import 'package:gym_app_client/utils/common/enums/exercise_difficulty.dart';
+import 'package:gym_app_client/utils/common/enums/exercise_type.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ExerciseSaveChangesButton extends StatelessWidget {
   final _userService = UserService();
@@ -16,10 +21,13 @@ class ExerciseSaveChangesButton extends StatelessWidget {
   final TextEditingController equipmentController;
   final TextEditingController instructionsController;
 
-  final String selectedDifficulty;
-  final String selectedType;
+  final ExerciseDifficulty selectedDifficulty;
+  final ExerciseType selectedType;
 
-  final void Function(ExerciseUpdateModel) onExerciseUpdated;
+  final List<String> imagesToBeRemoved;
+  final List<XFile> imagesToBeAdded;
+
+  final void Function() onUpdate;
 
   ExerciseSaveChangesButton({
     super.key,
@@ -31,7 +39,9 @@ class ExerciseSaveChangesButton extends StatelessWidget {
     required this.instructionsController,
     required this.selectedDifficulty,
     required this.selectedType,
-    required this.onExerciseUpdated,
+    required this.imagesToBeRemoved,
+    required this.imagesToBeAdded,
+    required this.onUpdate,
   });
 
   void _handleExerciseUpdate(BuildContext context) {
@@ -44,6 +54,9 @@ class ExerciseSaveChangesButton extends StatelessWidget {
         difficulty: selectedDifficulty,
         equipment:
             equipmentController.text.isEmpty ? null : equipmentController.text,
+        imagesToBeRemoved: imagesToBeRemoved,
+        imagesToBeAdded:
+            imagesToBeAdded.map((file) => File(file.path)).toList(),
       );
 
       _exerciseService.updateExerciseById(exerciseId, exerciseUpdate).then(
@@ -51,7 +64,7 @@ class ExerciseSaveChangesButton extends StatelessWidget {
           serviceResult.showPopUp(context);
 
           if (serviceResult.isSuccessful) {
-            onExerciseUpdated(exerciseUpdate);
+            onUpdate();
             if (context.mounted) Navigator.of(context).pop();
           } else if (serviceResult.shouldSignOutUser) {
             _userService.signOut(context);

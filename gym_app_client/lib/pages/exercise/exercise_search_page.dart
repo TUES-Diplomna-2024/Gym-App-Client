@@ -65,7 +65,7 @@ class _ExerciseSearchPageState extends State<ExerciseSearchPage> {
               if (mounted) {
                 Navigator.of(context).pushNamed(
                   "/exercise",
-                  arguments: _searchResults![index].id,
+                  arguments: [_searchResults![index].id, _getExerciseSearchResults],
                 );
               }
             },

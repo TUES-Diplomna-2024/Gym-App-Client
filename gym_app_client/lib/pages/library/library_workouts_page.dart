@@ -15,11 +15,16 @@ class LibraryWorkoutsPage extends StatefulWidget {
 class _LibraryWorkoutsPageState extends State<LibraryWorkoutsPage> {
   final _userService = UserService();
   final _workoutService = WorkoutService();
-  late final List<WorkoutPreviewModel> _userWorkouts;
+  late List<WorkoutPreviewModel> _userWorkouts;
   bool _isLoading = true;
 
   @override
   void initState() {
+    super.initState();
+    _loadPage();
+  }
+
+  void _loadPage() {
     _workoutService.getCurrUserWorkoutPreviews().then(
       (serviceResult) {
         if (serviceResult.isSuccessful) {
@@ -31,8 +36,6 @@ class _LibraryWorkoutsPageState extends State<LibraryWorkoutsPage> {
         }
       },
     );
-
-    super.initState();
   }
 
   Widget _getBody() {
@@ -61,7 +64,7 @@ class _LibraryWorkoutsPageState extends State<LibraryWorkoutsPage> {
               if (mounted) {
                 Navigator.of(context).pushNamed(
                   "/workout",
-                  arguments: _userWorkouts[index].id,
+                  arguments: [_userWorkouts[index].id, _loadPage],
                 );
               }
             },
@@ -80,7 +83,7 @@ class _LibraryWorkoutsPageState extends State<LibraryWorkoutsPage> {
           if (context.mounted) {
             showDialog(
               context: context,
-              builder: (_) => const WorkoutCreateDialog(),
+              builder: (_) => WorkoutCreateDialog(onUpdate: _loadPage),
             );
           }
         },

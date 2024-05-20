@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:gym_app_client/db_api/services/exercise_service.dart';
 import 'package:gym_app_client/db_api/services/user_service.dart';
+import 'package:gym_app_client/db_api/services/workout_service.dart';
 
-class ExerciseAddInWorkoutsDoneButton extends StatelessWidget {
+class ExerciseAddToWorkoutsDoneButton extends StatelessWidget {
   final _userService = UserService();
-  final _exerciseService = ExerciseService();
+  final _workoutService = WorkoutService();
   final String exerciseId;
   final List<String> selectedWorkoutIds;
 
-  ExerciseAddInWorkoutsDoneButton({
+  ExerciseAddToWorkoutsDoneButton({
     super.key,
     required this.exerciseId,
     required this.selectedWorkoutIds,
@@ -17,7 +17,7 @@ class ExerciseAddInWorkoutsDoneButton extends StatelessWidget {
   void _handleExerciseAddedInWorkouts(BuildContext context) {
     if (selectedWorkoutIds.isEmpty) return;
 
-    _exerciseService.addExerciseInWorkouts(exerciseId, selectedWorkoutIds).then(
+    _workoutService.addExerciseToWorkouts(exerciseId, selectedWorkoutIds).then(
       (serviceResult) {
         serviceResult.showPopUp(context);
 

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
+import 'package:gym_app_client/utils/common/enums/statistic_measurement.dart';
+import 'package:gym_app_client/utils/common/enums/statistic_period.dart';
 import 'package:gym_app_client/utils/common/helper_functions.dart';
-import 'package:gym_app_client/utils/common/statistic_data_point.dart';
+import 'package:gym_app_client/db_api/models/exercise/statistic_data_point.dart';
 import 'package:gym_app_client/utils/constants/statistic_constants.dart';
 
 class StatisticChartView extends StatelessWidget {
-  final String timePeriod;
-  final String measurement;
+  final StatisticPeriod timePeriod;
+  final StatisticMeasurement measurement;
   late final List<charts.Series<StatisticDataPoint, DateTime>> seriesList;
 
   StatisticChartView({
@@ -22,7 +24,7 @@ class StatisticChartView extends StatelessWidget {
       List<StatisticDataPoint> dataPoints) {
     return [
       charts.Series<StatisticDataPoint, DateTime>(
-        id: measurement,
+        id: measurement.name,
         colorFn: (_, __) => charts.MaterialPalette.blue.shadeDefault,
         domainFn: (StatisticDataPoint point, _) => point.date,
         measureFn: (StatisticDataPoint point, _) => point.value,
@@ -45,7 +47,7 @@ class StatisticChartView extends StatelessWidget {
         ),
         tickFormatterSpec: charts.BasicNumericTickFormatterSpec(
           (num? value) {
-            if (measurement.toLowerCase() == "duration") {
+            if (measurement == StatisticMeasurement.duration) {
               final Duration duration = Duration(seconds: value?.toInt() ?? 0);
               return durationToString(duration);
             }
@@ -58,21 +60,10 @@ class StatisticChartView extends StatelessWidget {
   }
 
   String _getChartTitle() {
-    String getNormalizedTimePeriod() {
-      return StatisticConstants.periods.keys.firstWhere(
-        (key) => StatisticConstants.periods[key] == timePeriod,
-        orElse: () => "",
-      );
-    }
+    String normalizedTimePeriod = StatisticConstants.periods[timePeriod]!;
+    String normalizedMeasurement = capitalizeFirstLetter(measurement.name);
 
-    String normalizedTimePeriod = getNormalizedTimePeriod();
-    String normalizedMeasurement = capitalizeFirstLetter(measurement);
-
-    if (normalizedTimePeriod.isEmpty || normalizedMeasurement.isEmpty) {
-      return "";
-    }
-
-    String endOfTitle = normalizedTimePeriod == "All"
+    String endOfTitle = timePeriod == StatisticPeriod.all
         ? "Based On All Records"
         : "Over The Last $normalizedTimePeriod";
 

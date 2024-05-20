@@ -3,16 +3,22 @@ import 'package:gym_app_client/db_api/models/exercise/exercise_view_model.dart';
 import 'package:gym_app_client/db_api/services/exercise_service.dart';
 import 'package:gym_app_client/db_api/services/token_service.dart';
 import 'package:gym_app_client/db_api/services/user_service.dart';
+import 'package:gym_app_client/utils/common/enums/exercise_visibility.dart';
+import 'package:gym_app_client/utils/common/helper_functions.dart';
 import 'package:gym_app_client/utils/components/buttons/exercise/exercise_actions_popup_menu_button.dart';
+import 'package:gym_app_client/utils/components/views/exercise_image_view.dart';
 import 'package:gym_app_client/utils/components/fields/content/content_field.dart';
+import 'package:gym_app_client/utils/components/views/previews/image_preview.dart';
 import 'package:gym_app_client/utils/constants/role_constants.dart';
 
 class ExerciseInfoPage extends StatefulWidget {
   final String exerciseId;
+  final void Function() onUpdate;
 
   const ExerciseInfoPage({
     super.key,
     required this.exerciseId,
+    required this.onUpdate,
   });
 
   @override
@@ -25,11 +31,16 @@ class _ExerciseInfoPageState extends State<ExerciseInfoPage> {
   final _tokenService = TokenService();
 
   late ExerciseViewModel _exerciseView;
-  late final bool _areEditAndDeleteAllowed;
+  late bool _isModifiable;
   bool _isLoading = true;
 
   @override
   void initState() {
+    super.initState();
+    _loadPage();
+  }
+
+  void _loadPage() {
     _exerciseService.getExerciseById(widget.exerciseId).then(
       (serviceResult) async {
         if (serviceResult.isSuccessful) {
@@ -37,11 +48,11 @@ class _ExerciseInfoPageState extends State<ExerciseInfoPage> {
 
           final currUserRole = await _tokenService.getCurrUserRole();
 
-          if (_exerciseView.isPrivate == false &&
+          if (_exerciseView.visibility == ExerciseVisibility.public &&
               !RoleConstants.adminRoles.contains(currUserRole)) {
-            _areEditAndDeleteAllowed = false;
+            _isModifiable = false;
           } else {
-            _areEditAndDeleteAllowed = true;
+            _isModifiable = true;
           }
 
           if (mounted) setState(() => _isLoading = false);
@@ -51,8 +62,35 @@ class _ExerciseInfoPageState extends State<ExerciseInfoPage> {
         }
       },
     );
+  }
 
-    super.initState();
+  Widget _previewImages() {
+    return Semantics(
+      child: SizedBox(
+        height: 300,
+        child: ListView.builder(
+          key: UniqueKey(),
+          scrollDirection: Axis.horizontal,
+          itemBuilder: (BuildContext context, int index) {
+            return ImagePreview(
+              image: _exerciseView.images![index].image,
+              onClicked: () {
+                if (mounted) {
+                  showDialog(
+                    context: context,
+                    barrierColor: Colors.transparent,
+                    builder: (_) => ExerciseImageView(
+                      image: _exerciseView.images![index].image,
+                    ),
+                  );
+                }
+              },
+            );
+          },
+          itemCount: _exerciseView.images!.length,
+        ),
+      ),
+    );
   }
 
   @override
@@ -77,19 +115,18 @@ class _ExerciseInfoPageState extends State<ExerciseInfoPage> {
                           ),
                           const SizedBox(width: 16),
                           ExerciseActionsPopupMenuButton(
-                            areEditAndDeleteAllowed: _areEditAndDeleteAllowed,
+                            isModifiable: _isModifiable,
                             exerciseCurrState: _exerciseView,
-                            onExerciseUpdated: (updateModel) {
-                              if (mounted) {
-                                setState(() =>
-                                    _exerciseView.updateView(updateModel));
-                              }
+                            onUpdate: ({bool shouldReloadPage = true}) {
+                              widget.onUpdate();
+                              if (shouldReloadPage) _loadPage();
                             },
                           ),
                           Icon(
-                            _exerciseView.isPrivate
-                                ? Icons.lock_outlined
-                                : Icons.public_outlined,
+                            _exerciseView.visibility ==
+                                    ExerciseVisibility.public
+                                ? Icons.public_outlined
+                                : Icons.lock_outlined,
                           ),
                         ],
                       ),
@@ -97,13 +134,17 @@ class _ExerciseInfoPageState extends State<ExerciseInfoPage> {
                       ContentField(
                         fieldIcon: Icons.bolt_outlined,
                         fieldName: "Difficulty",
-                        fieldValue: _exerciseView.difficulty,
+                        fieldValue: capitalizeFirstLetter(
+                          _exerciseView.difficulty.name,
+                        ),
                         padding: const EdgeInsets.only(bottom: 15),
                       ),
                       ContentField(
                         fieldIcon: Icons.sports_gymnastics_outlined,
                         fieldName: "Type",
-                        fieldValue: _exerciseView.type,
+                        fieldValue: capitalizeFirstLetter(
+                          _exerciseView.type.name,
+                        ),
                         padding: const EdgeInsets.only(bottom: 15),
                       ),
                       ContentField(
@@ -127,6 +168,7 @@ class _ExerciseInfoPageState extends State<ExerciseInfoPage> {
                         padding: const EdgeInsets.only(bottom: 15),
                         isMultiline: true,
                       ),
+                      if (_exerciseView.images != null) _previewImages(),
                     ],
                   ),
                 ),

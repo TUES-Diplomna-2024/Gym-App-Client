@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart';
-import 'package:gym_app_client/utils/common/statistic_data_point.dart';
+import 'package:gym_app_client/db_api/models/exercise/statistic_data_point.dart';
 import 'package:gym_app_client/utils/common/helper_functions.dart';
 
 class ExerciseStatsModel {

@@ -1,7 +1,13 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/models/exercise/exercise_create_model.dart';
 import 'package:gym_app_client/db_api/services/exercise_service.dart';
 import 'package:gym_app_client/db_api/services/user_service.dart';
+import 'package:gym_app_client/utils/common/enums/exercise_difficulty.dart';
+import 'package:gym_app_client/utils/common/enums/exercise_type.dart';
+import 'package:gym_app_client/utils/common/enums/exercise_visibility.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ExerciseCreateButton extends StatelessWidget {
   final _userService = UserService();
@@ -14,9 +20,12 @@ class ExerciseCreateButton extends StatelessWidget {
   final TextEditingController equipmentController;
   final TextEditingController instructionsController;
 
-  final bool selectedVisibility;
-  final String selectedDifficulty;
-  final String selectedType;
+  final ExerciseVisibility selectedVisibility;
+  final ExerciseDifficulty? selectedDifficulty;
+  final ExerciseType? selectedType;
+  final List<XFile>? selectedImageFiles;
+
+  final void Function() onUpdate;
 
   ExerciseCreateButton({
     super.key,
@@ -28,19 +37,22 @@ class ExerciseCreateButton extends StatelessWidget {
     required this.selectedVisibility,
     required this.selectedDifficulty,
     required this.selectedType,
+    required this.selectedImageFiles,
+    required this.onUpdate,
   });
 
   void _handleExerciseCreate(BuildContext context) {
     if (formKey.currentState?.validate() ?? false) {
       var exercise = ExerciseCreateModel(
         name: nameController.text,
-        type: selectedType,
-        difficulty: selectedDifficulty,
-        muscleGroups: muscleGroupController.text,
         instructions: instructionsController.text,
+        muscleGroups: muscleGroupController.text,
+        type: selectedType!,
+        difficulty: selectedDifficulty!,
         equipment:
             equipmentController.text.isEmpty ? null : equipmentController.text,
-        isPrivate: selectedVisibility,
+        visibility: selectedVisibility,
+        images: selectedImageFiles?.map((file) => File(file.path)).toList(),
       );
 
       _exerciseService.createNewExercise(exercise).then(
@@ -48,6 +60,7 @@ class ExerciseCreateButton extends StatelessWidget {
           serviceResult.showPopUp(context);
 
           if (serviceResult.isSuccessful && context.mounted) {
+            onUpdate();
             Navigator.of(context).pop();
           } else if (serviceResult.shouldSignOutUser) {
             _userService.signOut(context);

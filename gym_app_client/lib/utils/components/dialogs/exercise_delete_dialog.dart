@@ -8,11 +8,13 @@ class ExerciseDeleteDialog extends DeleteItemDialog {
   final _exerciseService = ExerciseService();
 
   final String exerciseId;
+  final void Function() onUpdate;
 
   ExerciseDeleteDialog({
     super.key,
     required super.context,
     required this.exerciseId,
+    required this.onUpdate,
   }) : super(itemType: "exercise");
 
   @override
@@ -22,6 +24,7 @@ class ExerciseDeleteDialog extends DeleteItemDialog {
         serviceResult.showPopUp(context);
 
         if (serviceResult.isSuccessful && context.mounted) {
+          onUpdate();
           Navigator.of(context).pop();
           Navigator.of(context).pop();
         } else if (serviceResult.shouldSignOutUser) {

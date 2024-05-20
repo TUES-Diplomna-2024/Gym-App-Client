@@ -1,16 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:gym_app_client/db_api/models/user/user_profile_base.dart';
+import 'package:gym_app_client/db_api/models/user/user_profile_extended_model.dart';
 import 'package:gym_app_client/db_api/models/user/user_profile_model.dart';
 import 'package:gym_app_client/db_api/services/token_service.dart';
 import 'package:gym_app_client/db_api/services/user_service.dart';
 import 'package:gym_app_client/utils/common/helper_functions.dart';
 import 'package:gym_app_client/utils/components/buttons/profile/profile_actions_popup_menu_button.dart';
+import 'package:gym_app_client/utils/components/buttons/profile/profile_admin_actions_popup_menu_button.dart';
+import 'package:gym_app_client/utils/components/common/back_leading_app_bar.dart';
 import 'package:gym_app_client/utils/components/common/custom_app_bar.dart';
 import 'package:gym_app_client/utils/components/fields/content/content_field.dart';
 import 'package:gym_app_client/utils/components/fields/content/date_field.dart';
 import 'package:gym_app_client/utils/constants/role_constants.dart';
 
 class ProfilePage extends StatefulWidget {
-  const ProfilePage({super.key});
+  final String? userId;
+  final void Function()? onUpdate;
+
+  ProfilePage({
+    super.key,
+    this.userId,
+    this.onUpdate,
+  }) : assert((userId != null && userId.isNotEmpty && onUpdate != null) ||
+            (userId == null && onUpdate == null));
 
   @override
   State<ProfilePage> createState() => _ProfilePageState();
@@ -20,35 +32,63 @@ class _ProfilePageState extends State<ProfilePage> {
   final _userService = UserService();
   final _tokenService = TokenService();
 
-  late UserProfileModel _userProfile;
-  late final bool _isDeleteAllowed;
+  late UserProfileBase _userProfile;
   bool _isLoading = true;
+  bool? _isDeleteAllowed;
+  bool? _isModifiable;
 
   @override
   void initState() {
-    _userService.getCurrUser().then(
-      (serviceResult) async {
-        if (serviceResult.isSuccessful) {
-          _userProfile = serviceResult.data!;
-
-          final currUserRole = await _tokenService.getCurrUserRole();
-          _isDeleteAllowed = currUserRole != RoleConstants.superAdminRole;
-
-          if (mounted) setState(() => _isLoading = false);
-        } else {
-          serviceResult.showPopUp(context);
-          if (serviceResult.shouldSignOutUser) _userService.signOut(context);
-        }
-      },
-    );
-
+    _loadPage();
     super.initState();
+  }
+
+  void _loadPage() {
+    if (widget.userId != null && widget.userId!.isNotEmpty) {
+      _userService.getUserById(widget.userId!).then(
+        (serviceResult) async {
+          if (serviceResult.isSuccessful) {
+            _userProfile = serviceResult.data! as UserProfileBase;
+
+            if (mounted) {
+              setState(() {
+                _isLoading = false;
+                _isModifiable =
+                    (_userProfile as UserProfileExtendedModel).assignableRole !=
+                        null;
+              });
+            }
+          } else {
+            serviceResult.showPopUp(context);
+            if (serviceResult.shouldSignOutUser) _userService.signOut(context);
+          }
+        },
+      );
+    } else {
+      _userService.getCurrUser().then(
+        (serviceResult) async {
+          if (serviceResult.isSuccessful) {
+            _userProfile = serviceResult.data! as UserProfileBase;
+
+            final currUserRole = await _tokenService.getCurrUserRole();
+            _isDeleteAllowed = currUserRole != RoleConstants.superAdminRole;
+
+            if (mounted) setState(() => _isLoading = false);
+          } else {
+            serviceResult.showPopUp(context);
+            if (serviceResult.shouldSignOutUser) _userService.signOut(context);
+          }
+        },
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: CustomAppBar(title: "Profile"),
+      appBar: (widget.userId == null || widget.userId!.isEmpty)
+          ? CustomAppBar(title: "Profile")
+          : BackLeadingAppBar(title: "Profile", context: context),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : SingleChildScrollView(
@@ -59,16 +99,25 @@ class _ProfilePageState extends State<ProfilePage> {
                     children: [
                       Align(
                         alignment: Alignment.topRight,
-                        child: ProfileActionsPopupMenuButton(
-                          isDeleteAllowed: _isDeleteAllowed,
-                          userStartState: _userProfile,
-                          onProfileUpdated: (updateModel) {
-                            if (mounted) {
-                              setState(() =>
-                                  _userProfile.updateProfile(updateModel));
-                            }
-                          },
-                        ),
+                        child: (_userProfile is UserProfileModel)
+                            ? ProfileActionsPopupMenuButton(
+                                isDeleteAllowed: _isDeleteAllowed!,
+                                userStartState:
+                                    (_userProfile as UserProfileModel),
+                                onUpdate: _loadPage,
+                              )
+                            : _isModifiable!
+                                ? ProfileAdminActionsPopupMenuButton(
+                                    userId: _userProfile.id,
+                                    assignableRole: (_userProfile
+                                            as UserProfileExtendedModel)
+                                        .assignableRole!,
+                                    onUpdate: ({bool shouldReloadPage = true}) {
+                                      widget.onUpdate!();
+                                      if (shouldReloadPage) _loadPage();
+                                    },
+                                  )
+                                : const SizedBox.shrink(),
                       ),
                       Text(
                         _userProfile.username,
@@ -97,7 +146,8 @@ class _ProfilePageState extends State<ProfilePage> {
                       ContentField(
                         fieldIcon: Icons.accessibility_new_outlined,
                         fieldName: "Gender",
-                        fieldValue: _userProfile.gender,
+                        fieldValue:
+                            capitalizeFirstLetter(_userProfile.gender.name),
                         padding: const EdgeInsets.only(bottom: 15),
                       ),
                       DateField(

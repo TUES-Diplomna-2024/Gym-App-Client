@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/models/user/user_profile_model.dart';
-import 'package:gym_app_client/db_api/models/user/user_update_model.dart';
 import 'package:gym_app_client/db_api/services/user_service.dart';
 import 'package:gym_app_client/utils/components/dialogs/profile_delete_dialog.dart';
 
@@ -9,7 +8,7 @@ class ProfileActionsPopupMenuButton extends PopupMenuButton {
     super.key,
     required bool isDeleteAllowed,
     required UserProfileModel userStartState,
-    required void Function(UserUpdateModel) onProfileUpdated,
+    required void Function() onUpdate,
   }) : super(
           icon: const Icon(Icons.settings),
           shape: RoundedRectangleBorder(
@@ -22,7 +21,7 @@ class ProfileActionsPopupMenuButton extends PopupMenuButton {
                   if (context.mounted) {
                     Navigator.of(context).pushNamed(
                       "/profile-edit",
-                      arguments: [userStartState, onProfileUpdated],
+                      arguments: [userStartState, onUpdate],
                     );
                   }
                 },
@@ -50,7 +49,7 @@ class ProfileActionsPopupMenuButton extends PopupMenuButton {
                     if (context.mounted) {
                       showDialog(
                         context: context,
-                        builder: (_) => const ProfileDeleteDialog(),
+                        builder: (_) => ProfileDeleteDialog(),
                       );
                     }
                   },

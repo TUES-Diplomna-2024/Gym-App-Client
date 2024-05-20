@@ -3,28 +3,27 @@ import 'package:http/http.dart';
 import 'dart:async';
 import 'package:global_configuration/global_configuration.dart';
 import 'package:gym_app_client/db_api/services/token_service.dart';
-import 'package:gym_app_client/utils/common/http_methods.dart';
+import 'package:gym_app_client/utils/common/enums/http_methods.dart';
 import 'package:gym_app_client/utils/common/request_result.dart';
 import 'package:gym_app_client/utils/common/service_result.dart';
 
-class BaseService {
+class BaseHttpService {
   final tokenService = TokenService();
-  final String _dbAPIBaseUrl = GlobalConfiguration().getValue("dbAPIBaseURL");
+  final String dbAPIBaseUrl = GlobalConfiguration().getValue("dbAPIBaseURL");
   late final Uri _refreshUrl;
   final String baseEndpoint;
   final connectionTimeout = const Duration(seconds: 4);
-  final String defaultErrorMessage = "Something went wrong! Try again later!";
 
-  BaseService({
+  BaseHttpService({
     required this.baseEndpoint,
   }) {
-    _refreshUrl = Uri.parse("$_dbAPIBaseUrl/users/refresh");
+    _refreshUrl = Uri.parse("$dbAPIBaseUrl/users/refresh");
   }
 
   Uri getUri({String? subEndpoint}) {
     final uri = subEndpoint != null
-        ? "$_dbAPIBaseUrl/$baseEndpoint/$subEndpoint"
-        : "$_dbAPIBaseUrl/$baseEndpoint";
+        ? "$dbAPIBaseUrl/$baseEndpoint/$subEndpoint"
+        : "$dbAPIBaseUrl/$baseEndpoint";
 
     return Uri.parse(Uri.encodeFull(uri));
   }
@@ -53,6 +52,62 @@ class BaseService {
     return headers;
   }
 
+  Map<String, String> _extractNormalFields(Map<String, dynamic> original) {
+    final normalFields = <String, String>{};
+    final keysToRemove = <String>[];
+
+    original.forEach((key, value) {
+      if (value is String) {
+        normalFields[key] = value;
+        keysToRemove.add(key);
+      }
+    });
+
+    keysToRemove.forEach(original.remove);
+    return normalFields;
+  }
+
+  Future<void> _addAllFieldsToFormDataRequest(
+      MultipartRequest request, Map<String, dynamic> body) async {
+    Map<String, String> normalFields = _extractNormalFields(body);
+
+    request.fields.addAll(normalFields);
+
+    List<MultipartFile> files = [];
+
+    for (var entry in body.entries) {
+      String key = entry.key;
+      var value = entry.value;
+
+      if (value is List<String>) {
+        for (int i = 0; i < value.length; i++) {
+          request.fields['$key[$i]'] = value[i];
+        }
+      } else if (value is List<File>?) {
+        for (int i = 0; i < (value?.length ?? -1); i++) {
+          final multipartFile =
+              await MultipartFile.fromPath(key, value![i].path);
+
+          files.add(multipartFile);
+        }
+      }
+    }
+
+    request.files.addAll(files);
+  }
+
+  Future<Response> _sendFormDataRequest(String method, Uri url,
+      Map<String, String> headers, Map<String, dynamic> body) async {
+    final request = MultipartRequest(method, url);
+    request.headers.addAll(headers);
+
+    await _addAllFieldsToFormDataRequest(request, body);
+
+    StreamedResponse streamedResponse = await request.send();
+
+    return await Response.fromStream(streamedResponse);
+  }
+
   Future<RequestResult> sendRequest({
     required HttpMethods method,
     required Map<String, String> headers,
@@ -70,26 +125,41 @@ class BaseService {
               await get(url, headers: headers).timeout(connectionTimeout);
           break;
         case HttpMethods.post:
-          response = await post(url, headers: headers, body: body)
-              .timeout(connectionTimeout);
+          if (body is Map<String, dynamic>) {
+            response = await _sendFormDataRequest("POST", url, headers, body);
+          } else {
+            response = await post(url, headers: headers, body: body)
+                .timeout(connectionTimeout);
+          }
+
           break;
         case HttpMethods.put:
-          response = await put(url, headers: headers, body: body)
-              .timeout(connectionTimeout);
+          if (body is Map<String, dynamic>) {
+            response = await _sendFormDataRequest("PUT", url, headers, body);
+          } else {
+            response = await put(url, headers: headers, body: body)
+                .timeout(connectionTimeout);
+          }
+
           break;
         case HttpMethods.delete:
-          response = await delete(url, headers: headers, body: body)
-              .timeout(connectionTimeout);
+          if (body is Map<String, dynamic>) {
+            response = await _sendFormDataRequest("DELETE", url, headers, body);
+          } else {
+            response = await delete(url, headers: headers, body: body)
+                .timeout(connectionTimeout);
+          }
+
           break;
       }
 
       return RequestResult.success(response: response);
     } catch (e) {
-      var errorMessage = defaultErrorMessage;
+      var errorMessage = "Something went wrong! Try again later!";
 
       if (e is SocketException || e is TimeoutException) {
         errorMessage =
-            "Network error! Please check your internet connection and try again!";
+            "Unable to connect with the server! Check your internet connection and try again!";
       }
 
       return RequestResult.fail(errorMessage: errorMessage);
@@ -122,14 +192,15 @@ class BaseService {
     return null;
   }
 
-  ServiceResult getServiceResult(int statusCode, Map<int, String> statusMap) {
-    String? message = statusMap[statusCode];
-
-    if (statusCode >= 400 || message == null) {
-      return ServiceResult.fail(message: message ?? defaultErrorMessage);
-    } else {
+  ServiceResult getServiceResult(int statusCode, String message,
+      {String badRequestMessage = "Invalid data provided!"}) {
+    if (statusCode == HttpStatus.ok || statusCode == HttpStatus.noContent) {
       return ServiceResult.success(message: message);
+    } else if (statusCode == HttpStatus.badRequest) {
+      return ServiceResult.fail(message: badRequestMessage);
     }
+
+    return ServiceResult.fail(message: message);
   }
 
   Future<ServiceResult> refreshAccessToken() async {
@@ -156,6 +227,6 @@ class BaseService {
       );
     }
 
-    return ServiceResult.fail(message: defaultErrorMessage);
+    return ServiceResult.fail(message: response.body);
   }
 }

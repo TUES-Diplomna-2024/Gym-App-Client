@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gym_app_client/utils/common/enums/gender.dart';
 import 'package:gym_app_client/utils/components/buttons/sign/signup_submit_button.dart';
 import 'package:gym_app_client/utils/constants/user_constants.dart';
 import 'package:gym_app_client/utils/forms/signup_account_info_form.dart';
@@ -34,7 +35,7 @@ class _SignUpFormState extends State<SignUpForm> {
   final _passwordController = TextEditingController();
   final _birthDateController = TextEditingController();
 
-  String _selectedGender = "";
+  Gender? _selectedGender;
   double _selectedHeight = UserConstants.defaultHeight;
   double _selectedWeight = UserConstants.defaultWeight;
 
@@ -66,7 +67,7 @@ class _SignUpFormState extends State<SignUpForm> {
           birthDateController: _birthDateController,
           selectedHeight: _selectedHeight,
           selectedWeight: _selectedWeight,
-          onGenderChanged: (String? value) {
+          onGenderChanged: (Gender? value) {
             if (mounted) setState(() => _selectedGender = value!);
           },
           onHeightChanged: (double value) {

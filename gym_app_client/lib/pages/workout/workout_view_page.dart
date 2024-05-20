@@ -9,10 +9,12 @@ import 'package:gym_app_client/utils/components/views/previews/exercise_preview.
 
 class WorkoutViewPage extends StatefulWidget {
   final String workoutId;
+  final void Function() onUpdate;
 
   const WorkoutViewPage({
     super.key,
     required this.workoutId,
+    required this.onUpdate,
   });
 
   @override
@@ -27,6 +29,11 @@ class _WorkoutViewPageState extends State<WorkoutViewPage> {
 
   @override
   void initState() {
+    super.initState();
+    _loadPage();
+  }
+
+  void _loadPage() {
     _workoutService.getWorkoutById(widget.workoutId).then(
       (serviceResult) {
         if (serviceResult.isSuccessful) {
@@ -38,8 +45,6 @@ class _WorkoutViewPageState extends State<WorkoutViewPage> {
         }
       },
     );
-
-    super.initState();
   }
 
   Widget _getExercisePreviews() {
@@ -69,7 +74,13 @@ class _WorkoutViewPageState extends State<WorkoutViewPage> {
             if (mounted) {
               Navigator.of(context).pushNamed(
                 "/exercise",
-                arguments: _workoutView.exercises![index].id,
+                arguments: [
+                  _workoutView.exercises![index].id,
+                  () {
+                    widget.onUpdate();
+                    _loadPage();
+                  }
+                ],
               );
             }
           },
@@ -102,13 +113,9 @@ class _WorkoutViewPageState extends State<WorkoutViewPage> {
                           const SizedBox(width: 16),
                           WorkoutActionsPopupMenuButton(
                             workoutCurrState: _workoutView,
-                            onWorkoutUpdated: (name, description, exercises) {
-                              if (mounted) {
-                                setState(
-                                  () => _workoutView.updateView(
-                                      name, description, exercises),
-                                );
-                              }
+                            onUpdate: ({bool shouldReloadPage = true}) {
+                              widget.onUpdate();
+                              if (shouldReloadPage) _loadPage();
                             },
                           ),
                         ],

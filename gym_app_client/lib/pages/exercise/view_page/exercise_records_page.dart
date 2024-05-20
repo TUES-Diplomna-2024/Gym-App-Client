@@ -3,6 +3,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:gym_app_client/db_api/models/exercise_record/exercise_record_view_model.dart';
 import 'package:gym_app_client/db_api/services/exercise_record_service.dart';
 import 'package:gym_app_client/db_api/services/user_service.dart';
+import 'package:gym_app_client/utils/common/enums/statistic_period.dart';
 import 'package:gym_app_client/utils/components/dialogs/exercise_record_create_dialog.dart';
 import 'package:gym_app_client/utils/components/dialogs/exercise_record_delete_dialog.dart';
 import 'package:gym_app_client/utils/components/dialogs/exercise_record_edit_dialog.dart';
@@ -25,13 +26,13 @@ class _ExerciseRecordsPageState extends State<ExerciseRecordsPage> {
   final _userService = UserService();
   final _exerciseRecordService = ExerciseRecordService();
 
-  String _selectedPeriod = "";
+  StatisticPeriod? _selectedPeriod;
   List<ExerciseRecordViewModel>? _records;
 
   void _getRecords() {
-    if (mounted && _selectedPeriod.isNotEmpty) {
+    if (mounted && _selectedPeriod != null) {
       _exerciseRecordService
-          .getCurrUserExerciseRecordsViews(widget.exerciseId, _selectedPeriod)
+          .getCurrUserExerciseRecordsViews(widget.exerciseId, _selectedPeriod!)
           .then(
         (serviceResult) {
           if (serviceResult.isSuccessful) {
@@ -53,7 +54,7 @@ class _ExerciseRecordsPageState extends State<ExerciseRecordsPage> {
     if (_records!.isEmpty) {
       return const Center(
         child: Text(
-          "No records found!",
+          "You don't have any records for this exercise!",
           style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
           textAlign: TextAlign.center,
         ),
@@ -75,7 +76,6 @@ class _ExerciseRecordsPageState extends State<ExerciseRecordsPage> {
                       context: context,
                       builder: (_) => ExerciseRecordDeleteDialog(
                         context: context,
-                        exerciseId: widget.exerciseId,
                         recordId: _records![index].id,
                         updatePage: _getRecords,
                       ),
@@ -95,7 +95,6 @@ class _ExerciseRecordsPageState extends State<ExerciseRecordsPage> {
                     showDialog(
                       context: context,
                       builder: (_) => ExerciseRecordEditDialog(
-                        exerciseId: widget.exerciseId,
                         recordInitState: _records![index],
                         updatePage: _getRecords,
                       ),
@@ -125,7 +124,7 @@ class _ExerciseRecordsPageState extends State<ExerciseRecordsPage> {
         child: Column(
           children: [
             TimePeriodFormField(
-              onTimePeriodChanged: (String? value) {
+              onTimePeriodChanged: (StatisticPeriod? value) {
                 if (mounted) setState(() => _selectedPeriod = value!);
                 _getRecords();
               },

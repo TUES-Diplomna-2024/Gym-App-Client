@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/models/user/user_profile_model.dart';
-import 'package:gym_app_client/db_api/models/user/user_update_model.dart';
+import 'package:gym_app_client/utils/common/enums/gender.dart';
 import 'package:gym_app_client/utils/components/buttons/profile/profile_save_changes_button.dart';
 import 'package:gym_app_client/utils/components/fields/form/birth_date_form_field.dart';
 import 'package:gym_app_client/utils/components/fields/form/gender_form_field.dart';
@@ -11,14 +11,14 @@ import 'package:gym_app_client/utils/constants/user_constants.dart';
 
 class ProfileEditForm extends StatefulWidget {
   final UserProfileModel userInitState;
-  final void Function(UserUpdateModel) onProfileUpdated;
+  final void Function() onUpdate;
   late final EdgeInsets formPadding;
   late final EdgeInsets betweenFieldsPadding;
 
   ProfileEditForm({
     super.key,
     required this.userInitState,
-    required this.onProfileUpdated,
+    required this.onUpdate,
     required EdgeInsets padding,
   }) {
     formPadding = EdgeInsets.only(
@@ -40,7 +40,7 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
   late final TextEditingController _usernameController;
   late final TextEditingController _birthDateController;
 
-  late String _selectedGender;
+  late Gender _selectedGender;
   late double _selectedHeight;
   late double _selectedWeight;
 
@@ -91,7 +91,7 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
             ),
             GenderFormField(
               defaultGender: _selectedGender,
-              onGenderChanged: (String? value) {
+              onGenderChanged: (Gender? value) {
                 if (mounted) setState(() => _selectedGender = value!);
               },
               padding: widget.betweenFieldsPadding,
@@ -117,7 +117,7 @@ class _ProfileEditFormState extends State<ProfileEditForm> {
               gender: _selectedGender,
               height: _selectedHeight,
               weight: _selectedWeight,
-              onProfileUpdated: widget.onProfileUpdated,
+              onUpdate: widget.onUpdate,
             ),
           ],
         ),

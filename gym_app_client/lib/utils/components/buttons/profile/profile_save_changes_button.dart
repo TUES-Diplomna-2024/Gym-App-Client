@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/models/user/user_update_model.dart';
 import 'package:gym_app_client/db_api/services/user_service.dart';
+import 'package:gym_app_client/utils/common/enums/gender.dart';
 
 class ProfileSaveChangesButton extends StatelessWidget {
   final UserService _userService = UserService();
   final GlobalKey<FormState> formKey;
   final TextEditingController usernameController;
   final TextEditingController birthDateController;
-  final String gender;
+  final Gender gender;
   final double height;
   final double weight;
-  final void Function(UserUpdateModel) onProfileUpdated;
+  final void Function() onUpdate;
 
   ProfileSaveChangesButton({
     super.key,
@@ -20,7 +21,7 @@ class ProfileSaveChangesButton extends StatelessWidget {
     required this.gender,
     required this.height,
     required this.weight,
-    required this.onProfileUpdated,
+    required this.onUpdate,
   });
 
   void _handleProfileUpdate(BuildContext context) {
@@ -38,7 +39,7 @@ class ProfileSaveChangesButton extends StatelessWidget {
           serviceResult.showPopUp(context);
 
           if (serviceResult.isSuccessful) {
-            onProfileUpdated(userUpdate);
+            onUpdate();
             if (context.mounted) Navigator.of(context).pop();
           } else if (serviceResult.shouldSignOutUser) {
             _userService.signOut(context);

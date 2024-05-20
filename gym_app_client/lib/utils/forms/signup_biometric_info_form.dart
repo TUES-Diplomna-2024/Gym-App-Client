@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gym_app_client/utils/common/enums/gender.dart';
 import 'package:gym_app_client/utils/components/fields/form/birth_date_form_field.dart';
 import 'package:gym_app_client/utils/components/fields/form/gender_form_field.dart';
 import 'package:gym_app_client/utils/components/fields/form/height_form_field.dart';
@@ -9,7 +10,7 @@ class SignUpBiometricInfoForm extends StatelessWidget {
   final TextEditingController birthDateController;
   final double selectedHeight;
   final double selectedWeight;
-  final void Function(String?) onGenderChanged;
+  final void Function(Gender?) onGenderChanged;
   final void Function(double) onHeightChanged;
   final void Function(double) onWeightChanged;
   final EdgeInsets formPadding;

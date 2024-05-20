@@ -1,19 +1,13 @@
-class StatisticConstants {
-  static const Map<String, String> periods = {
-    "1 Week": "oneWeek",
-    "1 Month": "oneMonth",
-    "2 Months": "twoMonths",
-    "3 Months": "threeMonths",
-    "6 Months": "sixMonths",
-    "1 Year": "oneYear",
-    "All": "all",
-  };
+import 'package:gym_app_client/utils/common/enums/statistic_period.dart';
 
-  static const List<String> measurements = [
-    "Sets",
-    "Reps",
-    "Weight",
-    "Volume",
-    "Duration",
-  ];
+class StatisticConstants {
+  static const Map<StatisticPeriod, String> periods = {
+    StatisticPeriod.oneWeek: "1 Week",
+    StatisticPeriod.oneMonth: "1 Month",
+    StatisticPeriod.twoMonths: "2 Months",
+    StatisticPeriod.threeMonths: "3 Months",
+    StatisticPeriod.sixMonths: "6 Months",
+    StatisticPeriod.oneYear: "1 Year",
+    StatisticPeriod.all: "All"
+  };
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/models/exercise/exercise_preview_model.dart';
+import 'package:gym_app_client/db_api/services/exercise_service.dart';
 import 'package:gym_app_client/db_api/services/user_service.dart';
 import 'package:gym_app_client/utils/components/views/previews/exercise_preview.dart';
 
@@ -14,12 +15,18 @@ class LibraryCustomExercisesPage extends StatefulWidget {
 class _LibraryCustomExercisesPageState
     extends State<LibraryCustomExercisesPage> {
   final _userService = UserService();
-  late final List<ExercisePreviewModel> _userCustomExercises;
+  final _exerciseService = ExerciseService();
+  late List<ExercisePreviewModel> _userCustomExercises;
   bool _isLoading = true;
 
   @override
   void initState() {
-    _userService.getCurrUserCustomExercisePreviews().then(
+    super.initState();
+    _loadPage();
+  }
+
+  void _loadPage() {
+    _exerciseService.getCurrUserCustomExercisePreviews().then(
       (serviceResult) {
         if (serviceResult.isSuccessful) {
           _userCustomExercises = serviceResult.data!;
@@ -30,8 +37,6 @@ class _LibraryCustomExercisesPageState
         }
       },
     );
-
-    super.initState();
   }
 
   Widget _getBody() {
@@ -58,7 +63,7 @@ class _LibraryCustomExercisesPageState
               if (mounted) {
                 Navigator.of(context).pushNamed(
                   "/exercise",
-                  arguments: _userCustomExercises[index].id,
+                  arguments: [_userCustomExercises[index].id, _loadPage],
                 );
               }
             },
@@ -74,7 +79,12 @@ class _LibraryCustomExercisesPageState
       body: _getBody(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          if (mounted) Navigator.of(context).pushNamed("/exercise-create");
+          if (mounted) {
+            Navigator.of(context).pushNamed(
+              "/exercise-create",
+              arguments: _loadPage,
+            );
+          }
         },
         child: const Icon(Icons.add),
       ),

@@ -15,8 +15,7 @@ class WorkoutSaveChangesButton extends StatelessWidget {
   final TextEditingController descriptionController;
   final List<ExercisePreviewModel>? exercises;
 
-  final void Function(String, String?, List<ExercisePreviewModel>?)
-      onWorkoutUpdated;
+  final void Function() onUpdate;
 
   WorkoutSaveChangesButton({
     super.key,
@@ -25,7 +24,7 @@ class WorkoutSaveChangesButton extends StatelessWidget {
     required this.nameController,
     required this.descriptionController,
     required this.exercises,
-    required this.onWorkoutUpdated,
+    required this.onUpdate,
   });
 
   void _handleWorkoutUpdate(BuildContext context) {
@@ -43,11 +42,7 @@ class WorkoutSaveChangesButton extends StatelessWidget {
           serviceResult.showPopUp(context);
 
           if (serviceResult.isSuccessful) {
-            onWorkoutUpdated(
-              workoutUpdate.name,
-              workoutUpdate.description,
-              exercises,
-            );
+            onUpdate();
 
             if (context.mounted) Navigator.of(context).pop();
           } else if (serviceResult.shouldSignOutUser) {

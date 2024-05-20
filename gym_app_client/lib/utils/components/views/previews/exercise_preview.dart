@@ -19,7 +19,7 @@ class ExercisePreview extends StatelessWidget {
         color: Colors.blue.shade100,
         gradient: LinearGradient(
           stops: const [0.03, 0.03],
-          colors: [exercise.difficulty, Colors.blue.shade100],
+          colors: [exercise.difficultyColor, Colors.blue.shade100],
         ),
         borderRadius: BorderRadius.circular(5),
       ),
@@ -40,9 +40,7 @@ class ExercisePreview extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 36),
-                Icon(exercise.isPrivate
-                    ? Icons.lock_outlined
-                    : Icons.public_outlined),
+                exercise.visibilityIcon,
               ],
             ),
           ),

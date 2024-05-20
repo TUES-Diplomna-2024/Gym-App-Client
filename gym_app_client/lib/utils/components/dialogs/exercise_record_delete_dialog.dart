@@ -7,21 +7,19 @@ class ExerciseRecordDeleteDialog extends DeleteItemDialog {
   final _userService = UserService();
   final _exerciseRecordService = ExerciseRecordService();
 
-  final String exerciseId;
   final String recordId;
   final void Function() updatePage;
 
   ExerciseRecordDeleteDialog({
     super.key,
     required super.context,
-    required this.exerciseId,
     required this.recordId,
     required this.updatePage,
   }) : super(itemType: "record");
 
   @override
   void handleItemDeletion() {
-    _exerciseRecordService.deleteExerciseRecordById(exerciseId, recordId).then(
+    _exerciseRecordService.deleteExerciseRecordById(recordId).then(
       (serviceResult) {
         serviceResult.showPopUp(context);
 

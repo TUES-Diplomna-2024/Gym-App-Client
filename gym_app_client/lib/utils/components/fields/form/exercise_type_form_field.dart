@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:gym_app_client/utils/common/enums/exercise_type.dart';
+import 'package:gym_app_client/utils/common/helper_functions.dart';
 import 'package:gym_app_client/utils/components/fields/form/padded_dropdown_button_form_field.dart';
-import 'package:gym_app_client/utils/constants/exercise_constants.dart';
 
-class ExerciseTypeFormField extends PaddedDropdownButtonFormField<String> {
+class ExerciseTypeFormField
+    extends PaddedDropdownButtonFormField<ExerciseType> {
   ExerciseTypeFormField({
     super.key,
-    String? defaultType,
-    required void Function(String?) onTypeChanged,
+    ExerciseType? defaultType,
+    required void Function(ExerciseType?) onTypeChanged,
     required super.padding,
   }) : super(
           decoration: const InputDecoration(
@@ -18,15 +20,15 @@ class ExerciseTypeFormField extends PaddedDropdownButtonFormField<String> {
                 OutlineInputBorder(borderSide: BorderSide(color: Colors.blue)),
           ),
           onChanged: onTypeChanged,
-          items: ExerciseConstants.types
-              .map((String type) => DropdownMenuItem(
+          items: ExerciseType.values
+              .map((type) => DropdownMenuItem(
                     value: type,
-                    child: Text(type),
+                    child: Text(capitalizeFirstLetter(type.name)),
                   ))
               .toList(),
           defaultItem: defaultType,
-          validator: (String? value) {
-            if (value == null || value.isEmpty) {
+          validator: (ExerciseType? value) {
+            if (value == null) {
               return "Please select exercise type";
             }
 

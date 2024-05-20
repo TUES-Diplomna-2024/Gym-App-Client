@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:gym_app_client/db_api/models/exercise/exercise_stats_model.dart';
+import 'package:gym_app_client/utils/common/enums/statistic_measurement.dart';
+import 'package:gym_app_client/utils/common/enums/statistic_period.dart';
 import 'package:gym_app_client/utils/components/fields/content/content_field.dart';
 import 'package:gym_app_client/utils/components/views/statistic_chart_view.dart';
 import 'package:gym_app_client/utils/common/helper_functions.dart';
 
 class ExerciseStatsView extends StatelessWidget {
   final ExerciseStatsModel stats;
-  final String timePeriod;
-  final String measurement;
+  final StatisticPeriod timePeriod;
+  final StatisticMeasurement measurement;
 
   const ExerciseStatsView({
     super.key,

@@ -1,13 +1,14 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:gym_app_client/db_api/models/workout/workout_create_model.dart';
 import 'package:gym_app_client/db_api/models/workout/workout_preview_model.dart';
 import 'package:gym_app_client/db_api/models/workout/workout_update_model.dart';
 import 'package:gym_app_client/db_api/models/workout/workout_view_model.dart';
-import 'package:gym_app_client/utils/common/http_methods.dart';
-import 'package:gym_app_client/db_api/services/base_service.dart';
+import 'package:gym_app_client/db_api/services/base_http_service.dart';
+import 'package:gym_app_client/utils/common/enums/http_methods.dart';
 import 'package:gym_app_client/utils/common/service_result.dart';
 
-class WorkoutService extends BaseService {
+class WorkoutService extends BaseHttpService {
   WorkoutService() : super(baseEndpoint: "users/current/workouts");
 
   Future<ServiceResult> createNewWorkout(
@@ -28,10 +29,28 @@ class WorkoutService extends BaseService {
 
     final statusCode = requestResult.response!.statusCode;
 
-    return getServiceResult(statusCode, {
-      HttpStatus.ok: "Workout has been successfully created!",
-      HttpStatus.badRequest: "Invalid workout data!",
-    });
+    return getServiceResult(
+        statusCode, "Workout has been successfully created!");
+  }
+
+  Future<ServiceResult> getCurrUserWorkoutPreviews() async {
+    final requestResult = await sendRequest(
+      method: HttpMethods.get,
+      headers: await getHeaders(),
+    );
+
+    final baseServiceResult = await baseAuthResponseHandle(
+      requestResult: requestResult,
+      currMethod: () => getCurrUserWorkoutPreviews(),
+    );
+
+    if (baseServiceResult != null) return baseServiceResult;
+
+    final response = requestResult.response!;
+
+    return ServiceResult.success(
+      data: WorkoutPreviewModel.getWorkoutPreviewsFromResponse(response),
+    );
   }
 
   Future<ServiceResult> getWorkoutById(String workoutId) async {
@@ -57,36 +76,8 @@ class WorkoutService extends BaseService {
       );
     }
 
-    return getServiceResult(statusCode, {
-      HttpStatus.notFound: "This workout could not be found!",
-      HttpStatus.badRequest: "This workout could not be found!",
-      HttpStatus.forbidden: response.body,
-    });
-  }
-
-  Future<ServiceResult> getCurrUserWorkoutPreviews() async {
-    final requestResult = await sendRequest(
-      method: HttpMethods.get,
-      headers: await getHeaders(),
-    );
-
-    final baseServiceResult = await baseAuthResponseHandle(
-      requestResult: requestResult,
-      currMethod: () => getCurrUserWorkoutPreviews(),
-    );
-
-    if (baseServiceResult != null) return baseServiceResult;
-
-    final response = requestResult.response!;
-    final statusCode = response.statusCode;
-
-    if (statusCode == HttpStatus.ok) {
-      return ServiceResult.success(
-        data: WorkoutPreviewModel.getWorkoutPreviewsFromResponse(response),
-      );
-    }
-
-    return ServiceResult.fail(message: defaultErrorMessage);
+    return getServiceResult(statusCode, response.body,
+        badRequestMessage: "The specified workout could not be found!");
   }
 
   Future<ServiceResult> updateWorkoutById(
@@ -108,12 +99,11 @@ class WorkoutService extends BaseService {
     final response = requestResult.response!;
     final statusCode = response.statusCode;
 
-    return getServiceResult(statusCode, {
-      HttpStatus.ok: "Successfully updated!",
-      HttpStatus.badRequest: "Invalid workout data!",
-      HttpStatus.notFound: "Workout could not be found!",
-      HttpStatus.forbidden: response.body,
-    });
+    if (statusCode == HttpStatus.noContent) {
+      return getServiceResult(statusCode, "Successfully updated!");
+    }
+
+    return getServiceResult(statusCode, response.body);
   }
 
   Future<ServiceResult> deleteWorkoutById(String workoutId) async {
@@ -133,11 +123,39 @@ class WorkoutService extends BaseService {
     final response = requestResult.response!;
     final statusCode = response.statusCode;
 
-    return getServiceResult(statusCode, {
-      HttpStatus.ok: "Workout was successfully deleted!",
-      HttpStatus.notFound: "Workout could not be found!",
-      HttpStatus.badRequest: "Workout could not be found!",
-      HttpStatus.forbidden: response.body,
-    });
+    if (statusCode == HttpStatus.noContent) {
+      return getServiceResult(
+          statusCode, "Workout has been successfully deleted!");
+    }
+
+    return getServiceResult(statusCode, response.body,
+        badRequestMessage: "The specified workout could not be found!");
+  }
+
+  Future<ServiceResult> addExerciseToWorkouts(
+      String exerciseId, List<String> workoutIds) async {
+    final requestResult = await sendRequest(
+      method: HttpMethods.post,
+      fullUrl: Uri.parse("$dbAPIBaseUrl/exercises/$exerciseId/add-to-workouts"),
+      headers: await getHeaders(),
+      body: jsonEncode(workoutIds),
+    );
+
+    final baseServiceResult = await baseAuthResponseHandle(
+      requestResult: requestResult,
+      currMethod: () => addExerciseToWorkouts(exerciseId, workoutIds),
+    );
+
+    if (baseServiceResult != null) return baseServiceResult;
+
+    final response = requestResult.response!;
+    final statusCode = response.statusCode;
+
+    if (statusCode == HttpStatus.noContent) {
+      return getServiceResult(statusCode,
+          "Exercise has been successfully added to ${workoutIds.length} workout(s)!");
+    }
+
+    return getServiceResult(statusCode, response.body);
   }
 }

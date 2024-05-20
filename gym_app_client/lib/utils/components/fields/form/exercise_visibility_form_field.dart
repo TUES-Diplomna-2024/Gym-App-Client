@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:gym_app_client/utils/common/enums/exercise_visibility.dart';
+import 'package:gym_app_client/utils/common/helper_functions.dart';
 import 'package:gym_app_client/utils/components/fields/form/padded_dropdown_button_form_field.dart';
-import 'package:gym_app_client/utils/constants/exercise_constants.dart';
 
-class ExerciseVisibilityFormField extends PaddedDropdownButtonFormField<bool> {
+class ExerciseVisibilityFormField
+    extends PaddedDropdownButtonFormField<ExerciseVisibility> {
   ExerciseVisibilityFormField({
     super.key,
-    required bool defaultVisibility,
-    required void Function(bool?) onVisibilityChanged,
+    required void Function(ExerciseVisibility?) onVisibilityChanged,
     required super.padding,
+    ExerciseVisibility? defaultVisibility,
   }) : super(
           decoration: const InputDecoration(
             label: Text("Visibility"),
@@ -18,17 +20,13 @@ class ExerciseVisibilityFormField extends PaddedDropdownButtonFormField<bool> {
                 OutlineInputBorder(borderSide: BorderSide(color: Colors.blue)),
           ),
           onChanged: onVisibilityChanged,
-          items: const [
-            DropdownMenuItem(
-              value: ExerciseConstants.publicVisibility,
-              child: Text("Public"),
-            ),
-            DropdownMenuItem(
-              value: ExerciseConstants.privateVisibility,
-              child: Text("Private"),
-            ),
-          ],
+          items: ExerciseVisibility.values
+              .map((visibility) => DropdownMenuItem(
+                    value: visibility,
+                    child: Text(capitalizeFirstLetter(visibility.name)),
+                  ))
+              .toList(),
           defaultItem: defaultVisibility,
-          validator: (bool? value) => null,
+          validator: (ExerciseVisibility? value) => null,
         );
 }
