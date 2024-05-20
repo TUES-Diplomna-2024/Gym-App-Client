@@ -21,7 +21,6 @@ class PickImagesDialog extends StatelessWidget {
       onSelect(pickedFileList);
     } catch (e) {
       debugPrint(e.toString());
-      // TODO: ?
     }
   }
 

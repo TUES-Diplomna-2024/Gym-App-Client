@@ -162,7 +162,7 @@ class BaseHttpService {
             "Unable to connect with the server! Check your internet connection and try again!";
       }
 
-      return RequestResult.fail(errorMessage: e.toString());
+      return RequestResult.fail(errorMessage: errorMessage);
     }
   }
 

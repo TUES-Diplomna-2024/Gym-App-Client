@@ -28,7 +28,7 @@ class _ExerciseStatsPageState extends State<ExerciseStatsPage> {
   StatisticMeasurement? _selectedMeasurement;
 
   ExerciseStatsModel? _stats;
-  bool _isLoading = false; // TODO: Why?
+  bool _isLoading = false;
 
   void _getStats() {
     if (mounted && _selectedPeriod != null && _selectedMeasurement != null) {
